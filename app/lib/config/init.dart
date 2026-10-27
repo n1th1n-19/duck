@@ -23,6 +23,7 @@ import 'package:localsend_app/provider/purchase_provider.dart';
 // [FOSS_REMOVE_END]
 import 'package:localsend_app/provider/selection/selected_sending_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/provider/tap_share_provider.dart';
 import 'package:localsend_app/provider/tv_provider.dart';
 import 'package:localsend_app/provider/version_provider.dart';
 import 'package:localsend_app/provider/window_dimensions_provider.dart';
@@ -232,6 +233,14 @@ Future<void> postInit(BuildContext context, Ref ref, bool appStart) async {
     ref.redux(nearbyDevicesProvider).dispatchAsync(StartDiscoveryListener()); // ignore: unawaited_futures
   } catch (e) {
     _logger.warning('Starting discovery listener failed', e);
+  }
+
+  if (appStart && checkPlatform([TargetPlatform.android])) {
+    try {
+      await initTapShare(ref);
+    } catch (e) {
+      _logger.warning('Starting tap to share failed', e);
+    }
   }
 
   // ignore: dead_code

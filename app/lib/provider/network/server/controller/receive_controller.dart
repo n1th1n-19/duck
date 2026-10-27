@@ -22,6 +22,7 @@ import 'package:localsend_app/provider/security_provider.dart';
 import 'package:localsend_app/provider/selection/selected_receiving_files_provider.dart';
 import 'package:localsend_app/provider/selection/selected_sending_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/provider/tap_share_provider.dart';
 import 'package:localsend_app/util/native/directories.dart';
 import 'package:localsend_app/util/native/platform_check.dart';
 import 'package:localsend_app/util/native/tray_helper.dart';
@@ -133,6 +134,14 @@ class ReceiveController {
       if (isFavorite) {
         quickSave = true;
       }
+    }
+    // Only the TLS certificate proves who tapped; the payload fingerprint (encryption off) could be forged.
+    final tappedFingerprint = event.certFingerprint;
+    if (!quickSave &&
+        tappedFingerprint != null &&
+        checkPlatform([TargetPlatform.android]) &&
+        await isRecentlyTappedSender(server.ref, tappedFingerprint)) {
+      quickSave = true;
     }
     if (server.getState().webUpload && settings.receiveViaLinkAutoAccept && server.getState().session?.message == null) {
       // The upload page (receive via link) is being served and requests should be accepted automatically.

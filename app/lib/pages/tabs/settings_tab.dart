@@ -10,6 +10,7 @@ import 'package:localsend_app/pages/settings/network_interfaces_page.dart';
 import 'package:localsend_app/pages/tabs/settings_tab_controller.dart';
 import 'package:localsend_app/provider/network/server/server_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/provider/tap_share_provider.dart';
 import 'package:localsend_app/provider/version_provider.dart';
 import 'package:localsend_app/util/alias_generator.dart';
 import 'package:localsend_app/util/device_type_ext.dart';
@@ -157,6 +158,27 @@ class SettingsTab extends StatelessWidget {
                 ),
               ],
             ),
+            if (context.watch(tapShareProvider.select((s) => s.available)))
+              _SettingsSection(
+                title: t.tapShare.title,
+                children: [
+                  _BooleanEntry(
+                    label: t.tapShare.title,
+                    description: t.tapShare.description,
+                    value: context.watch(tapShareProvider.select((s) => s.enabled)),
+                    onChanged: (b) async {
+                      await ref.redux(tapShareProvider).dispatchAsync(SetTapShareEnabledAction(b));
+                    },
+                  ),
+                  _BooleanEntry(
+                    label: t.tapShare.autoAccept,
+                    value: context.watch(tapShareProvider.select((s) => s.autoAccept)),
+                    onChanged: (b) async {
+                      await ref.redux(tapShareProvider).dispatchAsync(SetTapShareAutoAcceptAction(b));
+                    },
+                  ),
+                ],
+              ),
             _SettingsSection(
               title: t.settingsTab.receive.title,
               children: [

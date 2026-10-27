@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- localsend: "Tap to share" receiver. The AID must match TapShareState.AID. -->
+<host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/tap_share_service_description"
+    android:requireDeviceUnlock="false">
+    <aid-group android:category="other" android:description="@string/tap_share_service_description">
+        <aid-filter android:name="F04C4F43414C53454E44" />
+    </aid-group>
+</host-apdu-service>

@@ -88,6 +88,49 @@ Future<void> openGallery() async {
   await _methodChannel.invokeMethod('openGallery');
 }
 
+/// Callbacks MainActivity invokes for "Tap to share".
+void setTapShareHandlersAndroid({
+  required void Function(String identityJson) onRead,
+  required void Function(String senderFingerprint) onTapped,
+  required void Function(bool enabled) onEnabledChanged,
+}) {
+  _methodChannel.setMethodCallHandler((call) async {
+    switch (call.method) {
+      case 'onTapShareRead':
+        onRead(call.arguments as String);
+      case 'onTapShareTapped':
+        onTapped(call.arguments as String);
+      case 'onTapShareEnabledChanged':
+        onEnabledChanged(call.arguments as bool);
+    }
+  });
+}
+
+/// Returns (available, enabled, autoAccept).
+Future<(bool, bool, bool)> getTapShareStateAndroid() async {
+  final result = (await _methodChannel.invokeMethod<Map>('tapShareGetState'))!;
+  return (result['available'] as bool, result['enabled'] as bool, result['autoAccept'] as bool);
+}
+
+Future<void> setTapShareEnabledAndroid(bool enabled) => _methodChannel.invokeMethod('tapShareSetEnabled', enabled);
+
+Future<void> setTapShareAutoAcceptAndroid(bool autoAccept) => _methodChannel.invokeMethod('tapShareSetAutoAccept', autoAccept);
+
+/// The JSON this phone answers taps with, or null to stop answering.
+Future<void> setTapShareIdentityAndroid(String? identityJson) => _methodChannel.invokeMethod('tapShareSetIdentity', identityJson);
+
+/// Enables NFC reader mode (this phone sends) with our fingerprint, or disables it with null.
+Future<void> setTapShareSenderAndroid(String? fingerprint) => _methodChannel.invokeMethod('tapShareSetSender', fingerprint);
+
+/// The fingerprint of the last phone that tapped us and when, or null.
+Future<(String, DateTime)?> getTapShareLastTapAndroid() async {
+  final result = await _methodChannel.invokeMethod<Map>('tapShareLastTap');
+  if (result == null) {
+    return null;
+  }
+  return (result['fingerprint'] as String, DateTime.fromMillisecondsSinceEpoch(result['at'] as int));
+}
+
 @MappableClass()
 class PickDirectoryResult with PickDirectoryResultMappable {
   final String directoryUri;

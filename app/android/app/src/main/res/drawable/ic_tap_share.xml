@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Two phones touching at the top with waves between them. Tinted by the system in Quick Settings. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M4,7h5a1,1 0,0 1,1 1v13a1,1 0,0 1,-1 1H4a1,1 0,0 1,-1 -1V8a1,1 0,0 1,1 -1zM5,9v11h3V9zM15,7h5a1,1 0,0 1,1 1v13a1,1 0,0 1,-1 1h-5a1,1 0,0 1,-1 -1V8a1,1 0,0 1,1 -1zM16,9v11h3V9z" />
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M9.5,4.5a3.5,3.5 0,0 1,5 0M7.5,2.5a6.4,6.4 0,0 1,9 0" />
+</vector>

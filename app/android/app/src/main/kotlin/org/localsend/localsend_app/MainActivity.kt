@@ -74,12 +74,31 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    private var tapShareReader: TapShareReader? = null
+
+    override fun onResume() {
+        super.onResume()
+        tapShareReader?.apply()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        tapShareReader?.pause()
+    }
+
+    override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
+        super.cleanUpFlutterEngine(flutterEngine)
+        TapShareState.onTapped = null
+        TapShareState.onEnabledChanged = null
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(
-            flutterEngine.dartExecutor.binaryMessenger,
-            CHANNEL
-        ).setMethodCallHandler { call, result ->
+        val channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        tapShareReader = TapShareReader(this) { identity -> channel.invokeMethod("onTapShareRead", identity) }
+        TapShareState.onTapped = { fingerprint -> channel.invokeMethod("onTapShareTapped", fingerprint) }
+        TapShareState.onEnabledChanged = { enabled -> channel.invokeMethod("onTapShareEnabledChanged", enabled) }
+        channel.setMethodCallHandler { call, result ->
             when (call.method) {
                 "pickDirectory" -> {
                     pendingResult = result
@@ -134,6 +153,43 @@ class MainActivity : FlutterActivity() {
                         pendingPermissionResult = result
                         requestPermissions(arrayOf(PERMISSION_ACCESS_LOCAL_NETWORK), REQUEST_CODE_LOCAL_NETWORK)
                     }
+                }
+
+                "tapShareGetState" -> {
+                    result.success(
+                        mapOf(
+                            "available" to TapShareState.isNfcAvailable(this),
+                            "enabled" to TapShareState.isEnabled(this),
+                            "autoAccept" to TapShareState.isAutoAccept(this),
+                        )
+                    )
+                }
+
+                "tapShareSetEnabled" -> {
+                    TapShareState.setEnabled(this, call.arguments as Boolean)
+                    result.success(null)
+                }
+
+                "tapShareSetAutoAccept" -> {
+                    TapShareState.setAutoAccept(this, call.arguments as Boolean)
+                    result.success(null)
+                }
+
+                "tapShareSetIdentity" -> {
+                    TapShareState.setIdentity(this, call.arguments as String?)
+                    result.success(null)
+                }
+
+                "tapShareSetSender" -> {
+                    tapShareReader?.setSender(call.arguments as String?)
+                    result.success(null)
+                }
+
+                "tapShareLastTap" -> {
+                    val fingerprint = TapShareState.lastTappedFingerprint
+                    result.success(
+                        if (fingerprint == null) null else mapOf("fingerprint" to fingerprint, "at" to TapShareState.lastTappedAt)
+                    )
                 }
 
                 else -> result.notImplemented()
