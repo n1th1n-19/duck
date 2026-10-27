@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:localsend_app/model/cross_file.dart';
 import 'package:localsend_app/util/file_type_ext.dart';
+import 'package:localsend_app/util/native/channel/android_channel.dart';
 import 'package:localsend_isolates/model/file_type.dart';
 import 'package:uri_content/uri_content.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
@@ -89,29 +90,23 @@ class FilePathThumbnail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget? thumbnail;
-    if (path != null && fileType == FileType.image) {
-      if (path!.startsWith('content://')) {
-        thumbnail = Image(
-          image: ResizeImage.resizeIfNeeded(
-            64,
-            null,
-            _ContentUriImage(Uri.parse(path!)),
-          ),
-          errorBuilder: (_, _, _) => Padding(
-            padding: const EdgeInsets.all(10),
-            child: Icon(fileType.icon, size: 32),
-          ),
-        );
-      } else {
-        thumbnail = Image.file(
-          File(path!),
-          cacheWidth: 64, // reduce memory with low cached size; do not set cacheHeight because the image must keep its ratio
-          errorBuilder: (_, _, _) => Padding(
-            padding: const EdgeInsets.all(10),
-            child: Icon(fileType.icon, size: 32),
-          ),
-        );
-      }
+    final isVideo = fileType == FileType.video;
+    Widget fallback(BuildContext _, Object _, StackTrace? _) => Padding(
+      padding: const EdgeInsets.all(10),
+      child: Icon(fileType.icon, size: 32),
+    );
+    if (path != null && Platform.isAndroid && (path!.startsWith('content://') || isVideo) && (fileType == FileType.image || isVideo)) {
+      // Android renders the preview (also for videos) without reading the whole file.
+      thumbnail = Image(
+        image: _AndroidThumbnailImage(path!, video: isVideo),
+        errorBuilder: fallback,
+      );
+    } else if (path != null && fileType == FileType.image) {
+      thumbnail = Image.file(
+        File(path!),
+        cacheWidth: 64, // reduce memory with low cached size; do not set cacheHeight because the image must keep its ratio
+        errorBuilder: fallback,
+      );
     } else {
       thumbnail = null;
     }
@@ -193,30 +188,45 @@ class _Thumbnail extends StatelessWidget {
   }
 }
 
-class _ContentUriImage extends ImageProvider<Uri> {
-  final Uri uri;
+/// Preview from Android's thumbnail API; content URI images fall back to decoding the file.
+class _AndroidThumbnailImage extends ImageProvider<_AndroidThumbnailImage> {
+  final String source;
+  final bool video;
 
-  _ContentUriImage(this.uri);
+  const _AndroidThumbnailImage(this.source, {required this.video});
 
   @override
-  Future<Uri> obtainKey(ImageConfiguration configuration) {
-    return SynchronousFuture<Uri>(uri);
+  Future<_AndroidThumbnailImage> obtainKey(ImageConfiguration configuration) {
+    return SynchronousFuture(this);
   }
 
   @override
-  ImageStreamCompleter loadImage(Uri key, ImageDecoderCallback decode) {
+  ImageStreamCompleter loadImage(_AndroidThumbnailImage key, ImageDecoderCallback decode) {
     return MultiFrameImageStreamCompleter(
       // ignore: discarded_futures
-      codec: _loadAsync(key, decode),
+      codec: _loadAsync(decode),
       scale: 1,
       informationCollector: () sync* {
-        yield ErrorDescription('ContentUriImage: $uri');
+        yield ErrorDescription('AndroidThumbnailImage: $source');
       },
     );
   }
 
-  Future<Codec> _loadAsync(Uri key, ImageDecoderCallback decode) async {
-    final bytes = await UriContent().from(key);
-    return decode(await ImmutableBuffer.fromUint8List(bytes));
+  Future<Codec> _loadAsync(ImageDecoderCallback decode) async {
+    final bytes = await loadThumbnailAndroid(source: source, video: video);
+    if (bytes != null) {
+      return decode(await ImmutableBuffer.fromUint8List(bytes));
+    }
+    if (!video && source.startsWith('content://')) {
+      final full = await UriContent().from(Uri.parse(source));
+      return decode(await ImmutableBuffer.fromUint8List(full), getTargetSize: (_, _) => const TargetImageSize(width: 128));
+    }
+    throw StateError('No thumbnail for $source');
   }
+
+  @override
+  bool operator ==(Object other) => other is _AndroidThumbnailImage && other.source == source && other.video == video;
+
+  @override
+  int get hashCode => Object.hash(source, video);
 }

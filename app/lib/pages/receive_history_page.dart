@@ -7,6 +7,7 @@ import 'package:localsend_app/model/persistence/receive_history_entry.dart';
 import 'package:localsend_app/pages/receive_page.dart';
 import 'package:localsend_app/provider/receive_history_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/util/native/channel/android_channel.dart';
 import 'package:localsend_app/util/native/directories.dart';
 import 'package:localsend_app/util/native/open_file.dart';
 import 'package:localsend_app/util/native/open_folder.dart';
@@ -50,11 +51,15 @@ class ReceiveHistoryPage extends StatelessWidget {
     ReceiveHistoryEntry entry,
     Dispatcher<ReceiveHistoryService, List<ReceiveHistoryEntry>> dispatcher,
   ) async {
-    if (entry.path != null) {
+    // Older gallery entries were stored without a path: look the file up now.
+    final path =
+        entry.path ??
+        (entry.savedToGallery && Platform.isAndroid ? await resolveReceivedFileAndroid(path: null, name: entry.fileName, gallery: true) : null);
+    if (path != null && context.mounted) {
       await openFile(
         context,
         entry.fileType,
-        entry.path!,
+        path,
         onDeleteTap: () => dispatcher.dispatchAsync(RemoveHistoryEntryAction(entry.id)),
       );
     }
@@ -130,7 +135,7 @@ class ReceiveHistoryPage extends StatelessWidget {
                   splashFactory: NoSplash.splashFactory,
                   highlightColor: Colors.transparent,
                   hoverColor: Colors.transparent,
-                  onTap: entry.path != null || entry.isMessage
+                  onTap: entry.path != null || entry.savedToGallery || entry.isMessage
                       ? () async {
                           if (entry.isMessage) {
                             final vm = ViewProvider((ref) {
@@ -204,7 +209,7 @@ class ReceiveHistoryPage extends StatelessWidget {
                               await _openFile(context, entry, context.redux(receiveHistoryProvider));
                               break;
                             case _EntryOption.showInFolder:
-                              if (entry.path != null) {
+                              if (entry.path != null && !entry.path!.startsWith('content://')) {
                                 await openFolder(
                                   folderPath: File(entry.path!).parent.path,
                                   fileName: path.basename(entry.path!),
@@ -225,7 +230,9 @@ class ReceiveHistoryPage extends StatelessWidget {
                           }
                         },
                         itemBuilder: (BuildContext context) {
-                          return (entry.path != null ? _optionsAll : _optionsWithoutOpen).map((e) {
+                          final canOpen = entry.path != null || entry.savedToGallery;
+                          final inFolder = entry.path != null && !entry.path!.startsWith('content://');
+                          return (canOpen ? _optionsAll : _optionsWithoutOpen).where((e) => e != _EntryOption.showInFolder || inFolder).map((e) {
                             return PopupMenuItem<_EntryOption>(
                               value: e,
                               child: Text(e.label),

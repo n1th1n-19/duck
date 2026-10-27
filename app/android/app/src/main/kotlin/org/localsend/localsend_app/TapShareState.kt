@@ -31,6 +31,20 @@ object TapShareState {
     /// Called when [setEnabled] changed the value, so the Flutter toggle can follow the tile.
     var onEnabledChanged: ((Boolean) -> Unit)? = null
 
+    /// Our fingerprint while the app should send on tap (files selected), as pushed by Dart.
+    /// Kept here, not in the reader, so a recreated [MainActivity] picks it up.
+    var senderFingerprint: String? = null
+        private set
+
+    /// The attached [MainActivity] re-arms its reader with the new [senderFingerprint].
+    var onSenderChanged: (() -> Unit)? = null
+
+    fun setSender(fingerprint: String?) {
+        android.util.Log.d("TapShare", "Sender set: ${fingerprint != null}, activity attached: ${onSenderChanged != null}")
+        senderFingerprint = fingerprint
+        onSenderChanged?.invoke()
+    }
+
     /// Share sheet send waiting for Dart: JSON {identity, files: [{uri, name, size}], text}.
     @Volatile
     var pendingSend: String? = null

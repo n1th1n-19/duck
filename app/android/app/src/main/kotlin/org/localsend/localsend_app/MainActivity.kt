@@ -70,6 +70,9 @@ class MainActivity : FlutterActivity() {
             return withNewEngine().build(launchContext)
         }
 
+        /// The activity whose handler currently serves the method channel.
+        private var attached: MainActivity? = null
+
         /// Whether the UI is in the foreground, so a tap needs no keep-alive service.
         @Volatile
         var isVisible = false
@@ -108,14 +111,25 @@ class MainActivity : FlutterActivity() {
         super.cleanUpFlutterEngine(flutterEngine)
         tapShareReader?.pause()
         tapShareReader = null
-        // The engine lives on headless: hand the channel back to the activity-free handler.
-        TapShareChannel.install(applicationContext, flutterEngine)
+        // A recreated activity (rotation, theme) attaches before the old one is cleaned up:
+        // only the last attached one hands the channel back, or it would replace the new handler.
+        if (attached === this) {
+            attached = null
+            TapShareState.onSenderChanged = null
+            // The engine lives on headless: hand the channel back to the activity-free handler.
+            TapShareChannel.install(applicationContext, flutterEngine)
+        }
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         val channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
-        tapShareReader = TapShareReader(this) { identity -> channel.invokeMethod("onTapShareRead", identity) }
+        val reader = TapShareReader(this) { identity -> channel.invokeMethod("onTapShareRead", identity) }
+        tapShareReader = reader
+        attached = this
+        // Dart pushes the sender only on change: a recreated activity starts from the stored value.
+        reader.setSender(TapShareState.senderFingerprint)
+        TapShareState.onSenderChanged = { reader.setSender(TapShareState.senderFingerprint) }
         channel.setMethodCallHandler { call, result ->
             when (call.method) {
                 "pickDirectory" -> {
@@ -161,11 +175,6 @@ class MainActivity : FlutterActivity() {
                         pendingPermissionResult = result
                         requestPermissions(arrayOf(PERMISSION_ACCESS_LOCAL_NETWORK), REQUEST_CODE_LOCAL_NETWORK)
                     }
-                }
-
-                "tapShareSetSender" -> {
-                    tapShareReader?.setSender(call.arguments as String?)
-                    result.success(null)
                 }
 
                 else -> TapShareChannel.handle(this, call, result)

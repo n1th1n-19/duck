@@ -36,6 +36,7 @@ final _logger = Logger('TapShare');
 const _registerTimeout = Duration(seconds: 10);
 const _registerRetryInterval = Duration(milliseconds: 500);
 const _sheetProgressInterval = Duration(milliseconds: 300);
+const _registerAttemptTimeout = Duration(seconds: 3);
 
 class TapShareState {
   /// The device has NFC with host card emulation.
@@ -77,7 +78,6 @@ final _identityProvider = ViewProvider<String?>(
       ips: ref.watch(localIpProvider).localIps,
     ).encode();
   },
-  onChanged: (_, next, ref) => unawaited(setTapShareIdentityAndroid(next)),
 );
 
 /// Our fingerprint while this phone should send on tap (files selected); null otherwise.
@@ -90,8 +90,11 @@ final _senderProvider = ViewProvider<String?>(
     }
     return ref.watch(securityProvider).certificateHash;
   },
-  onChanged: (_, next, ref) => unawaited(setTapShareSenderAndroid(next)),
 );
+
+/// View providers recompute lazily: without a listener, a change (e.g. picking files) would
+/// never reach the native side. Subscribed once, though [initTapShare] can run twice.
+bool _syncing = false;
 
 /// Loads the native state and starts syncing. Call once on app start (Android only).
 Future<void> initTapShare(Ref ref) async {
@@ -117,9 +120,18 @@ Future<void> initTapShare(Ref ref) async {
     },
   );
 
-  // Reading initializes the view providers; later changes are pushed by their onChanged.
+  if (!_syncing) {
+    _syncing = true;
+    ref.stream(_identityProvider).listen((e) => unawaited(setTapShareIdentityAndroid(e.next)));
+    ref.stream(_senderProvider).listen((e) {
+      _logger.info('Sender changed: ${e.next != null}');
+      unawaited(setTapShareSenderAndroid(e.next));
+    });
+  }
   await setTapShareIdentityAndroid(ref.read(_identityProvider));
-  await setTapShareSenderAndroid(ref.read(_senderProvider));
+  final sender = ref.read(_senderProvider);
+  _logger.info('Tap share ready (available: $available, enabled: $enabled, sender: ${sender != null})');
+  await setTapShareSenderAndroid(sender);
 
   // The share sheet may have read a phone while this engine was still booting.
   await _runPendingSend(ref);
@@ -128,6 +140,7 @@ Future<void> initTapShare(Ref ref) async {
 /// Sends what the share sheet (TapShareActivity) handed over, without any UI.
 Future<void> _runPendingSend(Ref ref) async {
   final json = await takeTapSharePendingSendAndroid();
+  _logger.info('Pending sheet send: ${json != null}');
   if (json == null) {
     return;
   }
@@ -221,6 +234,7 @@ class TapShareSendAction extends AsyncGlobalAction {
   Future<void> reduce() async {
     final fromSheet = sheetFiles != null;
     final List<CrossFile> files = sheetFiles ?? ref.read(selectedSendingFilesProvider);
+    _logger.info('Read ${identity.alias} (${identity.ips.join(', ')}), ${files.length} file(s), from sheet: $fromSheet');
     if (files.isEmpty) {
       return;
     }
@@ -228,9 +242,14 @@ class TapShareSendAction extends AsyncGlobalAction {
     if (!fromSheet) {
       unawaited(HapticFeedback.heavyImpact());
       showTapRipple(Routerino.navigatorKey.currentContext);
+      final context = visibleUiContext;
+      if (context != null && context.mounted) {
+        context.showSnackBar(t.tapShare.connecting(alias: identity.alias));
+      }
     }
 
     final device = await _register();
+    _logger.info(device == null ? 'Could not reach ${identity.alias}' : 'Registered at ${device.ip}');
     // Fresh after the await; null while no UI is on screen.
     final context = fromSheet ? null : visibleUiContext;
     if (device == null) {
@@ -299,10 +318,11 @@ class TapShareSendAction extends AsyncGlobalAction {
     while (ips.isNotEmpty && DateTime.now().isBefore(deadline)) {
       for (final ip in ips) {
         try {
-          final response = await client.register(protocol: protocol, ip: ip, port: identity.port, payload: payload);
+          // A dead address (other network, VPN) must not stall the tap: try the next one soon.
+          final response = await client.register(protocol: protocol, ip: ip, port: identity.port, payload: payload).timeout(_registerAttemptTimeout);
           return response.body.toDevice(ip, identity.port, identity.https);
         } catch (e) {
-          _logger.fine('Register at $ip failed', e);
+          _logger.warning('Register at $ip failed', e);
         }
       }
       await Future.delayed(_registerRetryInterval);

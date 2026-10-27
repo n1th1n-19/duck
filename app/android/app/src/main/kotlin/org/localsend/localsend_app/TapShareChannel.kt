@@ -6,18 +6,25 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.StatusBarManager
 import android.content.ComponentName
-import android.content.Context
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.drawable.Icon
+import android.media.ThumbnailUtils
 import android.net.Uri
 import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
+import android.util.Size
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 const val CHANNEL = "org.localsend.localsend_app/localsend"
 
@@ -70,7 +77,10 @@ object TapShareChannel {
             "tapShareConsumeTap" -> result.success(TapShareState.consumeTap(call.arguments as String))
 
             // The reader needs an activity; without one this phone can only receive.
-            "tapShareSetSender" -> result.success(null)
+            "tapShareSetSender" -> {
+                TapShareState.setSender(call.arguments as String?)
+                result.success(null)
+            }
 
             "tapShareTakePendingSend" -> {
                 result.success(TapShareState.pendingSend)
@@ -156,6 +166,24 @@ object TapShareChannel {
                 result.success(null)
             }
 
+            "resolveReceivedFile" -> {
+                // MediaStore / media scanner: off the main thread, answered on it.
+                Thread {
+                    val uri = ReceivedFileResolver.resolve(context, call.argument<String>("path"), call.argument<String>("name"), call.argument<Boolean>("gallery") ?: false)
+                    mainHandler.post { result.success(uri?.toString()) }
+                }.start()
+            }
+
+            "loadThumbnail" -> {
+                val source = call.argument<String>("source") ?: ""
+                val video = call.argument<Boolean>("video") ?: false
+                val px = call.argument<Int>("size") ?: 192
+                Thread {
+                    val bytes = loadThumbnail(context, source, video, px)
+                    mainHandler.post { result.success(bytes) }
+                }.start()
+            }
+
             "getFileDescriptor" -> getFileDescriptor(context, call, result)
 
             "getDownloadsDirectory" -> result.success(
@@ -170,6 +198,29 @@ object TapShareChannel {
             "requestLocalNetworkPermission" -> result.success(MainActivity.hasLocalNetworkPermission(context))
 
             else -> result.notImplemented()
+        }
+    }
+
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    /// JPEG preview of an image or video (content URI or file path), or null. Android 10+.
+    private fun loadThumbnail(context: Context, source: String, video: Boolean, px: Int): ByteArray? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return null
+        }
+        return try {
+            val size = Size(px, px)
+            val bitmap = when {
+                source.startsWith("content://") -> context.contentResolver.loadThumbnail(Uri.parse(source), size, null)
+                video -> ThumbnailUtils.createVideoThumbnail(File(source), size, null)
+                else -> ThumbnailUtils.createImageThumbnail(File(source), size, null)
+            }
+            ByteArrayOutputStream().use { out ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out)
+                out.toByteArray()
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 

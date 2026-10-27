@@ -44,6 +44,7 @@ class TapShareReader(
 
     /// [senderFingerprint] null disables reading.
     fun setSender(senderFingerprint: String?) {
+        Log.d(TAG, "Reader ${if (senderFingerprint != null) "on" else "off"} (${activity.javaClass.simpleName})")
         senderJson = senderFingerprint?.let { JSONObject().put("v", 1).put("f", it).toString() }
         apply()
     }

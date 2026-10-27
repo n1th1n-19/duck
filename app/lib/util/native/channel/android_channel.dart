@@ -144,6 +144,14 @@ Future<void> openNfcSettingsAndroid() => _methodChannel.invokeMethod('tapShareOp
 /// Asks to add the Tap to share Quick Settings tile (Android 13+). True once the tile is there.
 Future<bool> requestTapShareTileAndroid() async => await _methodChannel.invokeMethod<bool>('tapShareRequestTile') ?? false;
 
+/// A viewable content URI for a received file (gallery saves have no usable path), or null.
+Future<String?> resolveReceivedFileAndroid({required String? path, required String name, required bool gallery}) =>
+    _methodChannel.invokeMethod<String>('resolveReceivedFile', {'path': path, 'name': name, 'gallery': gallery});
+
+/// JPEG preview of an image or video (content URI or file path) from Android 10+, else null.
+Future<Uint8List?> loadThumbnailAndroid({required String source, required bool video, int size = 192}) =>
+    _methodChannel.invokeMethod<Uint8List>('loadThumbnail', {'source': source, 'video': video, 'size': size});
+
 /// Returns (available, enabled, autoAccept).
 Future<(bool, bool, bool)> getTapShareStateAndroid() async {
   final result = (await _methodChannel.invokeMethod<Map>('tapShareGetState'))!;

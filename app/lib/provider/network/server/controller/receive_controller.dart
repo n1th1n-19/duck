@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
@@ -393,7 +394,11 @@ class ReceiveController {
         ),
       );
 
-      // Track it in history
+      // Track it in history. A gallery save has no usable path: store its content URI, so the
+      // history can preview and open it.
+      final historyPath = event.savedToGallery && Platform.isAndroid
+          ? await resolveReceivedFileAndroid(path: null, name: receivingFile.desiredName!, gallery: true).catchError((_) => null)
+          : filePath;
       await server.ref
           .redux(receiveHistoryProvider)
           .dispatchAsync(
@@ -401,7 +406,7 @@ class ReceiveController {
               entryId: fileId,
               fileName: receivingFile.desiredName!,
               fileType: fileType,
-              path: filePath,
+              path: historyPath,
               savedToGallery: event.savedToGallery,
               isMessage: false,
               fileSize: receivingFile.file.size,

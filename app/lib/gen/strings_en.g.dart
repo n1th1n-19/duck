@@ -1013,6 +1013,9 @@ class Translations$tapShare$en {
   String receiveFailed({required Object alias}) => 'Receiving from ${alias} failed';
 
   late final Translations$tapShare$guide$en guide = Translations$tapShare$guide$en.internal(_root);
+
+  /// en: 'Connecting to {alias}…'
+  String connecting({required Object alias}) => 'Connecting to ${alias}…';
 }
 
 // Path: trust

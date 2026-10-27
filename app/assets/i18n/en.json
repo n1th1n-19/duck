@@ -610,7 +610,8 @@
       "exact": "Touch the backs of both phones at the blue spot. Hold until they buzz.",
       "approximate": "NFC is usually in the upper middle of the back. Slide the phones slowly until they buzz.",
       "back": "Back of your phone"
-    }
+    },
+    "connecting": "Connecting to {alias}…"
   },
   "trust": {
     "question": "Trust {alias}?",
