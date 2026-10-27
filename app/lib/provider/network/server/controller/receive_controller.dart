@@ -455,10 +455,15 @@ class ReceiveController {
       if (_uiContext == null && checkPlatform([TargetPlatform.android])) {
         // Nothing on screen (received headless): say how it went.
         final alias = session.senderAlias;
+        // A single file opens straight from the notification; several open the app (history).
+        final single = session.files.length == 1 ? server.getState().session?.files.values.first : null;
         unawaited(
           notifyReceivedAndroid(
             ok: !hasError,
             text: hasError ? t.tapShare.receiveFailed(alias: alias) : t.tapShare.received(n: session.files.length, alias: alias),
+            path: hasError ? null : single?.path,
+            name: hasError ? null : single?.desiredName,
+            gallery: !hasError && (single?.savedToGallery ?? false),
           ),
         );
       }

@@ -169,5 +169,6 @@ class FileInfo with FileInfoMappable {
 Future<void> notifyIncomingAndroid(String text) => _methodChannel.invokeMethod('tapShareNotifyIncoming', text);
 
 /// Result notification (with vibration) for a transfer received while no UI was on screen.
-Future<void> notifyReceivedAndroid({required bool ok, required String text}) =>
-    _methodChannel.invokeMethod('tapShareNotifyReceived', {'ok': ok, 'text': text});
+/// [path], [name] and [gallery] describe a single received file, which tapping the notification opens.
+Future<void> notifyReceivedAndroid({required bool ok, required String text, String? path, String? name, bool gallery = false}) =>
+    _methodChannel.invokeMethod('tapShareNotifyReceived', {'ok': ok, 'text': text, 'path': path, 'name': name, 'gallery': gallery});

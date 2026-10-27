@@ -87,8 +87,13 @@ object TapShareChannel {
 
             "tapShareNotifyReceived" -> {
                 val ok = call.argument<Boolean>("ok") ?: true
+                val text = call.argument<String>("text") ?: ""
                 TapShareFeedback.vibrate(context, if (ok) TapShareFeedback.Kind.SUCCESS else TapShareFeedback.Kind.FAILURE)
-                notify(context, RECEIVED_NOTIFICATION_ID, call.argument<String>("text") ?: "")
+                // Resolving the file may hit MediaStore / the media scanner: off the main thread.
+                Thread {
+                    val file = ReceivedFileResolver.resolve(context, call.argument<String>("path"), call.argument<String>("name"), call.argument<Boolean>("gallery") ?: false)
+                    notify(context, RECEIVED_NOTIFICATION_ID, text, file)
+                }.start()
                 result.success(null)
             }
 
@@ -149,19 +154,22 @@ object TapShareChannel {
     }
 
     /// Shown while no UI is on screen; tapping it opens the app (and a pending receive page).
-    private fun notify(context: Context, id: Int, text: String) {
+    /// [open]: content URI to view when tapped; null opens the app.
+    private fun notify(context: Context, id: Int, text: String, open: Uri? = null) {
         val manager = context.getSystemService(NotificationManager::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             manager.createNotificationChannel(
                 NotificationChannel(INCOMING_CHANNEL_ID, context.getString(R.string.tap_share_incoming_channel), NotificationManager.IMPORTANCE_HIGH)
             )
         }
-        val open = PendingIntent.getActivity(
-            context,
-            0,
-            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
+        val target = if (open != null) {
+            Intent(Intent.ACTION_VIEW)
+                .setDataAndType(open, context.contentResolver.getType(open) ?: "*/*")
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+        } else {
+            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        val tap = PendingIntent.getActivity(context, id, target, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         @Suppress("DEPRECATION")
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Notification.Builder(context, INCOMING_CHANNEL_ID) else Notification.Builder(context)
         manager.notify(
@@ -170,7 +178,7 @@ object TapShareChannel {
                 .setSmallIcon(R.drawable.ic_tap_share)
                 .setContentTitle(context.getString(R.string.app_name_duck))
                 .setContentText(text)
-                .setContentIntent(open)
+                .setContentIntent(tap)
                 .setAutoCancel(true)
                 .build(),
         )
