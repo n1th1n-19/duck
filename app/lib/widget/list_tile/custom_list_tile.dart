@@ -8,6 +8,7 @@ class CustomListTile extends StatelessWidget {
   final Widget? trailing;
   final EdgeInsets padding;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   const CustomListTile({
     this.icon,
@@ -16,6 +17,7 @@ class CustomListTile extends StatelessWidget {
     this.trailing,
     this.padding = const EdgeInsets.all(15),
     this.onTap,
+    this.onLongPress,
   });
 
   @override
@@ -28,6 +30,7 @@ class CustomListTile extends StatelessWidget {
       color: Theme.of(context).colorScheme.secondaryContainerIfDark,
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         borderRadius: BorderRadius.circular(10),
         child: Padding(
           padding: padding,

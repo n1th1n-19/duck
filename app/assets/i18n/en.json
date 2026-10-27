@@ -583,5 +583,22 @@
     "autoAccept": "Auto-accept from tapped phones",
     "sending": "Sending to {alias}",
     "unreachable": "Could not reach {alias}. Are both phones on the same Wi-Fi?"
+  },
+  "trust": {
+    "question": "Trust {alias}?",
+    "explanation": "Trusted devices send files without asking, skip your PIN, and shared text is copied to your clipboard.",
+    "alwaysAllow": "Always allow",
+    "block": "Block",
+    "unblock": "Unblock",
+    "trust": "Trust",
+    "untrust": "Remove trust",
+    "trusted": "Trusted",
+    "copiedFrom": "Copied text from {alias}",
+    "blockedSnack": "Blocked {alias}",
+    "title": "Trusted & blocked devices",
+    "trustedDevices": "Trusted devices",
+    "blockedDevices": "Blocked devices",
+    "noTrusted": "No trusted devices yet. Choose \"Always allow\" when a device sends to you.",
+    "noBlocked": "No blocked devices."
   }
 }

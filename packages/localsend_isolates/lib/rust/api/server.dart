@@ -118,6 +118,10 @@ abstract class RsHttpServer implements RustOpaqueInterface {
   /// Passing `None` declines the request.
   Future<void> respondPrepareUpload({List<String>? acceptedFileIds});
 
+  /// Replaces the client certificate fingerprints that may send without the PIN
+  /// (trusted devices). Takes effect immediately, without a restart.
+  Future<void> setTrustedFingerprints({required List<String> fingerprints});
+
   /// Stops the server.
   /// Returns after the listeners are closed, so the port can be bound again.
   Future<void> stop();

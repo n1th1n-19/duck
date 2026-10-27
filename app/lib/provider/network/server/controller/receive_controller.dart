@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/model/state/server/receive_session_state.dart';
 import 'package:localsend_app/model/state/server/receiving_file.dart';
 import 'package:localsend_app/pages/home_page.dart';
@@ -10,6 +11,7 @@ import 'package:localsend_app/pages/home_page_controller.dart';
 import 'package:localsend_app/pages/progress_page.dart';
 import 'package:localsend_app/pages/receive_page.dart';
 import 'package:localsend_app/provider/device_info_provider.dart';
+import 'package:localsend_app/provider/device_trust_provider.dart';
 import 'package:localsend_app/provider/favorites_provider.dart';
 import 'package:localsend_app/provider/file_transfer_provider.dart';
 import 'package:localsend_app/provider/http_provider.dart';
@@ -26,6 +28,7 @@ import 'package:localsend_app/provider/tap_share_provider.dart';
 import 'package:localsend_app/util/native/directories.dart';
 import 'package:localsend_app/util/native/platform_check.dart';
 import 'package:localsend_app/util/native/tray_helper.dart';
+import 'package:localsend_app/util/ui/snackbar.dart';
 import 'package:localsend_app/widget/dialogs/open_file_dialog.dart';
 import 'package:localsend_isolates/isolate.dart';
 import 'package:localsend_isolates/model/device.dart';
@@ -89,6 +92,13 @@ class ReceiveController {
     // when encryption is disabled.
     final senderFingerprint = event.certFingerprint ?? event.info.fingerprint;
 
+    if (isBlockedDevice(server.ref, senderFingerprint)) {
+      _logger.info('Declined blocked device ${event.info.alias}');
+      server.ref.redux(parentIsolateProvider).dispatch(IsolateHttpServerPrepareUploadDecisionAction(config: null));
+      return;
+    }
+    final trusted = isTrustedDevice(server.ref, senderFingerprint);
+
     _logger.info('Session Id: $sessionId');
     _logger.info('Destination Directory: $destinationDir');
 
@@ -127,14 +137,8 @@ class ReceiveController {
           statuses: {for (final file in files.values) file.id: FileStatus.queue},
         );
 
-    bool quickSave = settings.quickSave && server.getState().session?.message == null;
-    final quickSaveFromFavorites = settings.quickSaveFromFavorites && server.getState().session?.message == null;
-    if (quickSaveFromFavorites) {
-      final bool isFavorite = server.ref.read(favoritesProvider).any((e) => e.fingerprint == senderFingerprint);
-      if (isFavorite) {
-        quickSave = true;
-      }
-    }
+    // Trusted devices (favorites) always skip the prompt.
+    bool quickSave = (settings.quickSave || trusted) && server.getState().session?.message == null;
     // Only the TLS certificate proves who tapped; the payload fingerprint (encryption off) could be forged.
     final tappedFingerprint = event.certFingerprint;
     if (!quickSave &&
@@ -166,28 +170,27 @@ class ReceiveController {
       return;
     }
 
+    final message = server.getState().session?.message;
+    if (message != null && trusted) {
+      // Trusted devices: text goes straight to the clipboard, no prompt.
+      await _addMessageToHistory(message);
+      await Clipboard.setData(ClipboardData(text: message));
+      final senderAlias = server.getState().session!.senderAlias;
+      await acceptFileRequest({});
+      final context = Routerino.context;
+      if (context.mounted) {
+        context.showSnackBar(t.trust.copiedFrom(alias: senderAlias));
+      }
+      return;
+    }
+
     if (checkPlatformHasTray() && (await windowManager.isMinimized() || !(await windowManager.isVisible()) || !(await windowManager.isFocused()))) {
       await showFromTray();
     }
 
-    final message = server.getState().session?.message;
     if (message != null) {
       // Message already received
-      await server.ref
-          .redux(receiveHistoryProvider)
-          .dispatchAsync(
-            AddHistoryEntryAction(
-              entryId: const Uuid().v4(),
-              fileName: message,
-              fileType: FileType.text,
-              path: null,
-              savedToGallery: false,
-              isMessage: true,
-              fileSize: utf8.encode(message).length,
-              senderAlias: server.getState().session!.senderAlias,
-              timestamp: DateTime.now().toUtc(),
-            ),
-          );
+      await _addMessageToHistory(message);
     }
 
     final receiveProvider = ViewProvider((ref) {
@@ -422,14 +425,8 @@ class ReceiveController {
       // Only auto-close fully successful sessions: a failed file may still be
       // retried by the sender (e.g. after a checksum mismatch), which requires
       // the session to stay open.
-      bool quickSave = settings.quickSave && !hasError && server.getState().session?.message == null;
-      final quickSaveFromFavorites = settings.quickSaveFromFavorites && !hasError && server.getState().session?.message == null;
-      if (quickSaveFromFavorites) {
-        final bool isFavorite = server.ref.read(favoritesProvider).any((e) => e.fingerprint == session.sender.fingerprint);
-        if (isFavorite) {
-          quickSave = true;
-        }
-      }
+      final trusted = isTrustedDevice(server.ref, session.sender.fingerprint);
+      final quickSave = (settings.quickSave || trusted) && !hasError && server.getState().session?.message == null;
       if (quickSave) {
         // close the session **after** the response has been sent
         Future.delayed(Duration.zero, () {
@@ -622,6 +619,24 @@ class ReceiveController {
       saveToGallery: session.saveToGallery,
       androidSdkInt: server.ref.read(deviceInfoProvider).androidSdkInt,
     );
+  }
+
+  Future<void> _addMessageToHistory(String message) async {
+    await server.ref
+        .redux(receiveHistoryProvider)
+        .dispatchAsync(
+          AddHistoryEntryAction(
+            entryId: const Uuid().v4(),
+            fileName: message,
+            fileType: FileType.text,
+            path: null,
+            savedToGallery: false,
+            isMessage: true,
+            fileSize: utf8.encode(message).length,
+            senderAlias: server.getState().session!.senderAlias,
+            timestamp: DateTime.now().toUtc(),
+          ),
+        );
   }
 
   void declineFileRequest() {

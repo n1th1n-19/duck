@@ -231,13 +231,19 @@ pub(crate) async fn prepare_upload(
     let v2 = require_v2(&state)?;
     let query = parse_query(req.uri().query());
 
-    check_pin(
-        v2.pin.as_deref(),
-        &v2.pin_attempts,
-        &query,
-        client_info.ip.ip,
-    )
-    .await?;
+    // Only the mTLS certificate proves identity; the payload fingerprint could be forged.
+    let trusted = client_info
+        .cert_fingerprint()
+        .is_some_and(|fp| v2.trusted_fingerprints.read().unwrap().contains(&fp));
+    if !trusted {
+        check_pin(
+            v2.pin.as_deref(),
+            &v2.pin_attempts,
+            &query,
+            client_info.ip.ip,
+        )
+        .await?;
+    }
 
     let payload = req
         .into_body()

@@ -429,6 +429,37 @@ class IsolateHttpServerCancelSessionAction extends ReduxAction<IsolateController
   }
 }
 
+/// Replaces the certificate fingerprints that may send without the PIN
+/// (trusted devices). Applies immediately and survives server restarts.
+class IsolateHttpServerTrustedFingerprintsAction extends ReduxAction<IsolateController, ParentIsolateState> {
+  final List<String> fingerprints;
+
+  IsolateHttpServerTrustedFingerprintsAction({
+    required this.fingerprints,
+  });
+
+  @override
+  ParentIsolateState reduce() {
+    final connection = state.httpServer;
+    if (connection == null) {
+      throw StateError('httpServer is not initialized');
+    }
+
+    connection.sendToIsolate(
+      SendToIsolateData(
+        syncState: null,
+        data: IsolateTask(
+          data: HttpServerTrustedFingerprintsTask(
+            fingerprints: fingerprints,
+          ),
+        ),
+      ),
+    );
+
+    return state;
+  }
+}
+
 /// Answers a pending [HttpServerWebPrepareDownloadEvent].
 class IsolateHttpServerPrepareDownloadDecisionAction extends ReduxAction<IsolateController, ParentIsolateState> {
   final String sessionId;

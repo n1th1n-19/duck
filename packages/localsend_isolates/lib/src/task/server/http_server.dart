@@ -9,6 +9,9 @@ final httpServerProvider = Provider((ref) => HttpServerService());
 class HttpServerService {
   RsHttpServer? _server;
 
+  /// Survives restarts: a new Rust server starts with an empty set.
+  List<String> _trustedFingerprints = const [];
+
   bool get running => _server != null;
 
   /// Starts the server and returns the stream of server events.
@@ -44,7 +47,14 @@ class HttpServerService {
       showToken: showToken,
     );
     _server = server;
+    await server.setTrustedFingerprints(fingerprints: _trustedFingerprints);
     return server.listen();
+  }
+
+  /// Certificate fingerprints that may send without the PIN (trusted devices).
+  Future<void> setTrustedFingerprints(List<String> fingerprints) async {
+    _trustedFingerprints = fingerprints;
+    await _server?.setTrustedFingerprints(fingerprints: fingerprints);
   }
 
   /// Answers a pending prepare-upload request.

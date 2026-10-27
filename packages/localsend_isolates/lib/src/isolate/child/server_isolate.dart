@@ -118,6 +118,16 @@ class HttpServerCancelSessionTask implements BaseHttpServerTask {
   });
 }
 
+/// Replaces the certificate fingerprints that may send without the PIN.
+/// Kept across server restarts.
+class HttpServerTrustedFingerprintsTask implements BaseHttpServerTask {
+  final List<String> fingerprints;
+
+  HttpServerTrustedFingerprintsTask({
+    required this.fingerprints,
+  });
+}
+
 /// Answers a pending [HttpServerWebPrepareDownloadEvent].
 class HttpServerPrepareDownloadDecisionTask implements BaseHttpServerTask {
   final String sessionId;
@@ -578,6 +588,9 @@ Future<void> setupHttpServerIsolate(
             holder.session = null;
           }
           await ref.read(httpServerProvider).cancelSession(sessionId: cancelTask.sessionId);
+          return;
+        case HttpServerTrustedFingerprintsTask trustedTask:
+          await ref.read(httpServerProvider).setTrustedFingerprints(trustedTask.fingerprints);
           return;
         case HttpServerPrepareDownloadDecisionTask decisionTask:
           await ref

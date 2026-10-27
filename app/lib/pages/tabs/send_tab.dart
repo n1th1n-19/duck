@@ -8,6 +8,7 @@ import 'package:localsend_app/pages/selected_files_page.dart';
 import 'package:localsend_app/pages/tabs/send_tab_vm.dart';
 import 'package:localsend_app/pages/troubleshoot_page.dart';
 import 'package:localsend_app/provider/animation_provider.dart';
+import 'package:localsend_app/provider/device_trust_provider.dart';
 import 'package:localsend_app/provider/file_transfer_provider.dart';
 import 'package:localsend_app/provider/network/nearby_devices_provider.dart';
 import 'package:localsend_app/provider/network/scan_facade.dart';
@@ -20,6 +21,7 @@ import 'package:localsend_app/util/native/platform_check.dart';
 import 'package:localsend_app/widget/big_button.dart';
 import 'package:localsend_app/widget/custom_icon_button.dart';
 import 'package:localsend_app/widget/dialogs/add_file_dialog.dart';
+import 'package:localsend_app/widget/dialogs/device_trust_sheet.dart';
 import 'package:localsend_app/widget/dialogs/send_mode_help_dialog.dart';
 import 'package:localsend_app/widget/file_thumbnail.dart';
 import 'package:localsend_app/widget/list_tile/device_list_tile.dart';
@@ -50,6 +52,7 @@ class SendTab extends StatelessWidget {
         final sizingInformation = SizingInformation(MediaQuery.sizeOf(context).width);
         final buttonWidth = sizingInformation.isDesktop ? BigButton.desktopWidth : BigButton.mobileWidth;
         final ref = context.ref;
+        final blocked = context.watch(blockedDevicesProvider).map((e) => e.fingerprint).toSet();
         return ResponsiveListView(
           padding: EdgeInsets.zero,
           children: [
@@ -207,7 +210,7 @@ class SendTab extends StatelessWidget {
                   child: DevicePlaceholderListTile(),
                 ),
               ),
-            ...vm.nearbyDevices.map((device) {
+            ...vm.nearbyDevices.where((device) => !blocked.contains(device.fingerprint)).map((device) {
               final favoriteEntry = vm.favoriteDevices.findDevice(device);
               return Padding(
                 padding: const EdgeInsets.only(bottom: 10, left: _horizontalPadding, right: _horizontalPadding),
@@ -226,6 +229,7 @@ class SendTab extends StatelessWidget {
                           nameOverride: favoriteEntry?.alias,
                           onDetailsTap: () async => await context.push(() => DeviceDetailsPage(device: device)),
                           onTap: () async => await vm.onTapDevice(context, device),
+                          onLongPress: () async => await showDeviceTrustSheet(context, device),
                         ),
                 ),
               );

@@ -25,6 +25,7 @@ use hyper_util::rt::TokioIo;
 use lru::LruCache;
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, PrivateKeyDer};
+use std::collections::HashSet;
 use std::fmt::Debug;
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr};
 use std::num::NonZeroUsize;
@@ -66,6 +67,10 @@ pub(crate) struct V2State {
 
     /// Maps client IPs to the number of failed PIN attempts.
     pub(crate) pin_attempts: Mutex<LruCache<IpAddr, u32>>,
+
+    /// Client certificate fingerprints that skip the PIN check.
+    /// Set by the application at runtime, see [ServerHandle::set_trusted_fingerprints].
+    pub(crate) trusted_fingerprints: std::sync::RwLock<HashSet<String>>,
 }
 
 #[derive(Clone)]
@@ -106,6 +111,7 @@ impl AppState {
                 event_tx: config.event_tx,
                 session: Mutex::new(None),
                 pin_attempts: Mutex::new(LruCache::new(NonZeroUsize::new(200).unwrap())),
+                trusted_fingerprints: std::sync::RwLock::new(HashSet::new()),
             })
         });
 
@@ -186,6 +192,15 @@ impl ServerHandle {
     pub async fn wait_stopped(&self) {
         if let Some(task) = self.task.lock().await.take() {
             let _ = task.await;
+        }
+    }
+
+    /// Replaces the client certificate fingerprints (uppercase hex SHA-256)
+    /// that may prepare an upload without the PIN. Takes effect immediately,
+    /// so trusting a device does not require a restart.
+    pub fn set_trusted_fingerprints(&self, fingerprints: Vec<String>) {
+        if let Some(v2) = &self.v2 {
+            *v2.trusted_fingerprints.write().unwrap() = fingerprints.into_iter().collect();
         }
     }
 

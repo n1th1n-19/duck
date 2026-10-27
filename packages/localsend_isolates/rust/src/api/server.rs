@@ -676,6 +676,12 @@ impl RsHttpServer {
             .retain(|(sid, _), _| sid != &session_id);
     }
 
+    /// Replaces the client certificate fingerprints that may send without the PIN
+    /// (trusted devices). Takes effect immediately, without a restart.
+    pub async fn set_trusted_fingerprints(&self, fingerprints: Vec<String>) {
+        self.instance.handle.set_trusted_fingerprints(fingerprints);
+    }
+
     /// Stops the server.
     /// Returns after the listeners are closed, so the port can be bound again.
     pub async fn stop(&self) {

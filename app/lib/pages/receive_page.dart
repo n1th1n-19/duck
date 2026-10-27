@@ -8,6 +8,7 @@ import 'package:localsend_app/model/persistence/color_mode.dart';
 import 'package:localsend_app/pages/receive_options_page.dart';
 import 'package:localsend_app/pages/verify_page.dart';
 import 'package:localsend_app/pages/web_share_page.dart';
+import 'package:localsend_app/provider/device_trust_provider.dart';
 import 'package:localsend_app/provider/favorites_provider.dart';
 import 'package:localsend_app/provider/selection/selected_receiving_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
@@ -144,6 +145,9 @@ class _ReceivePageState extends State<ReceivePage> with Refena {
                                           ),
                                         ),
                                       ],
+                                      // Only a certificate-backed identity can be trusted.
+                                      if (vm.showSenderInfo && vm.sender.https && senderFavoriteEntry == null && vm.status == SessionStatus.waiting)
+                                        _TrustCard(vm: vm),
                                     ],
                                   ),
 
@@ -384,6 +388,60 @@ class _Actions extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Asks once whether to trust an unknown sender. Trusted devices are never asked again.
+class _TrustCard extends StatelessWidget {
+  final ReceivePageVm vm;
+
+  const _TrustCard({required this.vm});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(top: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            Text(
+              t.trust.question(alias: vm.sender.alias),
+              style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(t.trust.explanation, textAlign: TextAlign.center),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton.icon(
+                  onPressed: () async {
+                    await context.global.dispatchAsync(BlockDeviceAction(vm.sender));
+                    vm.onDecline();
+                    if (context.mounted) {
+                      context.global.dispatch(NavigateAction.popUntil<WebSharePage>());
+                    }
+                  },
+                  icon: const Icon(Icons.block),
+                  label: Text(t.trust.block),
+                ),
+                const SizedBox(width: 8),
+                FilledButton.icon(
+                  onPressed: () async {
+                    await context.global.dispatchAsync(TrustDeviceAction(vm.sender));
+                    vm.onAccept();
+                  },
+                  icon: const Icon(Icons.verified_user),
+                  label: Text(t.trust.alwaysAllow),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

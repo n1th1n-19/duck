@@ -10,7 +10,7 @@ use localsend::http::dto_v2::{PrepareUploadRequestDtoV2, RegisterDtoV2};
 use localsend::http::server::common::save::FileUploadTarget;
 use localsend::http::server::v2::{PrepareUploadDecisionV2, ServerEventV2};
 use localsend::http::server::web::{WebConfig, WebMode};
-use localsend::http::server::{start_with_port, ServerConfigV2, TlsConfig};
+use localsend::http::server::{start_with_port, ServerConfigV2, ServerHandle, TlsConfig};
 use localsend::http::state::ClientInfo;
 use localsend::model::discovery::ProtocolType;
 use localsend::model::transfer::FileDto;
@@ -44,6 +44,7 @@ struct TestServer {
     prepare_uploads: Arc<Mutex<Vec<String>>>,
     /// Uploaded file contents, mapped by file ID.
     received: Arc<Mutex<Vec<(String, Vec<u8>)>>>,
+    handle: ServerHandle,
     _stop_tx: oneshot::Sender<()>,
 }
 
@@ -55,6 +56,14 @@ async fn start_tls_server(identity: &Identity) -> TestServer {
 /// Starts a test server over TLS, optionally with the web pages enabled
 /// (which makes the client certificate optional).
 async fn start_tls_server_with_web(identity: &Identity, web: WebConfig) -> TestServer {
+    start_tls_server_full(identity, web, None).await
+}
+
+async fn start_tls_server_full(
+    identity: &Identity,
+    web: WebConfig,
+    pin: Option<&str>,
+) -> TestServer {
     let _ = tracing_subscriber::fmt().with_test_writer().try_init();
     let prepare_uploads: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(Vec::new()));
     let received: Arc<Mutex<Vec<(String, Vec<u8>)>>> = Arc::new(Mutex::new(Vec::new()));
@@ -121,7 +130,7 @@ async fn start_tls_server_with_web(identity: &Identity, web: WebConfig) -> TestS
         },
         None,
         Some(ServerConfigV2 {
-            pin: None,
+            pin: pin.map(str::to_string),
             verify_checksums: true,
             event_tx,
         }),
@@ -135,6 +144,7 @@ async fn start_tls_server_with_web(identity: &Identity, web: WebConfig) -> TestS
         port: handle.port(),
         prepare_uploads,
         received,
+        handle,
         _stop_tx: stop_tx,
     }
 }
@@ -429,4 +439,45 @@ async fn test_register_without_pin_returns_public_key() {
 
     assert!(response.public_key.is_some());
     assert_eq!(response.body.fingerprint, server_identity.fingerprint);
+}
+
+/// A trusted device (by client certificate) may prepare an upload without the
+/// PIN; an untrusted one still needs it.
+#[tokio::test]
+async fn test_trusted_fingerprint_skips_pin() {
+    let server_identity = generate_identity();
+    let trusted = generate_identity();
+    let stranger = generate_identity();
+    let server = start_tls_server_full(&server_identity, WebConfig::default(), Some("1234")).await;
+    server
+        .handle
+        .set_trusted_fingerprints(vec![trusted.fingerprint.clone()]);
+
+    let files = vec![file_dto("file-1", 4)];
+    let prepare = |sender: &Identity| {
+        let client = client(sender, Some(&server_identity.fingerprint));
+        let request = prepare_upload_request(sender, &files);
+        async move {
+            client
+                .prepare_upload(
+                    ProtocolType::Https,
+                    "127.0.0.1",
+                    server.port,
+                    None,
+                    request,
+                    None,
+                    CancellationToken::new(),
+                )
+                .await
+        }
+    };
+
+    assert!(
+        prepare(&stranger).await.is_err(),
+        "untrusted sender without PIN must be rejected"
+    );
+    let result = prepare(&trusted)
+        .await
+        .expect("trusted sender should skip the PIN");
+    assert!(result.response.is_some());
 }

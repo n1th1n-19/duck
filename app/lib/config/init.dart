@@ -14,6 +14,7 @@ import 'package:localsend_app/pages/whats_new_page.dart';
 import 'package:localsend_app/provider/animation_provider.dart';
 import 'package:localsend_app/provider/app_arguments_provider.dart';
 import 'package:localsend_app/provider/device_info_provider.dart';
+import 'package:localsend_app/provider/device_trust_provider.dart';
 import 'package:localsend_app/provider/network/nearby_devices_provider.dart';
 import 'package:localsend_app/provider/network/server/server_provider.dart';
 import 'package:localsend_app/provider/network/webrtc/signaling_provider.dart';
@@ -220,6 +221,9 @@ Future<void> postInit(BuildContext context, Ref ref, bool appStart) async {
       }
     }
   }
+
+  // Before the server starts, so trusted devices skip the PIN from the first request.
+  initDeviceTrust(ref);
 
   try {
     await ref.notifier(serverProvider).startServerFromSettings();

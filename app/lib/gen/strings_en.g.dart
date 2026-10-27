@@ -74,6 +74,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$web$en web = Translations$web$en.internal(_root);
   late final Translations$assetPicker$en assetPicker = Translations$assetPicker$en.internal(_root);
   late final Translations$tapShare$en tapShare = Translations$tapShare$en.internal(_root);
+  late final Translations$trust$en trust = Translations$trust$en.internal(_root);
 }
 
 // Path: general
@@ -970,6 +971,60 @@ class Translations$tapShare$en {
 
   /// en: 'Could not reach {alias}. Are both phones on the same Wi-Fi?'
   String unreachable({required Object alias}) => 'Could not reach ${alias}. Are both phones on the same Wi-Fi?';
+}
+
+// Path: trust
+class Translations$trust$en {
+  Translations$trust$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Trust {alias}?'
+  String question({required Object alias}) => 'Trust ${alias}?';
+
+  /// en: 'Trusted devices send files without asking, skip your PIN, and shared text is copied to your clipboard.'
+  String get explanation => 'Trusted devices send files without asking, skip your PIN, and shared text is copied to your clipboard.';
+
+  /// en: 'Always allow'
+  String get alwaysAllow => 'Always allow';
+
+  /// en: 'Block'
+  String get block => 'Block';
+
+  /// en: 'Unblock'
+  String get unblock => 'Unblock';
+
+  /// en: 'Trust'
+  String get trust => 'Trust';
+
+  /// en: 'Remove trust'
+  String get untrust => 'Remove trust';
+
+  /// en: 'Trusted'
+  String get trusted => 'Trusted';
+
+  /// en: 'Copied text from {alias}'
+  String copiedFrom({required Object alias}) => 'Copied text from ${alias}';
+
+  /// en: 'Blocked {alias}'
+  String blockedSnack({required Object alias}) => 'Blocked ${alias}';
+
+  /// en: 'Trusted & blocked devices'
+  String get title => 'Trusted & blocked devices';
+
+  /// en: 'Trusted devices'
+  String get trustedDevices => 'Trusted devices';
+
+  /// en: 'Blocked devices'
+  String get blockedDevices => 'Blocked devices';
+
+  /// en: 'No trusted devices yet. Choose "Always allow" when a device sends to you.'
+  String get noTrusted => 'No trusted devices yet. Choose "Always allow" when a device sends to you.';
+
+  /// en: 'No blocked devices.'
+  String get noBlocked => 'No blocked devices.';
 }
 
 // Path: receiveTab.infoBox

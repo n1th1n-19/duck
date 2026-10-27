@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/util/device_type_ext.dart';
 import 'package:localsend_app/widget/custom_progress_bar.dart';
 import 'package:localsend_app/widget/device_bage.dart';
@@ -17,6 +18,7 @@ class DeviceListTile extends StatelessWidget {
   final double? progress;
   final VoidCallback? onTap;
   final VoidCallback? onDetailsTap;
+  final VoidCallback? onLongPress;
 
   const DeviceListTile({
     required this.device,
@@ -26,6 +28,7 @@ class DeviceListTile extends StatelessWidget {
     this.progress,
     this.onTap,
     this.onDetailsTap,
+    this.onLongPress,
   });
 
   @override
@@ -39,7 +42,8 @@ class DeviceListTile extends StatelessWidget {
           Text(nameOverride ?? device.alias, style: const TextStyle(fontSize: 20)),
           if (isFavorite) ...[
             const SizedBox(width: 5),
-            Icon(Icons.check_circle, size: 16),
+            // Favorites are the trusted devices.
+            Tooltip(message: t.trust.trusted, child: const Icon(Icons.verified_user, size: 16)),
           ],
         ],
       ),
@@ -83,6 +87,7 @@ class DeviceListTile extends StatelessWidget {
         ],
       ),
       onTap: onTap,
+      onLongPress: onLongPress,
     );
   }
 }
