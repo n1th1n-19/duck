@@ -87,6 +87,13 @@ Also make sure AP isolation is disabled on your router (guest networks often ena
 
 ## How it works
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="support/readme/architecture-dark.svg">
+  <img src="support/readme/architecture-light.svg" alt="Duck Share packages as a load rack: the Rust core is the base plate; the isolates deck stands on it and carries the app; the CLI and the WebRTC signaling server stand directly on the core.">
+</picture>
+
+Every package rests on what it depends on: the app talks to the Rust core through the isolates layer, while the CLI and the signaling server use the core directly.
+
 Devices talk to each other over a REST API using HTTPS. Each device generates its TLS certificate on the fly, and the peer identity is the SHA-256 fingerprint of that certificate. See the [LocalSend protocol](https://github.com/localsend/protocol) for details.
 
 Tap to share adds an NFC handshake in front of it: the receiving phone emulates a card (Android host card emulation, AID `F04C4F43414C53454E44`) that answers with its alias, port, local IPs and certificate fingerprint. The sender reads it in NFC reader mode, connects over HTTPS pinned to that fingerprint, and starts a normal transfer. The fingerprint coming from physical contact makes the connection harder to intercept than LAN discovery.
