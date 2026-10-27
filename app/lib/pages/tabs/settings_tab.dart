@@ -618,7 +618,12 @@ class SettingsTab extends StatelessWidget {
                   orElse: () => Container(),
                 ),
             Text(
-              '© ${DateTime.now().year} Tien Do Nam',
+              '© ${DateTime.now().year} n1th1n-19',
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              'Based on LocalSend by Tien Do Nam',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             Center(
