@@ -40,7 +40,7 @@ class TranslationsTr extends Translations with BaseTranslations<AppLocale, Trans
 
   // Translations
   @override
-  String get appName => 'Duck';
+  String get appName => 'Duck Share';
   @override
   late final _Translations$general$tr general = _Translations$general$tr._(_root);
   @override
@@ -289,7 +289,7 @@ class _Translations$networkInterfacesPage$tr extends Translations$networkInterfa
   String get title => 'Ağ Arayüzleri';
   @override
   String get info =>
-      'Varsayılan olarak, Duck mevcut olan tüm ağları kullanır. Burada istenmeyen ağları engelleyebilirsiniz. Değişikliklerin uygulanması için sunucuyu yeniden başlatmanız gerekir.';
+      'Varsayılan olarak, Duck Share mevcut olan tüm ağları kullanır. Burada istenmeyen ağları engelleyebilirsiniz. Değişikliklerin uygulanması için sunucuyu yeniden başlatmanız gerekir.';
   @override
   String get preview => 'Önizle';
   @override
@@ -414,7 +414,7 @@ class _Translations$receiveOptionsPage$tr extends Translations$receiveOptionsPag
   @override
   String get destination => _root.settingsTab.receive.destination;
   @override
-  String get appDirectory => '(Duck klasörü)';
+  String get appDirectory => '(Duck Share klasörü)';
   @override
   String get saveToGallery => _root.settingsTab.receive.saveToGallery;
   @override
@@ -493,7 +493,7 @@ class _Translations$webSharePage$tr extends Translations$webSharePage$en {
   @override
   String pinHint({required Object pin}) => 'PIN "${pin}"';
   @override
-  String get encryptionHint => 'Duck, tarayıcıda kabul etmeniz gereken kendi-üretimli bir sertifika kullanır.';
+  String get encryptionHint => 'Duck Share, tarayıcıda kabul etmeniz gereken kendi-üretimli bir sertifika kullanır.';
   @override
   String pendingRequests({required Object n}) => 'Bekleyen istekler: ${n}';
 }
@@ -517,10 +517,10 @@ class _Translations$aboutPage$tr extends Translations$aboutPage$en {
 
   // Translations
   @override
-  String get title => 'Duck hakkında';
+  String get title => 'Duck Share hakkında';
   @override
   List<String> get description => [
-    'Duck, internet bağlantısına ihtiyaç duymadan yerel ağınız üzerinden yakınınızdaki cihazlarla dosya ve mesajlarınızı güvenli bir şekilde paylaşmanıza olanak tanıyan özgür ve açık kaynaklı bir uygulamadır.',
+    'Duck Share, internet bağlantısına ihtiyaç duymadan yerel ağınız üzerinden yakınınızdaki cihazlarla dosya ve mesajlarınızı güvenli bir şekilde paylaşmanıza olanak tanıyan özgür ve açık kaynaklı bir uygulamadır.',
     'Bu uygulama Android, iOS, macOS, Windows ve Linux\'ta mevcuttur. Tüm indirme seçeneklerini resmi ana sayfada bulabilirsiniz.',
   ];
   @override
@@ -544,7 +544,7 @@ class _Translations$donationPage$tr extends Translations$donationPage$en {
   String get title => 'Bağış yap';
   @override
   String get info =>
-      'Duck ücretsiz, açık kaynaklı ve reklamsız bir uygulamadır. Eğer uygulamayı beğendiyseniz, bağış yaparak uygulamanın gelişimine katkıda bulunabilirsiniz.';
+      'Duck Share ücretsiz, açık kaynaklı ve reklamsız bir uygulamadır. Eğer uygulamayı beğendiyseniz, bağış yaparak uygulamanın gelişimine katkıda bulunabilirsiniz.';
   @override
   String donate({required Object amount}) => 'Bağışta bulun ${amount}';
   @override
@@ -660,7 +660,7 @@ class _Translations$tray$tr extends Translations$tray$en {
   @override
   String get open => _root.general.open;
   @override
-  String get close => 'Duck\'den çık';
+  String get close => 'Duck Share\'den çık';
   @override
   String get closeWindows => 'Çıkış';
 }
@@ -871,7 +871,7 @@ class _Translations$settingsTab$general$tr extends Translations$settingsTab$gene
   @override
   String get launchMinimized => 'Otomatik başlatma: Gizli Başlatma';
   @override
-  String get showInContextMenu => 'Duck\'i bağlam menüsünde göster';
+  String get showInContextMenu => 'Duck Share\'i bağlam menüsünde göster';
   @override
   String get animations => 'Animasyonlar';
 }
@@ -973,7 +973,7 @@ class _Translations$settingsTab$other$tr extends Translations$settingsTab$other$
   @override
   String get title => 'Diğer';
   @override
-  String get support => 'Duck\'i destekle';
+  String get support => 'Duck Share\'i destekle';
   @override
   String get donate => 'Bağış yap';
   @override
@@ -1329,7 +1329,7 @@ class _Translations$dialogs$localNetworkUnauthorized$tr extends Translations$dia
   @override
   String get title => _root.dialogs.noPermission.title;
   @override
-  String get description => 'Duck, lokal ağı tarama iznine sahip olmadan başka cihazları bulamıyor. Lütfen bu izni ayarlarda verin.';
+  String get description => 'Duck Share, lokal ağı tarama iznine sahip olmadan başka cihazları bulamıyor. Lütfen bu izni ayarlarda verin.';
   @override
   String get gotoSettings => 'Ayarlar';
 }
@@ -1472,7 +1472,7 @@ class _Translations$dialogs$sendModeHelp$tr extends Translations$dialogs$sendMod
   @override
   String get multiple => 'Dosyaları birden çok alıcıya gönderir. Seçim temizlenmeyecektir.';
   @override
-  String get link => 'Duck yüklü olmayan alıcılar, tarayıcılarındaki bağlantıyı açarak seçilen dosyaları indirebilir.';
+  String get link => 'Duck Share yüklü olmayan alıcılar, tarayıcılarındaki bağlantıyı açarak seçilen dosyaları indirebilir.';
 }
 
 // Path: dialogs.zoom

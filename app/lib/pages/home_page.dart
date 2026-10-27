@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> with Refena {
                             children: [
                               SizedBox(height: 20),
                               Text(
-                                'Duck',
+                                'Duck Share',
                                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.center,
                               ),

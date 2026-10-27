@@ -40,7 +40,7 @@ class TranslationsZhCn extends Translations with BaseTranslations<AppLocale, Tra
 
   // Translations
   @override
-  String get appName => 'Duck';
+  String get appName => 'Duck Share';
   @override
   late final Translations$general$zh_CN general = Translations$general$zh_CN.internal(_root);
   @override
@@ -290,7 +290,7 @@ class Translations$networkInterfacesPage$zh_CN extends Translations$networkInter
   @override
   String get title => '网络接口';
   @override
-  String get info => '默认情况下，Duck 使用所有可用的网络接口。您可以在此处排除不需要的网络接口。您需要重新启动服务器以应用更改。';
+  String get info => '默认情况下，Duck Share 使用所有可用的网络接口。您可以在此处排除不需要的网络接口。您需要重新启动服务器以应用更改。';
   @override
   String get preview => '预览';
   @override
@@ -415,7 +415,7 @@ class Translations$receiveOptionsPage$zh_CN extends Translations$receiveOptionsP
   @override
   String get destination => _root.settingsTab.receive.destination;
   @override
-  String get appDirectory => '(Duck 文件夹)';
+  String get appDirectory => '(Duck Share 文件夹)';
   @override
   String get saveToGallery => _root.settingsTab.receive.saveToGallery;
   @override
@@ -494,7 +494,7 @@ class Translations$webSharePage$zh_CN extends Translations$webSharePage$en {
   @override
   String pinHint({required Object pin}) => 'PIN 为 “${pin}”';
   @override
-  String get encryptionHint => 'Duck 使用自签名证书。您需要在浏览器中允许它。';
+  String get encryptionHint => 'Duck Share 使用自签名证书。您需要在浏览器中允许它。';
   @override
   String pendingRequests({required Object n}) => '待处理请求：${n}';
 }
@@ -518,10 +518,10 @@ class Translations$aboutPage$zh_CN extends Translations$aboutPage$en {
 
   // Translations
   @override
-  String get title => '关于 Duck';
+  String get title => '关于 Duck Share';
   @override
   List<String> get description => [
-    'Duck 是一款免费的开源应用程序，可让您通过本地网络与附近的设备安全地分享文件和信息，而无需互联网连接。',
+    'Duck Share 是一款免费的开源应用程序，可让您通过本地网络与附近的设备安全地分享文件和信息，而无需互联网连接。',
     '本程序可在 Android、iOS、macOS、Windows 和 Linux 上使用。您可以在官方主页找到所有下载选项。',
   ];
   @override
@@ -544,7 +544,7 @@ class Translations$donationPage$zh_CN extends Translations$donationPage$en {
   @override
   String get title => '捐赠';
   @override
-  String get info => 'Duck 免费、开源、无广告。如果您喜欢这款应用程序，可以捐款支持开发。';
+  String get info => 'Duck Share 免费、开源、无广告。如果您喜欢这款应用程序，可以捐款支持开发。';
   @override
   String donate({required Object amount}) => '捐款 ${amount}';
   @override
@@ -745,7 +745,7 @@ class Translations$tray$zh_CN extends Translations$tray$en {
   @override
   String get open => _root.general.open;
   @override
-  String get close => '退出 Duck';
+  String get close => '退出 Duck Share';
   @override
   String get closeWindows => '退出';
 }
@@ -956,7 +956,7 @@ class Translations$settingsTab$general$zh_CN extends Translations$settingsTab$ge
   @override
   String get launchMinimized => '自动启动时隐藏窗口';
   @override
-  String get showInContextMenu => '在“发送到...”文件菜单中显示 Duck';
+  String get showInContextMenu => '在“发送到...”文件菜单中显示 Duck Share';
   @override
   String get animations => '动画效果';
 }
@@ -1058,7 +1058,7 @@ class Translations$settingsTab$other$zh_CN extends Translations$settingsTab$othe
   @override
   String get title => '其他';
   @override
-  String get support => '支持 Duck';
+  String get support => '支持 Duck Share';
   @override
   String get donate => '捐赠';
   @override
@@ -1410,7 +1410,7 @@ class Translations$dialogs$localNetworkUnauthorized$zh_CN extends Translations$d
   @override
   String get title => _root.dialogs.noPermission.title;
   @override
-  String get description => 'Duck 在没有扫描本地网络的权限的情况下无法找到其他设备。请在设置中授予此权限。';
+  String get description => 'Duck Share 在没有扫描本地网络的权限的情况下无法找到其他设备。请在设置中授予此权限。';
   @override
   String get gotoSettings => '设置';
 }
@@ -1552,7 +1552,7 @@ class Translations$dialogs$sendModeHelp$zh_CN extends Translations$dialogs$sendM
   @override
   String get multiple => '发送文件给多个接收者。已选择的文件在发送后不会取消选择。';
   @override
-  String get link => '未安装 Duck 的接收者可以在浏览器中打开链接以下载选中的文件。';
+  String get link => '未安装 Duck Share 的接收者可以在浏览器中打开链接以下载选中的文件。';
 }
 
 // Path: dialogs.zoom

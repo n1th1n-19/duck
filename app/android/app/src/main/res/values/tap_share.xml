@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tap_share_service_description">Duck tap to share</string>
-    <string name="app_name_duck" translatable="false">Duck</string>
+    <string name="tap_share_service_description">Duck Share tap to share</string>
+    <string name="app_name_duck" translatable="false">Duck Share</string>
     <string name="tap_share_ready_channel">Tap to share</string>
     <string name="tap_share_ready">Ready to receive</string>
     <string name="tap_share_incoming_channel">Incoming transfers</string>
@@ -16,7 +16,7 @@
     <string name="tap_share_sheet_title_sent">Sent</string>
     <string name="tap_share_sheet_title_failed">Couldn\'t send</string>
     <string name="tap_share_sheet_close">Close</string>
-    <string name="tap_share_sheet_open_app">Open Duck</string>
+    <string name="tap_share_sheet_open_app">Open Duck Share</string>
 
     <!-- Brand blue, see support/branding/duck.py -->
     <color name="tap_share_accent">#1E6FD9</color>

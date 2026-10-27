@@ -1,5 +1,5 @@
 {
-  "appName": "Duck",
+  "appName": "Duck Share",
   "general": {
     "accept": "אישור",
     "accepted": "התקבל",
@@ -111,7 +111,7 @@
       "minimizeToTray": "יציאה: מזעור למגש",
       "launchAtStartup": "הפעלה אוטומטית לאחר הכניסה",
       "launchMinimized": "הפעלה אוטומטית: התחל מוסתר",
-      "showInContextMenu": "הצג את Duck בתפריט ההקשר",
+      "showInContextMenu": "הצג את Duck Share בתפריט ההקשר",
       "animations": "אנימציות"
     },
     "receive": {
@@ -154,7 +154,7 @@
     },
     "other": {
       "title": "אחר",
-      "support": "תמיכה ב-Duck",
+      "support": "תמיכה ב-Duck Share",
       "donate": "תרומה",
       "privacyPolicy": "מדיניות פרטיות",
       "termsOfUse": "תנאי השימוש"
@@ -182,7 +182,7 @@
   },
   "networkInterfacesPage": {
     "title": "ממשקי רשת",
-    "info": "כברירת מחדל, Duck משתמש בכל ממשקי הרשת הזמינים. באפשרותך להסיר רשתות שאינן רצויות כאן. עליך להפעיל מחדש את השרת כדי להחיל את השינויים.",
+    "info": "כברירת מחדל, Duck Share משתמש בכל ממשקי הרשת הזמינים. באפשרותך להסיר רשתות שאינן רצויות כאן. עליך להפעיל מחדש את השרת כדי להחיל את השינויים.",
     "preview": "תצוגה מקדימה",
     "whitelist": "רשימה לבנה",
     "blacklist": "רשימה שחורה"
@@ -243,7 +243,7 @@
   "receiveOptionsPage": {
     "title": "אפשרויות",
     "destination": "@:settingsTab.receive.destination",
-    "appDirectory": "(תיקיית Duck)",
+    "appDirectory": "(תיקיית Duck Share)",
     "saveToGallery": "@:settingsTab.receive.saveToGallery",
     "saveToGalleryOff": "כבוי באופן אוטומטי בשל קיום ספריות."
   },
@@ -298,16 +298,16 @@
     "autoAccept": "אישור בקשות באופן אוטומטי",
     "requirePin": "דרוש סיסמה",
     "pinHint": "הסיסמה היא \"{pin}\"",
-    "encryptionHint": "Duck משתמש בתעודה עצמית. עליך לאשר אותה בדפדפן.",
+    "encryptionHint": "Duck Share משתמש בתעודה עצמית. עליך לאשר אותה בדפדפן.",
     "pendingRequests": "בקשות בהמתנה: {n}"
   },
   "webReceivePage": {
     "title": "קבלה באמצעות קישור"
   },
   "aboutPage": {
-    "title": "אודות Duck",
+    "title": "אודות Duck Share",
     "description": [
-      "Duck היא אפליקציית קוד פתוח חינמית המאפשרת לשתף קבצים והודעות בצורה מאובטחת עם מכשירים קרובים דרך הרשת המקומית מבלי להזדקק לחיבור לאינטרנט.",
+      "Duck Share היא אפליקציית קוד פתוח חינמית המאפשרת לשתף קבצים והודעות בצורה מאובטחת עם מכשירים קרובים דרך הרשת המקומית מבלי להזדקק לחיבור לאינטרנט.",
       "אפליקציה זו זמינה באנדרואיד, iOS, macOS, Windows ו-Linux. אתה יכול למצוא את כל אפשרויות ההורדה בדף הבית הרשמי."
     ],
     "author": "יוצר",
@@ -317,7 +317,7 @@
   },
   "donationPage": {
     "title": "תרומה",
-    "info": "אפליקציית Duck היא חינמית, קוד פתוח וללא פרסומות. אם אתה אוהב את האפליקציה, אתה יכול לתמוך בפיתוח באמצעות תרומה.",
+    "info": "אפליקציית Duck Share היא חינמית, קוד פתוח וללא פרסומות. אם אתה אוהב את האפליקציה, אתה יכול לתמוך בפיתוח באמצעות תרומה.",
     "donate": "תרומת {amount}",
     "thanks": "תודה רבה!",
     "restore": "שחזור רכישה"
@@ -406,7 +406,7 @@
     },
     "localNetworkUnauthorized": {
       "title": "@:dialogs.noPermission.title",
-      "description": "ל־Duck אין אפשרות למצוא מכשירים אחרים ללא הרשאה לסריקת הרשת המקומית. אנא הענק את ההרשאה הזו בהגדרות.",
+      "description": "ל־Duck Share אין אפשרות למצוא מכשירים אחרים ללא הרשאה לסריקת הרשת המקומית. אנא הענק את ההרשאה הזו בהגדרות.",
       "gotoSettings": "הגדרות"
     },
     "messageInput": {
@@ -453,7 +453,7 @@
       "title": "מצבי שליחה",
       "single": "שליחת קבצים למקבל בודד. בחירת הקבצים תתאפס לאחר השליחה.",
       "multiple": "שליחת קבצים למקבלים מרובים. בחירת הקבצים לא תתאפס.",
-      "link": "מקבלים ש-Duck לא מותקן אצלם יוכלו להוריד את הקבצים שנבחרו על ידי פתיחת הקישור בדפדפן שלהם."
+      "link": "מקבלים ש-Duck Share לא מותקן אצלם יוכלו להוריד את הקבצים שנבחרו על ידי פתיחת הקישור בדפדפן שלהם."
     },
     "zoom": {
       "title": "URL"
@@ -466,7 +466,7 @@
   "tray": {
     "@info": "Apple Guidelines are very strict about the 'close' wording.",
     "open": "@:general.open",
-    "close": "צא מ-Duck",
+    "close": "צא מ-Duck Share",
     "closeWindows": "יציאה"
   },
   "web": {

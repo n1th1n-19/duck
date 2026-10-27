@@ -291,7 +291,7 @@ class _Translations$networkInterfacesPage$hi extends Translations$networkInterfa
   String get title => 'नेटवर्क इंटरफेस';
   @override
   String get info =>
-      'डिफ़ॉल्ट रूप से, Duck सभी उपलब्ध नेटवर्क इंटरफेस का उपयोग करता है। आप यहां अवांछित नेटवर्क को बाहर कर सकते हैं। परिवर्तनों को लागू करने के लिए आपको सर्वर को पुनः आरंभ करना होगा।';
+      'डिफ़ॉल्ट रूप से, Duck Share सभी उपलब्ध नेटवर्क इंटरफेस का उपयोग करता है। आप यहां अवांछित नेटवर्क को बाहर कर सकते हैं। परिवर्तनों को लागू करने के लिए आपको सर्वर को पुनः आरंभ करना होगा।';
   @override
   String get preview => 'पूर्वावलोकन';
   @override
@@ -416,7 +416,7 @@ class _Translations$receiveOptionsPage$hi extends Translations$receiveOptionsPag
   @override
   String get destination => '@ : सेटिंग्सटैब.रिसीव.डेस्टिनेशन';
   @override
-  String get appDirectory => '(Duck फ़ोल्डर)';
+  String get appDirectory => '(Duck Share फ़ोल्डर)';
   @override
   String get saveToGallery => '@ : सेटिंग्सटैब.रिसीव.सेव टू गैलरी';
   @override
@@ -519,10 +519,10 @@ class _Translations$aboutPage$hi extends Translations$aboutPage$en {
 
   // Translations
   @override
-  String get title => 'Duck के बारे में';
+  String get title => 'Duck Share के बारे में';
   @override
   List<String> get description => [
-    'Duck एक मुफ्त, ओपन-सोर्स ऐप है जो आपको अपने स्थानीय नेटवर्क पर पास के डिवाइसों के साथ इंटरनेट कनेक्शन की आवश्यकता के बिना सुरक्षित रूप से फाइलें और संदेश साझा करने की अनुमति देता है।',
+    'Duck Share एक मुफ्त, ओपन-सोर्स ऐप है जो आपको अपने स्थानीय नेटवर्क पर पास के डिवाइसों के साथ इंटरनेट कनेक्शन की आवश्यकता के बिना सुरक्षित रूप से फाइलें और संदेश साझा करने की अनुमति देता है।',
     'यह ऐप Android, iOS, macOS, Windows और Linux पर उपलब्ध है। आप सभी डाउनलोड विकल्पों को आधिकारिक होमपेज पर पा सकते हैं।',
   ];
   @override
@@ -545,7 +545,7 @@ class _Translations$donationPage$hi extends Translations$donationPage$en {
   @override
   String get title => 'दान करें';
   @override
-  String get info => 'Duck मुफ्त, ओपन-सोर्स और बिना किसी विज्ञापन के है। यदि आपको ऐप पसंद है, तो आप विकास का समर्थन दान करके कर सकते हैं।';
+  String get info => 'Duck Share मुफ्त, ओपन-सोर्स और बिना किसी विज्ञापन के है। यदि आपको ऐप पसंद है, तो आप विकास का समर्थन दान करके कर सकते हैं।';
   @override
   String donate({required Object amount}) => 'दान करें ${amount}';
   @override
@@ -744,7 +744,7 @@ class _Translations$tray$hi extends Translations$tray$en {
   @override
   String get open => _root.general.open;
   @override
-  String get close => 'Duck बंद करें';
+  String get close => 'Duck Share बंद करें';
   @override
   String get closeWindows => 'बाहर जाएं।';
 }
@@ -955,7 +955,7 @@ class _Translations$settingsTab$general$hi extends Translations$settingsTab$gene
   @override
   String get launchMinimized => 'ऑटोस्टार्ट: छुपा हुआ प्रारंभ करें';
   @override
-  String get showInContextMenu => 'कॉन्टेक्स्ट मेनू में Duck दिखाएं';
+  String get showInContextMenu => 'कॉन्टेक्स्ट मेनू में Duck Share दिखाएं';
   @override
   String get animations => 'एनिमेशन';
 }
@@ -1057,7 +1057,7 @@ class _Translations$settingsTab$other$hi extends Translations$settingsTab$other$
   @override
   String get title => 'अन्य';
   @override
-  String get support => 'Duck का समर्थन करें';
+  String get support => 'Duck Share का समर्थन करें';
   @override
   String get donate => 'दान करें';
   @override
@@ -1413,7 +1413,8 @@ class _Translations$dialogs$localNetworkUnauthorized$hi extends Translations$dia
   @override
   String get title => _root.dialogs.noPermission.title;
   @override
-  String get description => 'Duck स्थानीय नेटवर्क को स्कैन करने की अनुमति के बिना अन्य डिवाइसों को नहीं ढूंढ सकता। कृपया सेटिंग्स में यह अनुमति दें।';
+  String get description =>
+      'Duck Share स्थानीय नेटवर्क को स्कैन करने की अनुमति के बिना अन्य डिवाइसों को नहीं ढूंढ सकता। कृपया सेटिंग्स में यह अनुमति दें।';
   @override
   String get gotoSettings => 'सेटिंग्स';
 }
@@ -1555,7 +1556,7 @@ class _Translations$dialogs$sendModeHelp$hi extends Translations$dialogs$sendMod
   @override
   String get multiple => 'कई प्राप्तकर्ताओं को फ़ाइलें भेजता है। चयन हटाया नहीं जाएगा।';
   @override
-  String get link => 'जिन प्राप्तकर्ताओं के पास Duck इंस्टॉल नहीं है, वे अपने ब्राउज़र में लिंक खोलकर चयनित फ़ाइलें डाउनलोड कर सकते हैं।';
+  String get link => 'जिन प्राप्तकर्ताओं के पास Duck Share इंस्टॉल नहीं है, वे अपने ब्राउज़र में लिंक खोलकर चयनित फ़ाइलें डाउनलोड कर सकते हैं।';
 }
 
 // Path: dialogs.zoom

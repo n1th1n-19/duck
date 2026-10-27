@@ -1,15 +1,15 @@
-# Duck
+# Duck Share
 
 [![CI status][ci-badge]][ci-workflow]
 
 [ci-badge]: https://github.com/n1th1n-19/duck/actions/workflows/ci.yml/badge.svg
 [ci-workflow]: https://github.com/n1th1n-19/duck/actions/workflows/ci.yml
 
-<img src="support/branding/logo.svg" alt="Duck logo" width="96" />
+<img src="support/branding/logo.svg" alt="Duck Share logo" width="96" />
 
-Duck shares files and messages between nearby devices over your local network, with no internet connection and no account. On Android, **hold two phones together** and the file goes across, like AirDrop or Quick Share — even when Duck is closed on both phones.
+Duck Share shares files and messages between nearby devices over your local network, with no internet connection and no account. On Android, **hold two phones together** and the file goes across, like AirDrop or Quick Share — even when Duck Share is closed on both phones.
 
-Duck is a fork of [LocalSend](https://github.com/localsend/localsend) and speaks the same protocol, so it works with every LocalSend device on Windows, macOS, Linux, iOS and Android.
+Duck Share is a fork of [LocalSend](https://github.com/localsend/localsend) and speaks the same protocol, so it works with every LocalSend device on Windows, macOS, Linux, iOS and Android.
 
 - [Features](#features)
 - [Tap to share](#tap-to-share)
@@ -27,7 +27,7 @@ Duck is a fork of [LocalSend](https://github.com/localsend/localsend) and speaks
 Everything LocalSend does, plus:
 
 - **Tap to share (Android):** hold two phones back to back to send. No pairing, no picking a device from a list.
-- **Works with the app closed:** share from any app via **Share → Duck**; the receiving phone wakes up from the tap and saves the file in the background.
+- **Works with the app closed:** share from any app via **Share → Duck Share**; the receiving phone wakes up from the tap and saves the file in the background.
 - **Clear feedback:** both phones vibrate on touch and when done; the receiver gets a "Received…" notification that opens the file.
 - **Trusted devices:** files from devices you trust arrive without a prompt, skip your PIN, and shared text lands on your clipboard.
 - **Blocked devices:** requests from blocked devices are declined and they are hidden from the nearby list.
@@ -38,21 +38,21 @@ Requires two Android phones with NFC (host card emulation) on the same Wi-Fi.
 
 **Send**
 
-1. In any app (Gallery, Files, …) tap **Share → Duck**. A sheet slides up: *Hold near another phone*.
+1. In any app (Gallery, Files, …) tap **Share → Duck Share**. A sheet slides up: *Hold near another phone*.
 2. Hold the phones back to back, camera ends lined up.
 3. Pull them apart when both vibrate. The sheet shows **Sent**; tap more phones to send to them too.
 
-Inside Duck, selecting files on the Send tab and tapping another phone works the same way.
+Inside Duck Share, selecting files on the Send tab and tapping another phone works the same way.
 
 **Receive**
 
-Nothing to do: keep the screen on and unlocked. Duck may be closed. The phone vibrates on touch and again when the file is saved, and the notification opens it.
+Nothing to do: keep the screen on and unlocked. Duck Share may be closed. The phone vibrates on touch and again when the file is saved, and the notification opens it.
 
 **Good to know**
 
 - The touch only exchanges the address and the security fingerprint (well under a second). The file itself goes over Wi-Fi, so the phones can be apart while it transfers. Keep the share sheet open until it says *Sent*.
 - Taps from a locked phone, or from a device that was not tapped, show the normal accept prompt.
-- Turn tap to share on or off with the **Tap to share** tile in Quick Settings or in Duck's settings.
+- Turn tap to share on or off with the **Tap to share** tile in Quick Settings or in Duck Share's settings.
 - **Pixel phones:** Google's own *Tap to Share* (Quick Share) competes for NFC. Turn it off under *Settings → Connected devices → Connection preferences → Quick Share* if taps are unreliable.
 
 ## Trusted and blocked devices
@@ -66,7 +66,7 @@ Long-press a device on the Send tab, or open **Settings → Trusted & blocked de
 
 ## Setup
 
-Duck should work out of the box. If devices cannot see each other, allow Duck through your firewall:
+Duck Share should work out of the box. If devices cannot see each other, allow Duck Share through your firewall:
 
 | Traffic Type | Protocol | Port  | Action |
 |--------------|----------|-------|--------|
@@ -89,7 +89,7 @@ Tap to share adds an NFC handshake in front of it: the receiving phone emulates 
 
 ## Getting started
 
-To build Duck from source:
+To build Duck Share from source:
 
 1. Install Flutter [directly](https://flutter.dev) or with [fvm](https://fvm.app) (see the [required version](.fvmrc))
 2. Install [Rust](https://www.rust-lang.org/tools/install)
@@ -99,13 +99,13 @@ To build Duck from source:
 6. `fvm flutter run`
 
 > [!NOTE]
-> Duck pins its Flutter version in [.fvmrc](.fvmrc). Use `fvm flutter` instead of a system-wide `flutter` to avoid build issues from a version mismatch.
+> Duck Share pins its Flutter version in [.fvmrc](.fvmrc). Use `fvm flutter` instead of a system-wide `flutter` to avoid build issues from a version mismatch.
 
 The app icons for every platform are generated from [support/branding](support/branding/README.md).
 
 ## Command line interface
 
-The repository also contains a terminal client (`localsend-cli`) built on the same protocol, so it works with Duck too.
+The repository also contains a terminal client (`localsend-cli`) built on the same protocol, so it works with Duck Share too.
 Run `localsend-cli --help` to see every option.
 
 ```shell
@@ -147,4 +147,4 @@ Release APKs need a signing key: create `app/android/key.properties`, or sign wi
 
 ## Credits and license
 
-Duck is based on [LocalSend](https://github.com/localsend/localsend) by Tien Do Nam and contributors, and is licensed under the [Apache License 2.0](LICENSE), like the original. "LocalSend" and its logo belong to their owners; Duck is not affiliated with or endorsed by the LocalSend project.
+Duck Share is based on [LocalSend](https://github.com/localsend/localsend) by Tien Do Nam and contributors, and is licensed under the [Apache License 2.0](LICENSE), like the original. "LocalSend" and its logo belong to their owners; Duck Share is not affiliated with or endorsed by the LocalSend project.

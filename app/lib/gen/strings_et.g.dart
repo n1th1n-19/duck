@@ -40,7 +40,7 @@ class TranslationsEt extends Translations with BaseTranslations<AppLocale, Trans
 
   // Translations
   @override
-  String get appName => 'Duck';
+  String get appName => 'Duck Share';
   @override
   late final _Translations$general$et general = _Translations$general$et._(_root);
   @override
@@ -289,7 +289,7 @@ class _Translations$networkInterfacesPage$et extends Translations$networkInterfa
   String get title => 'Võrguliidesed';
   @override
   String get info =>
-      'Vaikimisi kasutab Duck kõiki võrguliideseid. Kui sul on vaja, siis saad mittesoovitud võrgud siinkohal välistada ning muudatuste jõustumine eeldab serverikomponendi uuesti käivitamist.';
+      'Vaikimisi kasutab Duck Share kõiki võrguliideseid. Kui sul on vaja, siis saad mittesoovitud võrgud siinkohal välistada ning muudatuste jõustumine eeldab serverikomponendi uuesti käivitamist.';
   @override
   String get preview => 'Eelvaade';
   @override
@@ -493,7 +493,7 @@ class _Translations$webSharePage$et extends Translations$webSharePage$en {
   @override
   String pinHint({required Object pin}) => 'PIN-kood on „${pin}“';
   @override
-  String get encryptionHint => 'Duck kasutab enda poolt allkirjastatud sertifikaate. Ühenduse toimimiseks palun nõustu nendega veebibrauseris.';
+  String get encryptionHint => 'Duck Share kasutab enda poolt allkirjastatud sertifikaate. Ühenduse toimimiseks palun nõustu nendega veebibrauseris.';
   @override
   String pendingRequests({required Object n}) => 'Ootel päringuid: ${n}';
 }
@@ -517,10 +517,10 @@ class _Translations$aboutPage$et extends Translations$aboutPage$en {
 
   // Translations
   @override
-  String get title => 'Rakenduse teave: Duck';
+  String get title => 'Rakenduse teave: Duck Share';
   @override
   List<String> get description => [
-    'Duck põhineb avatud lähtekoodil, on kõikide jaoks vaba ning tasuta kasutatav. Rakenduse eesmärgiks on võimaldada failide ja tekstide jagamist kohtvõrgus asuvate arvutite vahel nii, et välist internetiühendust pole vaja kasutada.',
+    'Duck Share põhineb avatud lähtekoodil, on kõikide jaoks vaba ning tasuta kasutatav. Rakenduse eesmärgiks on võimaldada failide ja tekstide jagamist kohtvõrgus asuvate arvutite vahel nii, et välist internetiühendust pole vaja kasutada.',
     'See rakendus on saadaval Androidi, iOSi, macOSi, Windowsi ja Linuxi jaoks. Kõik allalaaditavad paigaldusfailid leiad meie ametlikust veebisaidist.',
   ];
   @override
@@ -544,7 +544,7 @@ class _Translations$donationPage$et extends Translations$donationPage$en {
   String get title => 'Toeta meid rahaliselt';
   @override
   String get info =>
-      'Duck põhineb avatud lähtekoodil, on kõikide jaoks vaba ning tasuta kasutatav, ega sisalda reklaame. Kui sulle see rakendus meeldib, siis palun toeta meie arendust.';
+      'Duck Share põhineb avatud lähtekoodil, on kõikide jaoks vaba ning tasuta kasutatav, ega sisalda reklaame. Kui sulle see rakendus meeldib, siis palun toeta meie arendust.';
   @override
   String donate({required Object amount}) => 'Anneta ${amount}';
   @override
@@ -660,7 +660,7 @@ class _Translations$tray$et extends Translations$tray$en {
   @override
   String get open => _root.general.open;
   @override
-  String get close => 'Sulge Duck';
+  String get close => 'Sulge Duck Share';
   @override
   String get closeWindows => 'Välju';
 }
@@ -1330,7 +1330,7 @@ class _Translations$dialogs$localNetworkUnauthorized$et extends Translations$dia
   String get title => _root.dialogs.noPermission.title;
   @override
   String get description =>
-      'Ilma kohtvõrgu skaneerimise õiguseta ei suuda Duck leida teisi seadmeid. Palun luba süsteemi seadistustest vajalikud õigused.';
+      'Ilma kohtvõrgu skaneerimise õiguseta ei suuda Duck Share leida teisi seadmeid. Palun luba süsteemi seadistustest vajalikud õigused.';
   @override
   String get gotoSettings => 'Seadistused';
 }
@@ -1473,7 +1473,7 @@ class _Translations$dialogs$sendModeHelp$et extends Translations$dialogs$sendMod
   String get multiple => 'Sellega saadame faile mitmele vastuvõtjale. Peale failide saatmise lõppu failid jäävad saatmisloendisse alles.';
   @override
   String get link =>
-      'Kui failide vastuvõtjatel pole arvutis või nutiseadmes rakendust Duck, siis avades etteantud lingi oma veebibrauseris, saavad nad failid alla laadida.';
+      'Kui failide vastuvõtjatel pole arvutis või nutiseadmes rakendust Duck Share, siis avades etteantud lingi oma veebibrauseris, saavad nad failid alla laadida.';
 }
 
 // Path: dialogs.zoom

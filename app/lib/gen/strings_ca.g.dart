@@ -40,7 +40,7 @@ class TranslationsCa extends Translations with BaseTranslations<AppLocale, Trans
 
   // Translations
   @override
-  String get appName => 'Duck';
+  String get appName => 'Duck Share';
   @override
   late final _Translations$general$ca general = _Translations$general$ca._(_root);
   @override
@@ -292,7 +292,7 @@ class _Translations$networkInterfacesPage$ca extends Translations$networkInterfa
   String get title => 'Interfícies de xarxa';
   @override
   String get info =>
-      'De manera predefinida, el Duck utilitza totes les interfícies de xarxa disponibles. Podeu excloure les xarxes no desitjades aquí. Cal que reinicieu el servidor per a aplicar els canvis.';
+      'De manera predefinida, el Duck Share utilitza totes les interfícies de xarxa disponibles. Podeu excloure les xarxes no desitjades aquí. Cal que reinicieu el servidor per a aplicar els canvis.';
   @override
   String get preview => 'Previsualitza';
   @override
@@ -417,7 +417,7 @@ class _Translations$receiveOptionsPage$ca extends Translations$receiveOptionsPag
   @override
   String get destination => _root.settingsTab.receive.destination;
   @override
-  String get appDirectory => '(Carpeta Duck)';
+  String get appDirectory => '(Carpeta Duck Share)';
   @override
   String get saveToGallery => _root.settingsTab.receive.saveToGallery;
   @override
@@ -496,7 +496,7 @@ class _Translations$webSharePage$ca extends Translations$webSharePage$en {
   @override
   String pinHint({required Object pin}) => 'El PIN és «${pin}»';
   @override
-  String get encryptionHint => 'El Duck utilitza un certificat auto-signat. Cal que l\'accepteu al navegador.';
+  String get encryptionHint => 'El Duck Share utilitza un certificat auto-signat. Cal que l\'accepteu al navegador.';
   @override
   String pendingRequests({required Object n}) => 'Peticions pendents: ${n}';
 }
@@ -520,10 +520,10 @@ class _Translations$aboutPage$ca extends Translations$aboutPage$en {
 
   // Translations
   @override
-  String get title => 'Quant al Duck';
+  String get title => 'Quant al Duck Share';
   @override
   List<String> get description => [
-    'El Duck és una aplicació gratuïta i de codi obert que us permet compartir fitxers i missatges de manera segura amb dispositius propers a la vostra xarxa local sense necessitat de connexió a Internet.',
+    'El Duck Share és una aplicació gratuïta i de codi obert que us permet compartir fitxers i missatges de manera segura amb dispositius propers a la vostra xarxa local sense necessitat de connexió a Internet.',
     'Aquesta aplicació està disponible per a Android, iOS, macOS, Windows i Linux. Podeu trobar totes les opcions de baixada a la pàgina d\'inici oficial.',
   ];
   @override
@@ -547,7 +547,7 @@ class _Translations$donationPage$ca extends Translations$donationPage$en {
   String get title => 'Donació';
   @override
   String get info =>
-      'El Duck és gratuït, de codi obert i sense anuncis. Si us agrada l\'aplicació, podeu donar suport al desenvolupament amb una donació.';
+      'El Duck Share és gratuït, de codi obert i sense anuncis. Si us agrada l\'aplicació, podeu donar suport al desenvolupament amb una donació.';
   @override
   String donate({required Object amount}) => 'Donació: ${amount}';
   @override
@@ -746,7 +746,7 @@ class _Translations$tray$ca extends Translations$tray$en {
   @override
   String get open => _root.general.open;
   @override
-  String get close => 'Surt del Duck';
+  String get close => 'Surt del Duck Share';
   @override
   String get closeWindows => 'Surt';
 }
@@ -957,7 +957,7 @@ class _Translations$settingsTab$general$ca extends Translations$settingsTab$gene
   @override
   String get launchMinimized => 'Inici automàtic: Inici minimitzat';
   @override
-  String get showInContextMenu => 'Mostra el Duck al menú contextual';
+  String get showInContextMenu => 'Mostra el Duck Share al menú contextual';
   @override
   String get animations => 'Animacions';
 }
@@ -1059,7 +1059,7 @@ class _Translations$settingsTab$other$ca extends Translations$settingsTab$other$
   @override
   String get title => 'Altres';
   @override
-  String get support => 'Doneu suport al Duck';
+  String get support => 'Doneu suport al Duck Share';
   @override
   String get donate => 'Donació';
   @override
@@ -1415,7 +1415,7 @@ class _Translations$dialogs$localNetworkUnauthorized$ca extends Translations$dia
   String get title => _root.dialogs.noPermission.title;
   @override
   String get description =>
-      'El Duck no pot trobar altres dispositius sense tenir permís per a escanejar la xarxa local. Concediu aquest permís a la configuració.';
+      'El Duck Share no pot trobar altres dispositius sense tenir permís per a escanejar la xarxa local. Concediu aquest permís a la configuració.';
   @override
   String get gotoSettings => 'Configuració';
 }
@@ -1558,7 +1558,8 @@ class _Translations$dialogs$sendModeHelp$ca extends Translations$dialogs$sendMod
   @override
   String get multiple => 'Envia fitxers a diversos destinataris. La selecció no s\'esborrarà en finalitzar la trasferència.';
   @override
-  String get link => 'Els destinataris que no tinguin el Duck instal·lat poden baixar els fitxers seleccionats obrint l\'enllaç al seu navegador.';
+  String get link =>
+      'Els destinataris que no tinguin el Duck Share instal·lat poden baixar els fitxers seleccionats obrint l\'enllaç al seu navegador.';
 }
 
 // Path: dialogs.zoom

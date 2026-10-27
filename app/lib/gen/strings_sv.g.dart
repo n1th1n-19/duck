@@ -40,7 +40,7 @@ class TranslationsSv extends Translations with BaseTranslations<AppLocale, Trans
 
   // Translations
   @override
-  String get appName => 'Duck';
+  String get appName => 'Duck Share';
   @override
   late final _Translations$general$sv general = _Translations$general$sv._(_root);
   @override
@@ -291,7 +291,7 @@ class _Translations$networkInterfacesPage$sv extends Translations$networkInterfa
   String get title => 'Nätverksgränssnitt';
   @override
   String get info =>
-      'Som standard använder Duck alla tillgängliga nätverksgränssnitt. Du kan utesluta oönskade nätverk här. Starta om servern för att tillämpa ändringarna.';
+      'Som standard använder Duck Share alla tillgängliga nätverksgränssnitt. Du kan utesluta oönskade nätverk här. Starta om servern för att tillämpa ändringarna.';
   @override
   String get preview => 'Förhandsvisning';
   @override
@@ -416,7 +416,7 @@ class _Translations$receiveOptionsPage$sv extends Translations$receiveOptionsPag
   @override
   String get destination => _root.settingsTab.receive.destination;
   @override
-  String get appDirectory => '(Duck-mappen)';
+  String get appDirectory => '(Duck Share-mappen)';
   @override
   String get saveToGallery => _root.settingsTab.receive.saveToGallery;
   @override
@@ -495,7 +495,7 @@ class _Translations$webSharePage$sv extends Translations$webSharePage$en {
   @override
   String pinHint({required Object pin}) => 'PIN-koden är "${pin}"';
   @override
-  String get encryptionHint => 'Duck använder ett självsignerat certifikat. Du måste godkänna det i webbläsaren.';
+  String get encryptionHint => 'Duck Share använder ett självsignerat certifikat. Du måste godkänna det i webbläsaren.';
   @override
   String pendingRequests({required Object n}) => 'Väntande förfrågningar: ${n}';
 }
@@ -519,10 +519,10 @@ class _Translations$aboutPage$sv extends Translations$aboutPage$en {
 
   // Translations
   @override
-  String get title => 'Om Duck';
+  String get title => 'Om Duck Share';
   @override
   List<String> get description => [
-    'Duck är en fri app med öppen källkod som gör det möjligt att säkert dela filer och meddelanden med enheter i närheten via det lokala nätverket, utan internetanslutning.',
+    'Duck Share är en fri app med öppen källkod som gör det möjligt att säkert dela filer och meddelanden med enheter i närheten via det lokala nätverket, utan internetanslutning.',
     'Appen finns för Android, iOS, macOS, Windows och Linux. Alla nedladdningsalternativ finns på den officiella webbplatsen.',
   ];
   @override
@@ -545,7 +545,7 @@ class _Translations$donationPage$sv extends Translations$donationPage$en {
   @override
   String get title => 'Donera';
   @override
-  String get info => 'Duck är en fri app med öppen källkod och utan annonser. Om du gillar appen kan du stödja utvecklingen genom att donera.';
+  String get info => 'Duck Share är en fri app med öppen källkod och utan annonser. Om du gillar appen kan du stödja utvecklingen genom att donera.';
   @override
   String donate({required Object amount}) => 'Donera ${amount}';
   @override
@@ -744,7 +744,7 @@ class _Translations$tray$sv extends Translations$tray$en {
   @override
   String get open => _root.general.open;
   @override
-  String get close => 'Avsluta Duck';
+  String get close => 'Avsluta Duck Share';
   @override
   String get closeWindows => 'Avsluta';
 }
@@ -955,7 +955,7 @@ class _Translations$settingsTab$general$sv extends Translations$settingsTab$gene
   @override
   String get launchMinimized => 'Automatisk start: starta dolt';
   @override
-  String get showInContextMenu => 'Visa Duck i snabbmenyn';
+  String get showInContextMenu => 'Visa Duck Share i snabbmenyn';
   @override
   String get animations => 'Animationer';
 }
@@ -1057,7 +1057,7 @@ class _Translations$settingsTab$other$sv extends Translations$settingsTab$other$
   @override
   String get title => 'Övrigt';
   @override
-  String get support => 'Stöd Duck';
+  String get support => 'Stöd Duck Share';
   @override
   String get donate => 'Donera';
   @override
@@ -1412,7 +1412,7 @@ class _Translations$dialogs$localNetworkUnauthorized$sv extends Translations$dia
   String get title => _root.dialogs.noPermission.title;
   @override
   String get description =>
-      'Duck kan inte hitta andra enheter utan behörighet att söka i det lokala nätverket. Bevilja behörigheten i inställningarna.';
+      'Duck Share kan inte hitta andra enheter utan behörighet att söka i det lokala nätverket. Bevilja behörigheten i inställningarna.';
   @override
   String get gotoSettings => 'Inställningar';
 }
@@ -1554,7 +1554,7 @@ class _Translations$dialogs$sendModeHelp$sv extends Translations$dialogs$sendMod
   @override
   String get multiple => 'Skickar filer till flera mottagare. Valet rensas inte när filöverföringen är klar.';
   @override
-  String get link => 'Mottagare som inte har Duck installerat kan ladda ner de valda filerna genom att öppna länken i sin webbläsare.';
+  String get link => 'Mottagare som inte har Duck Share installerat kan ladda ner de valda filerna genom att öppna länken i sin webbläsare.';
 }
 
 // Path: dialogs.zoom

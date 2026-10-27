@@ -1,8 +1,8 @@
-## Duck (unreleased)
+## Duck Share (unreleased)
 
-Duck is a fork of LocalSend. Changes on top of LocalSend 1.18.2:
+Duck Share is a fork of LocalSend. Changes on top of LocalSend 1.18.2:
 
-- feat: rebrand to Duck (name, Pond blue logo and icons, Android package `app.duck.share`)
+- feat: rebrand to Duck Share (name, Pond blue logo and icons, Android package `com.duck.daystack`)
 - feat(android): tap to share — hold two phones together to send, over NFC
 - feat(android): receive with the app closed; the tap wakes the app in the background
 - feat(android): send from the share sheet without opening the app

@@ -2,9 +2,9 @@
 
 This file provides guidance to LLMs when working with code in this repository.
 
-**Duck** is a fork of [LocalSend](https://github.com/localsend/localsend) (Apache 2.0) that adds Android tap to share (NFC), background receiving and sending, and trusted/blocked devices. It stays protocol-compatible with LocalSend.
+**Duck Share** is a fork of [LocalSend](https://github.com/localsend/localsend) (Apache 2.0) that adds Android tap to share (NFC), background receiving and sending, and trusted/blocked devices. It stays protocol-compatible with LocalSend.
 
-- User-facing name: "Duck"; Android `applicationId` `app.duck.share` (debug: `app.duck.share.debug`); brand color Pond blue `#1E6FD9`.
+- User-facing name: "Duck Share"; Android `applicationId` `com.duck.daystack` (debug: `com.duck.daystack.debug`); brand color Pond blue `#1E6FD9`.
 - Internal identifiers are deliberately unchanged to keep upstream merges small: Dart package `localsend_app`, Kotlin package `org.localsend.localsend_app`, method channel `org.localsend.localsend_app/localsend`, settings keys `ls_*`, crate names. Do not rename them.
 - The original project is the `upstream` git remote; this repository is `origin` (`n1th1n-19/duck`).
 
@@ -21,7 +21,7 @@ This is a multi-language monorepo: a Flutter app on top of a Rust protocol imple
 | `server/`                      | Axum WebSocket signaling server for WebRTC (`/v1/ws`). Deployed separately, see `server/Dockerfile`.                                                        |
 | `cli/`                         | Rust CLI crate (`localsend-cli`): interactive terminal client on top of `packages/core` (v2 HTTP + multicast).                                              |
 | `support/scripts/`             | Release/packaging scripts (per-platform builds, MSIX, Inno Setup, FOSS stripping).                                                                          |
-| `support/branding/`            | Duck logo source (`duck.py`) and `export.py`, which regenerates every platform icon. Edit there, never the PNGs by hand.                                    |
+| `support/branding/`            | Duck Share logo source (`duck.py`) and `export.py`, which regenerates every platform icon. Edit there, never the PNGs by hand.                                    |
 
 The four Rust crates (`packages/core`, `packages/localsend_isolates/rust`, `server`, `cli`) form a single Cargo workspace rooted at the repository root: one shared `Cargo.lock` and `target/`, and `[profile.*]` settings live only in the root `Cargo.toml` (member profiles would be ignored). Cargokit still builds the plugin crate into its own target dir during Flutter builds.
 
@@ -143,7 +143,7 @@ NFC is only the handshake; the transfer is the normal pinned-TLS register + sess
 **Running without UI.** `LocalSendApplication` owns the single `FlutterEngine` (`FlutterEngineCache` id `main`); `MainActivity` attaches to it (`provideFlutterEngine`, `shouldDestroyEngineWithHost = false`), so closing the app does not stop the server and reopening never starts a second one.
 
 - A tap while no UI is visible starts `TapShareWakeService` (connectedDevice foreground service, 90 s), which boots the engine with `--headless`; `main()` then runs `startBackgroundServices` instead of waiting for `postInit`. Locked taps never wake the app.
-- `TapShareActivity` is the share target (the SEND filters moved off `MainActivity`): a native sheet that reads a phone and hands the items to Dart via `tapShareTakePendingSend`; "Open Duck" forwards the intent to `MainActivity`.
+- `TapShareActivity` is the share target (the SEND filters moved off `MainActivity`): a native sheet that reads a phone and hands the items to Dart via `tapShareTakePendingSend`; "Open Duck Share" forwards the intent to `MainActivity`.
 - `TapShareChannel` serves the activity-free channel methods (tap share, `getFileDescriptor`, notifications) and is reinstalled when the activity detaches; `MainActivity` delegates unknown methods to it.
 - Headless code must not touch UI: use `visibleUiContext` (`app/lib/util/ui/snackbar.dart`), which is null unless the app is in the foreground — the navigator exists headless, so `Routerino.navigatorKey.currentContext` alone is not enough. Receive requests without UI post a notification and open the receive page with the app (`showPendingReceivePage`); finished transfers post a "Received" notification whose tap opens the file (`ReceivedFileResolver`).
 - On Android the isolates are not disposed on `AppLifecycleState.detached` (the engine outlives the UI).
@@ -154,7 +154,7 @@ Favorites are the trusted devices; blocked devices are a separate list (`app/lib
 
 ### i18n
 
-Slang, source files in `app/assets/i18n/` (Duck adds new keys to `en.json` only) (`<locale>.json` plus `_missing_translations_<locale>.json`), generated output in `app/lib/gen/`. Translations are managed on Weblate; fields prefixed with `@` are metadata for translators and are not used by the app. `app/test/unit/i18n_test.dart` guards the locale set.
+Slang, source files in `app/assets/i18n/` (Duck Share adds new keys to `en.json` only) (`<locale>.json` plus `_missing_translations_<locale>.json`), generated output in `app/lib/gen/`. Translations are managed on Weblate; fields prefixed with `@` are metadata for translators and are not used by the app. `app/test/unit/i18n_test.dart` guards the locale set.
 
 ### FOSS build
 

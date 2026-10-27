@@ -1,5 +1,5 @@
 {
-  "appName": "Duck",
+  "appName": "Duck Share",
   "general": {
     "accept": "Aceptar",
     "accepted": "Aceptado",
@@ -109,7 +109,7 @@
       "minimizeToTray": "Minimizar á Bandexa do Sistema/Barra de Menú ao Pechar",
       "launchAtStartup": "Arrancar automáticamente despois do inicio de sesión",
       "launchMinimized": "Arranque automático: Iniciar minimizada",
-      "showInContextMenu": "Amosar Duck no menú contextual",
+      "showInContextMenu": "Amosar Duck Share no menú contextual",
       "animations": "Animacións"
     },
     "receive": {
@@ -152,7 +152,7 @@
     },
     "other": {
       "title": "Outros",
-      "support": "Apoia a Duck",
+      "support": "Apoia a Duck Share",
       "donate": "Doar",
       "privacyPolicy": "Política de privacidade",
       "termsOfUse": "Condicións de uso"
@@ -180,7 +180,7 @@
   },
   "networkInterfacesPage": {
     "title": "Interfaces de rede",
-    "info": "Por defecto, Duck emprega todas as interfaces de rede dispoñíbeis. Eiquí podes desactivar as redes non desexadas. Tes que reiniciar o servidor para aplicar os cambios.",
+    "info": "Por defecto, Duck Share emprega todas as interfaces de rede dispoñíbeis. Eiquí podes desactivar as redes non desexadas. Tes que reiniciar o servidor para aplicar os cambios.",
     "preview": "Vista previa",
     "whitelist": "Lista de permitidos",
     "blacklist": "Lista negra"
@@ -293,16 +293,16 @@
     "autoAccept": "Aceptar solicitudes automaticamente",
     "requirePin": "Requerir PIN",
     "pinHint": "O PIN é \"{pin}\"",
-    "encryptionHint": "Duck precisa un certificado autoasinado. Tes que aceptalo no teu navegador.",
+    "encryptionHint": "Duck Share precisa un certificado autoasinado. Tes que aceptalo no teu navegador.",
     "pendingRequests": "Solicitudes pendentes: {n}"
   },
   "webReceivePage": {
     "title": "Recibir mediante ligazón"
   },
   "aboutPage": {
-    "title": "Acerca de Duck",
+    "title": "Acerca de Duck Share",
     "description": [
-      "Duck é unha aplicación gratuita, de código aberto, que che permite compartir ficheiros e mensaxes de xeito seguro con dispositivos cercanos a través da túa rede local sen necesidade dunha conexión a internet.",
+      "Duck Share é unha aplicación gratuita, de código aberto, que che permite compartir ficheiros e mensaxes de xeito seguro con dispositivos cercanos a través da túa rede local sen necesidade dunha conexión a internet.",
       "Esta aplicación está dispoñíbel en Android, iOS, macOS, Windows e Linux. Podes atopar todas as opcións de descarga na páxina web oficial."
     ],
     "author": "Autor",
@@ -400,7 +400,7 @@
     },
     "localNetworkUnauthorized": {
       "title": "@:dialogs.noPermission.title",
-      "description": "Duck non pode atopar outros dispositivos sen ter permiso para escanear a rede local. Por favor, concede este permiso na configuración.",
+      "description": "Duck Share non pode atopar outros dispositivos sen ter permiso para escanear a rede local. Por favor, concede este permiso na configuración.",
       "gotoSettings": "Axustes"
     },
     "messageInput": {
@@ -447,7 +447,7 @@
       "title": "Modos de envío",
       "single": "Envia ficheiros a un receptor. A selección borrarase unha vez rematada a transferencia de ficheiros.",
       "multiple": "Envia ficheiros a múltiples receptores. A selección non se borrará unha vez rematada a transferencia de ficheiros.",
-      "link": "Os destinatarios que non teñan instalado Duck poden descargar os ficheiros seleccionados abrindo a ligazón no seu navegador."
+      "link": "Os destinatarios que non teñan instalado Duck Share poden descargar os ficheiros seleccionados abrindo a ligazón no seu navegador."
     },
     "zoom": {
       "title": "URL"
@@ -460,7 +460,7 @@
   "tray": {
     "@info": "As directrices de Apple son moi estrictas sobre a expresión \"pechar\".",
     "open": "@:general.open",
-    "close": "Saír de Duck",
+    "close": "Saír de Duck Share",
     "closeWindows": "Saír"
   },
   "web": {

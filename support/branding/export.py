@@ -1,4 +1,4 @@
-"""Render every Duck icon the app ships, from duck.py. Run: python export.py <app_dir>"""
+"""Render every Duck Share icon the app ships, from duck.py. Run: python export.py <app_dir>"""
 import io, sys, cairosvg
 from PIL import Image
 import duck
@@ -55,7 +55,7 @@ png(tile(B, shape="circle"), 192).save(f"{res}/mipmap-xxxhdpi/ic_launcher_round.
 banner_svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180">'
               f'<rect width="320" height="180" fill="{WHITE}"/>'
               f'<g transform="translate(110 8) scale(0.195)">{duck.mark(B)}</g>'
-              f'<text x="160" y="158" font-family="sans-serif" font-weight="bold" font-size="40" text-anchor="middle" fill="{INK}">Duck</text></svg>')
+              f'<text x="160" y="158" font-family="sans-serif" font-weight="bold" font-size="32" text-anchor="middle" fill="{INK}">Duck Share</text></svg>')
 banner = Image.open(io.BytesIO(cairosvg.svg2png(bytestring=banner_svg.encode()))).convert("RGBA")
 banner.save(f"{res}/drawable/banner.png")
 

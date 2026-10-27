@@ -24,7 +24,7 @@ class LocalSendLogo extends StatelessWidget {
         children: [
           logo,
           const Text(
-            'Duck',
+            'Duck Share',
             style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),

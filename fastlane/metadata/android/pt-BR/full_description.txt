@@ -1,12 +1,12 @@
-Duck compartilha arquivos e mensagens entre dispositivos próximos pela rede Wi-Fi local.
+Duck Share compartilha arquivos e mensagens entre dispositivos próximos pela rede Wi-Fi local.
 
-Encoste dois celulares para enviar, como o AirDrop: o compartilhamento por toque funciona via NFC, mesmo com o Duck fechado nos dois celulares. Compartilhe de qualquer app com Compartilhar → Duck, e o outro celular salva o arquivo em segundo plano.
+Encoste dois celulares para enviar, como o AirDrop: o compartilhamento por toque funciona via NFC, mesmo com o Duck Share fechado nos dois celulares. Compartilhe de qualquer app com Compartilhar → Duck Share, e o outro celular salva o arquivo em segundo plano.
 
 - Sem internet, sem conta, sem anúncios, sem rastreamento*
 - Criptografia de ponta a ponta via HTTPS
 - Dispositivos confiáveis enviam sem perguntar; bloqueie os que você não quer
 - Funciona com o LocalSend no Windows, macOS, Linux, iOS e Android
 
-Duck é um fork do LocalSend (Apache 2.0).
+Duck Share é um fork do LocalSend (Apache 2.0).
 
 *O sistema operacional pode ainda coletar dados de utilização.

@@ -40,7 +40,7 @@ class TranslationsEnIn extends Translations with BaseTranslations<AppLocale, Tra
 
   // Translations
   @override
-  String get appName => 'Duck';
+  String get appName => 'Duck Share';
   @override
   late final _Translations$general$en_IN general = _Translations$general$en_IN._(_root);
   @override
@@ -281,7 +281,7 @@ class _Translations$networkInterfacesPage$en_IN extends Translations$networkInte
   String get title => 'Network Interfaces';
   @override
   String get info =>
-      'By default, Duck uses all available network interfaces. You can exclude unwanted networks here. You need to restart the server to apply the changes.';
+      'By default, Duck Share uses all available network interfaces. You can exclude unwanted networks here. You need to restart the server to apply the changes.';
   @override
   String get preview => 'Preview';
   @override
@@ -370,7 +370,7 @@ class _Translations$receiveOptionsPage$en_IN extends Translations$receiveOptions
   @override
   String get destination => _root.settingsTab.receive.destination;
   @override
-  String get appDirectory => '(Duck folder)';
+  String get appDirectory => '(Duck Share folder)';
   @override
   String get saveToGallery => _root.settingsTab.receive.saveToGallery;
   @override
@@ -445,7 +445,7 @@ class _Translations$webSharePage$en_IN extends Translations$webSharePage$en {
   @override
   String pinHint({required Object pin}) => 'The PIN is "${pin}"';
   @override
-  String get encryptionHint => 'Duck uses a self-signed certificate. You need to accept it in your browser.';
+  String get encryptionHint => 'Duck Share uses a self-signed certificate. You need to accept it in your browser.';
   @override
   String pendingRequests({required Object n}) => 'Pending requests: ${n}';
 }
@@ -458,10 +458,10 @@ class _Translations$aboutPage$en_IN extends Translations$aboutPage$en {
 
   // Translations
   @override
-  String get title => 'About Duck';
+  String get title => 'About Duck Share';
   @override
   List<String> get description => [
-    'Duck is a free, open-source app that allows you to securely share files and messages with nearby devices over your local network without needing an internet connection.',
+    'Duck Share is a free, open-source app that allows you to securely share files and messages with nearby devices over your local network without needing an internet connection.',
     'This app is available on Android, iOS, macOS, Windows and Linux. You can find all download options on the official homepage.',
   ];
   @override
@@ -484,7 +484,7 @@ class _Translations$donationPage$en_IN extends Translations$donationPage$en {
   @override
   String get title => 'Donate';
   @override
-  String get info => 'Duck is free, open-source and without any ads. If you like the app, you can support the development with a donation.';
+  String get info => 'Duck Share is free, open-source and without any ads. If you like the app, you can support the development with a donation.';
   @override
   String donate({required Object amount}) => 'Donate ${amount}';
   @override
@@ -674,7 +674,7 @@ class _Translations$tray$en_IN extends Translations$tray$en {
   @override
   String get open => _root.general.open;
   @override
-  String get close => 'Quit Duck';
+  String get close => 'Quit Duck Share';
   @override
   String get closeWindows => 'Exit';
 }
@@ -886,7 +886,7 @@ class _Translations$settingsTab$general$en_IN extends Translations$settingsTab$g
   @override
   String get launchMinimized => 'Autostart: Start hidden';
   @override
-  String get showInContextMenu => 'Show Duck in context menu';
+  String get showInContextMenu => 'Show Duck Share in context menu';
   @override
   String get animations => 'Animations';
 }
@@ -984,7 +984,7 @@ class _Translations$settingsTab$other$en_IN extends Translations$settingsTab$oth
   @override
   String get title => 'Other';
   @override
-  String get support => 'Support Duck';
+  String get support => 'Support Duck Share';
   @override
   String get donate => 'Donate';
   @override
@@ -1271,7 +1271,7 @@ class _Translations$dialogs$localNetworkUnauthorized$en_IN extends Translations$
   String get title => _root.dialogs.noPermission.title;
   @override
   String get description =>
-      'Duck can\'t find other devices without having the permission to scan the local network. Please grant this permission in the settings.';
+      'Duck Share can\'t find other devices without having the permission to scan the local network. Please grant this permission in the settings.';
   @override
   String get gotoSettings => 'Settings';
 }
@@ -1413,7 +1413,7 @@ class _Translations$dialogs$sendModeHelp$en_IN extends Translations$dialogs$send
   @override
   String get multiple => 'Sends files to multiple recipients. Selection will not be cleared.';
   @override
-  String get link => 'Recipients who do not have Duck installed can download the selected files by opening the link in their browser.';
+  String get link => 'Recipients who do not have Duck Share installed can download the selected files by opening the link in their browser.';
 }
 
 // Path: dialogs.zoom

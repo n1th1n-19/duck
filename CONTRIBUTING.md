@@ -1,6 +1,6 @@
-# Contributing to Duck
+# Contributing to Duck Share
 
-Duck is a fork of [LocalSend](https://github.com/localsend/localsend). This guide covers working on it; [AGENTS.md](AGENTS.md) describes the architecture.
+Duck Share is a fork of [LocalSend](https://github.com/localsend/localsend). This guide covers working on it; [AGENTS.md](AGENTS.md) describes the architecture.
 
 ## Run
 
@@ -36,9 +36,9 @@ Formatting is 150 columns. Generated Dart (`lib/gen`) is not format-checked.
 Tap to share needs two real Android phones with NFC; the emulator has none.
 
 1. Pair both phones over wireless debugging (*Developer options → Wireless debugging → Pair device with QR code*).
-2. Install on both: `adb -s <device> install -r app/build/app/outputs/flutter-apk/app-debug.apk`. Debug builds use the package `app.duck.share.debug`.
+2. Install on both: `adb -s <device> install -r app/build/app/outputs/flutter-apk/app-debug.apk`. Debug builds use the package `com.duck.daystack.debug`.
 3. Watch the exchange: `adb -s <device> logcat -s TapShare flutter`.
-4. To test with the app closed: `adb shell input keyevent KEYCODE_HOME && adb shell am kill app.duck.share.debug`.
+4. To test with the app closed: `adb shell input keyevent KEYCODE_HOME && adb shell am kill com.duck.daystack.debug`.
 
 On Pixel phones, turn off Google's *Tap to Share* first; it competes for NFC.
 
@@ -71,7 +71,7 @@ git fetch upstream
 git merge upstream/main
 ```
 
-Expect conflicts in the rebranded files (app name, icons, `applicationId`, i18n). Duck keeps LocalSend's internal identifiers (method channel names, settings keys, the Kotlin package `org.localsend.localsend_app`) so that merges stay small.
+Expect conflicts in the rebranded files (app name, icons, `applicationId`, i18n). Duck Share keeps LocalSend's internal identifiers (method channel names, settings keys, the Kotlin package `org.localsend.localsend_app`) so that merges stay small.
 
 ## Notes
 

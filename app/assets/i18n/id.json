@@ -1,5 +1,5 @@
 {
-  "appName": "Duck",
+  "appName": "Duck Share",
   "general": {
     "accept": "Terima",
     "accepted": "Diterima",
@@ -109,7 +109,7 @@
       "minimizeToTray": "Keluar: Perkecil ke pojok bawah",
       "launchAtStartup": "Mulai otomatis setelah masuk",
       "launchMinimized": "Mulai otomatis: Berjalan di latar",
-      "showInContextMenu": "Tampilkan Duck di menu konteks",
+      "showInContextMenu": "Tampilkan Duck Share di menu konteks",
       "animations": "Animasi"
     },
     "receive": {
@@ -152,7 +152,7 @@
     },
     "other": {
       "title": "Lainnya",
-      "support": "Dukung Duck",
+      "support": "Dukung Duck Share",
       "donate": "Donasi",
       "privacyPolicy": "Kebijakan Privasi",
       "termsOfUse": "Syarat dan Ketentuan Penggunaan"
@@ -180,7 +180,7 @@
   },
   "networkInterfacesPage": {
     "title": "Antarmuka Jaringan",
-    "info": "Secara default, Duck menggunakan semua antarmuka jaringan yang tersedia. Anda dapat mengecualikan jaringan yang tidak diinginkan di sini. Anda perlu memulai ulang server untuk menerapkan perubahan.",
+    "info": "Secara default, Duck Share menggunakan semua antarmuka jaringan yang tersedia. Anda dapat mengecualikan jaringan yang tidak diinginkan di sini. Anda perlu memulai ulang server untuk menerapkan perubahan.",
     "preview": "Pratinjau",
     "whitelist": "Daftar putih",
     "blacklist": "Daftar hitam"
@@ -241,7 +241,7 @@
   "receiveOptionsPage": {
     "title": "Pilihan",
     "destination": "@:settingsTab.receive.destination",
-    "appDirectory": "(folder Duck)",
+    "appDirectory": "(folder Duck Share)",
     "saveToGallery": "@:settingsTab.receive.saveToGallery",
     "saveToGalleryOff": "Dimatikan secara otomatis karena ada direktori."
   },
@@ -293,16 +293,16 @@
     "autoAccept": "Terima permintaan secara otomatis",
     "requirePin": "Memerlukan PIN",
     "pinHint": "PIN-nya adalah \"{pin}\"",
-    "encryptionHint": "Duck menggunakan sertifikat self-signed. Anda perlu menerimanya di peramban.",
+    "encryptionHint": "Duck Share menggunakan sertifikat self-signed. Anda perlu menerimanya di peramban.",
     "pendingRequests": "Banyaknya permintaan yang tertunda: {n}"
   },
   "webReceivePage": {
     "title": "Terima melalui tautan"
   },
   "aboutPage": {
-    "title": "Tentang Duck",
+    "title": "Tentang Duck Share",
     "description": [
-      "Duck adalah aplikasi gratis dan bersumber terbuka yang memungkinkan Anda untuk membagikan berkas dan pesan secara aman dengan perangkat lain yang terhubung pada jaringan lokal tanpa memerlukan koneksi internet atau paket data.",
+      "Duck Share adalah aplikasi gratis dan bersumber terbuka yang memungkinkan Anda untuk membagikan berkas dan pesan secara aman dengan perangkat lain yang terhubung pada jaringan lokal tanpa memerlukan koneksi internet atau paket data.",
       "Aplikasi ini tersedia untuk platform Android, iOS, macOS, Windows, dan Linux. Semua pilihan pengunduhan dapat ditemukan di laman situs resmi kami."
     ],
     "author": "Pembuat",
@@ -312,7 +312,7 @@
   },
   "donationPage": {
     "title": "Donasi",
-    "info": "Duck adalah aplikasi gratis, bersumber terbuka, dan bebas iklan. Jika Anda menyukai aplikasi ini, mohon berikan kami dukungan dengan cara memberikan donasi.",
+    "info": "Duck Share adalah aplikasi gratis, bersumber terbuka, dan bebas iklan. Jika Anda menyukai aplikasi ini, mohon berikan kami dukungan dengan cara memberikan donasi.",
     "donate": "Donasi {amount}",
     "thanks": "Terima kasih banyak!",
     "restore": "Kembalikan dana"
@@ -400,7 +400,7 @@
     },
     "localNetworkUnauthorized": {
       "title": "@:dialogs.noPermission.title",
-      "description": "Duck tidak dapat menemukan perangkat lain tanpa izin untuk memindai jaringan lokal. Mohon berikan izin ini di pengaturan.",
+      "description": "Duck Share tidak dapat menemukan perangkat lain tanpa izin untuk memindai jaringan lokal. Mohon berikan izin ini di pengaturan.",
       "gotoSettings": "Pengaturan"
     },
     "messageInput": {
@@ -447,7 +447,7 @@
       "title": "Mode Pengiriman",
       "single": "Mengirim berkas ke satu penerima. Pilihan penerima akan dihapus setelah selesai membagikan berkas.",
       "multiple": "Mengirim berkas ke beberapa penerima. Pilihan penerima tidak akan dihapus.",
-      "link": "Penerima yang tidak memiliki Duck dapat mengunduh berkas yang dipilih dengan membuka tautan di peramban."
+      "link": "Penerima yang tidak memiliki Duck Share dapat mengunduh berkas yang dipilih dengan membuka tautan di peramban."
     },
     "zoom": {
       "title": "URL"
@@ -460,7 +460,7 @@
   "tray": {
     "@info": "Pedoman Apple sangat ketat mengenai kata-kata 'tutup'.",
     "open": "@:general.open",
-    "close": "Tutup Duck",
+    "close": "Tutup Duck Share",
     "closeWindows": "Keluar"
   },
   "web": {

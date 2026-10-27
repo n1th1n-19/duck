@@ -416,7 +416,7 @@ class _Translations$receiveOptionsPage$ta extends Translations$receiveOptionsPag
   @override
   String get destination => '@: setsionStab.receive.destination';
   @override
-  String get appDirectory => '(Duck கோப்புறை)';
+  String get appDirectory => '(Duck Share கோப்புறை)';
   @override
   String get saveToGallery => '@: settionstab.receive.savetogallery';
   @override
@@ -495,7 +495,7 @@ class _Translations$webSharePage$ta extends Translations$webSharePage$en {
   @override
   String pinHint({required Object pin}) => 'PIN "${pin}" ஆகும்';
   @override
-  String get encryptionHint => 'Duck ஒரு சுய கையொப்பம் செய்யப்பட்ட சான்றிதழைப் பயன்படுத்துகிறது. உங்களின் உலாவியில் அதை ஏற்க வேண்டும்.';
+  String get encryptionHint => 'Duck Share ஒரு சுய கையொப்பம் செய்யப்பட்ட சான்றிதழைப் பயன்படுத்துகிறது. உங்களின் உலாவியில் அதை ஏற்க வேண்டும்.';
   @override
   String pendingRequests({required Object n}) => 'நிலுவை கோரிக்கைகள்: ${n}';
 }
@@ -519,10 +519,10 @@ class _Translations$aboutPage$ta extends Translations$aboutPage$en {
 
   // Translations
   @override
-  String get title => 'Duck பற்றி';
+  String get title => 'Duck Share பற்றி';
   @override
   List<String> get description => [
-    'Duck என்பது ஒரு இலவச, திறந்த மூல செயலி ஆகும், இது உங்களுக்கு உங்களின் உள்ளூர் நெட்வொர்க்கின் மூலம் அருகிலுள்ள சாதனங்களுடன் இணையம் தேவையின்றி பாதுகாப்பாக கோப்புகள் மற்றும் செய்திகளை பகிர அனுமதிக்கிறது.',
+    'Duck Share என்பது ஒரு இலவச, திறந்த மூல செயலி ஆகும், இது உங்களுக்கு உங்களின் உள்ளூர் நெட்வொர்க்கின் மூலம் அருகிலுள்ள சாதனங்களுடன் இணையம் தேவையின்றி பாதுகாப்பாக கோப்புகள் மற்றும் செய்திகளை பகிர அனுமதிக்கிறது.',
     'இந்த செயலி Android, iOS, macOS, Windows மற்றும் Linux-ல் கிடைக்கிறது. அனைத்து பதிவிறக்கம் விருப்பங்களையும் உத்தியோகபூர்வ இணையதளத்தில் காணலாம்.',
   ];
   @override
@@ -546,7 +546,7 @@ class _Translations$donationPage$ta extends Translations$donationPage$en {
   String get title => 'தானம்';
   @override
   String get info =>
-      'Duck இலவசம், திறந்த மூலமாக உள்ளது மற்றும் விளம்பரங்களின்றி உள்ளது. செயலியை நீங்கள் விரும்பினால், ஒரு தானம் மூலம் வளர்ச்சியை ஆதரிக்கலாம்.';
+      'Duck Share இலவசம், திறந்த மூலமாக உள்ளது மற்றும் விளம்பரங்களின்றி உள்ளது. செயலியை நீங்கள் விரும்பினால், ஒரு தானம் மூலம் வளர்ச்சியை ஆதரிக்கலாம்.';
   @override
   String donate({required Object amount}) => '${amount} தானம் செய்யவும்';
   @override
@@ -745,7 +745,7 @@ class _Translations$tray$ta extends Translations$tray$en {
   @override
   String get open => '@: general.open';
   @override
-  String get close => 'Duck-ஐ நிறுத்து';
+  String get close => 'Duck Share-ஐ நிறுத்து';
   @override
   String get closeWindows => 'வெளியேறு';
 }
@@ -956,7 +956,7 @@ class _Translations$settingsTab$general$ta extends Translations$settingsTab$gene
   @override
   String get launchMinimized => 'ஆட்டோஸ்டார்ட்: மறைக்கப்பட்ட தொடக்கம்';
   @override
-  String get showInContextMenu => 'சூழல் மெனுவில் Duck ஐக் காட்டு';
+  String get showInContextMenu => 'சூழல் மெனுவில் Duck Share ஐக் காட்டு';
   @override
   String get animations => 'அனிமேஷன்கள்';
 }
@@ -1058,7 +1058,7 @@ class _Translations$settingsTab$other$ta extends Translations$settingsTab$other$
   @override
   String get title => 'மற்றவை';
   @override
-  String get support => 'Duck ஐ ஆதரிக்க';
+  String get support => 'Duck Share ஐ ஆதரிக்க';
   @override
   String get donate => 'நன்கொடை';
   @override
@@ -1415,7 +1415,7 @@ class _Translations$dialogs$localNetworkUnauthorized$ta extends Translations$dia
   String get title => '@: உரையாடல்.நோபர்மிசன்.டிடில்';
   @override
   String get description =>
-      'Duck உள்நாட்டு நெட்வொர்க்கை ஸ்கேன் செய்ய அனுமதியின்றி சாதனங்களை கண்டறிய முடியாது. தயவுசெய்து அமைப்புகளில் இந்த அனுமதியை வழங்கவும்.';
+      'Duck Share உள்நாட்டு நெட்வொர்க்கை ஸ்கேன் செய்ய அனுமதியின்றி சாதனங்களை கண்டறிய முடியாது. தயவுசெய்து அமைப்புகளில் இந்த அனுமதியை வழங்கவும்.';
   @override
   String get gotoSettings => 'அமைப்புகள்';
 }
@@ -1558,7 +1558,8 @@ class _Translations$dialogs$sendModeHelp$ta extends Translations$dialogs$sendMod
   @override
   String get multiple => 'கோப்புகளை பல பெறுநர்களுக்கு அனுப்புகிறது. கோப்புகள் பரிமாற்றம் முடிந்த பிறகு தேர்வு அழிக்கப்படாது.';
   @override
-  String get link => 'Duck நிறுவப்படாத பெறுநர்கள் தங்கள் உலாவியில் இணைப்பைத் திறக்க மூலம் தேர்ந்தெடுக்கப்பட்ட கோப்புகளை பதிவிறக்கம் செய்ய முடியும்.';
+  String get link =>
+      'Duck Share நிறுவப்படாத பெறுநர்கள் தங்கள் உலாவியில் இணைப்பைத் திறக்க மூலம் தேர்ந்தெடுக்கப்பட்ட கோப்புகளை பதிவிறக்கம் செய்ய முடியும்.';
 }
 
 // Path: dialogs.zoom

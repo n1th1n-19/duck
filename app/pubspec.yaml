@@ -1,5 +1,5 @@
 name: localsend_app
-description: Duck, an AirDrop-style file sharing app (tap to share) based on LocalSend
+description: Duck Share, an AirDrop-style file sharing app (tap to share) based on LocalSend
 homepage: https://localsend.org/
 publish_to: "none"
 resolution: workspace

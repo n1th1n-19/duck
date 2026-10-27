@@ -1,5 +1,5 @@
 {
-  "appName": "Duck",
+  "appName": "Duck Share",
   "general": {
     "accept": "Qabul qilish",
     "accepted": "Qabul qilindi",
@@ -180,7 +180,7 @@
   },
   "networkInterfacesPage": {
     "title": "Tarmoq interfeyslari",
-    "info": "Standart holatda Duck barcha mavjud tarmoq interfeyslaridan foydalanadi. Bu yerda keraksiz tarmoqlarni chiqarib tashlashingiz mumkin. Oʻzgarishlarni qoʻllash uchun serverni qayta ishga tushirishingiz kerak.",
+    "info": "Standart holatda Duck Share barcha mavjud tarmoq interfeyslaridan foydalanadi. Bu yerda keraksiz tarmoqlarni chiqarib tashlashingiz mumkin. Oʻzgarishlarni qoʻllash uchun serverni qayta ishga tushirishingiz kerak.",
     "preview": "Oldindan koʻrish",
     "whitelist": "Ruxsat etilganlar roʻyxati",
     "blacklist": "Taqiqlanganlar roʻyxati"
@@ -241,7 +241,7 @@
   "receiveOptionsPage": {
     "title": "Parametrlar",
     "destination": "@:settingsTab.receive.destination",
-    "appDirectory": "(Duck papkasi)",
+    "appDirectory": "(Duck Share papkasi)",
     "saveToGallery": "@:settingsTab.receive.saveToGallery",
     "saveToGalleryOff": "Papkalar mavjud boʻlgani uchun avtomatik oʻchirildi."
   },
@@ -293,16 +293,16 @@
     "autoAccept": "Soʻrovlarni avtomatik qabul qilish",
     "requirePin": "PIN talab qilish",
     "pinHint": "PIN \"{pin}\"",
-    "encryptionHint": "Duck oʻz-oʻzini imzolagan sertifikatdan foydalanadi. Uni brauzeringizda qabul qilishingiz kerak.",
+    "encryptionHint": "Duck Share oʻz-oʻzini imzolagan sertifikatdan foydalanadi. Uni brauzeringizda qabul qilishingiz kerak.",
     "pendingRequests": "Kutilayotgan soʻrovlar: {n}"
   },
   "webReceivePage": {
     "title": "Havola orqali qabul qilish"
   },
   "aboutPage": {
-    "title": "Duck haqida",
+    "title": "Duck Share haqida",
     "description": [
-      "Duck — bu bepul, ochiq manbali ilova boʻlib, u internet ulanishisiz mahalliy tarmoq orqali yaqin atrofdagi qurilmalar bilan fayllar va xabarlarni xavfsiz ulashish imkonini beradi.",
+      "Duck Share — bu bepul, ochiq manbali ilova boʻlib, u internet ulanishisiz mahalliy tarmoq orqali yaqin atrofdagi qurilmalar bilan fayllar va xabarlarni xavfsiz ulashish imkonini beradi.",
       "Ushbu ilova Android, iOS, macOS, Windows va Linuxda mavjud. Barcha yuklab olish variantlarini rasmiy sahifada topishingiz mumkin."
     ],
     "author": "Muallif",
@@ -312,7 +312,7 @@
   },
   "donationPage": {
     "title": "Xayriya",
-    "info": "Duck bepul, ochiq manbali va reklamasiz. Agar ilova sizga yoqqan boʻlsa, xayriya bilan rivojlanishni qoʻllab-quvvatlashingiz mumkin.",
+    "info": "Duck Share bepul, ochiq manbali va reklamasiz. Agar ilova sizga yoqqan boʻlsa, xayriya bilan rivojlanishni qoʻllab-quvvatlashingiz mumkin.",
     "donate": "{amount} xayriya qilish",
     "thanks": "Katta rahmat!",
     "restore": "Xaridni tiklash"
@@ -397,7 +397,7 @@
     },
     "localNetworkUnauthorized": {
       "title": "@:dialogs.noPermission.title",
-      "description": "Duck mahalliy tarmoqni skanerlash ruxsatisiz boshqa qurilmalarni topa olmaydi. Iltimos, ushbu ruxsatni sozlamalarda bering.",
+      "description": "Duck Share mahalliy tarmoqni skanerlash ruxsatisiz boshqa qurilmalarni topa olmaydi. Iltimos, ushbu ruxsatni sozlamalarda bering.",
       "gotoSettings": "Sozlamalar"
     },
     "messageInput": {
@@ -444,7 +444,7 @@
       "title": "Yuborish rejimlari",
       "single": "Fayllarni bitta qabul qiluvchiga yuboradi. Fayl uzatish tugagandan soʻng tanlov tozalanadi.",
       "multiple": "Fayllarni bir nechta qabul qiluvchiga yuboradi. Fayl uzatish tugagandan soʻng tanlov tozalanmaydi.",
-      "link": "Duck oʻrnatilmagan qabul qiluvchilar havolani brauzerlarida ochish orqali tanlangan fayllarni yuklab olishlari mumkin."
+      "link": "Duck Share oʻrnatilmagan qabul qiluvchilar havolani brauzerlarida ochish orqali tanlangan fayllarni yuklab olishlari mumkin."
     },
     "zoom": {
       "title": "URL"

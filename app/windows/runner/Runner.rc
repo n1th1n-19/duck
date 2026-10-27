@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "Tien Do Nam" "\0"
-            VALUE "FileDescription", "Duck" "\0"
+            VALUE "FileDescription", "Duck Share" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "localsend_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2022-2026 Tien Do Nam" "\0"
             VALUE "OriginalFilename", "localsend_app.exe" "\0"
-            VALUE "ProductName", "Duck" "\0"
+            VALUE "ProductName", "Duck Share" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

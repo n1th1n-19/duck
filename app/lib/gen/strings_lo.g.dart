@@ -40,7 +40,7 @@ class TranslationsLo extends Translations with BaseTranslations<AppLocale, Trans
 
   // Translations
   @override
-  String get appName => 'Duck';
+  String get appName => 'Duck Share';
   @override
   late final _Translations$general$lo general = _Translations$general$lo._(_root);
   @override
@@ -291,7 +291,7 @@ class _Translations$networkInterfacesPage$lo extends Translations$networkInterfa
   String get title => 'ອິນເຕີເຟສເຄືອຂ່າຍ';
   @override
   String get info =>
-      'ໂດຍຄ່າເລີ່ມຕົ້ນ Duck ໃຊ້ອິນເຕີເຟສເຄືອຂ່າຍທັງໝົດທີ່ມີ. ທ່ານສາມາດຍົກເວັ້ນເຄືອຂ່າຍທີ່ບໍ່ຕ້ອງການໄດ້ຢູ່ນີ້. ທ່ານຕ້ອງເລີ່ມເຊີບເວີໃໝ່ເພື່ອນຳໃຊ້ການປ່ຽນແປງ.';
+      'ໂດຍຄ່າເລີ່ມຕົ້ນ Duck Share ໃຊ້ອິນເຕີເຟສເຄືອຂ່າຍທັງໝົດທີ່ມີ. ທ່ານສາມາດຍົກເວັ້ນເຄືອຂ່າຍທີ່ບໍ່ຕ້ອງການໄດ້ຢູ່ນີ້. ທ່ານຕ້ອງເລີ່ມເຊີບເວີໃໝ່ເພື່ອນຳໃຊ້ການປ່ຽນແປງ.';
   @override
   String get preview => 'ຕົວຢ່າງ';
   @override
@@ -416,7 +416,7 @@ class _Translations$receiveOptionsPage$lo extends Translations$receiveOptionsPag
   @override
   String get destination => _root.settingsTab.receive.destination;
   @override
-  String get appDirectory => '(ໂຟລເດີ Duck)';
+  String get appDirectory => '(ໂຟລເດີ Duck Share)';
   @override
   String get saveToGallery => _root.settingsTab.receive.saveToGallery;
   @override
@@ -495,7 +495,7 @@ class _Translations$webSharePage$lo extends Translations$webSharePage$en {
   @override
   String pinHint({required Object pin}) => 'PIN ຄື "${pin}"';
   @override
-  String get encryptionHint => 'Duck ໃຊ້ໃບຮັບຮອງທີ່ເຊັນດ້ວຍຕົນເອງ. ທ່ານຕ້ອງຍອມຮັບມັນຢູ່ໃນບຣາວເຊີຂອງທ່ານ.';
+  String get encryptionHint => 'Duck Share ໃຊ້ໃບຮັບຮອງທີ່ເຊັນດ້ວຍຕົນເອງ. ທ່ານຕ້ອງຍອມຮັບມັນຢູ່ໃນບຣາວເຊີຂອງທ່ານ.';
   @override
   String pendingRequests({required Object n}) => 'ຄຳຂໍທີ່ລໍຖ້າ: ${n}';
 }
@@ -519,10 +519,10 @@ class _Translations$aboutPage$lo extends Translations$aboutPage$en {
 
   // Translations
   @override
-  String get title => 'ກ່ຽວກັບ Duck';
+  String get title => 'ກ່ຽວກັບ Duck Share';
   @override
   List<String> get description => [
-    'Duck ເປັນແອັບຟຣີແບບໂອເພັນຊອດ ທີ່ໃຫ້ທ່ານແບ່ງປັນໄຟລ໌ ແລະ ຂໍ້ຄວາມກັບອຸປະກອນໃກ້ຄຽງຜ່ານເຄືອຂ່າຍທ້ອງຖິ່ນຂອງທ່ານໄດ້ຢ່າງປອດໄພ ໂດຍບໍ່ຈຳເປັນຕ້ອງມີການເຊື່ອມຕໍ່ອິນເຕີເນັດ.',
+    'Duck Share ເປັນແອັບຟຣີແບບໂອເພັນຊອດ ທີ່ໃຫ້ທ່ານແບ່ງປັນໄຟລ໌ ແລະ ຂໍ້ຄວາມກັບອຸປະກອນໃກ້ຄຽງຜ່ານເຄືອຂ່າຍທ້ອງຖິ່ນຂອງທ່ານໄດ້ຢ່າງປອດໄພ ໂດຍບໍ່ຈຳເປັນຕ້ອງມີການເຊື່ອມຕໍ່ອິນເຕີເນັດ.',
     'ແອັບນີ້ມີໃຫ້ໃຊ້ໃນ Android, iOS, macOS, Windows ແລະ Linux. ທ່ານສາມາດຊອກຫາທາງເລືອກການດາວໂຫຼດທັງໝົດໄດ້ຢູ່ໜ້າຫຼັກຢ່າງເປັນທາງການ.',
   ];
   @override
@@ -545,7 +545,7 @@ class _Translations$donationPage$lo extends Translations$donationPage$en {
   @override
   String get title => 'ບໍລິຈາກ';
   @override
-  String get info => 'Duck ຟຣີ, ໂອເພັນຊອດ ແລະ ບໍ່ມີໂຄສະນາ. ຖ້າທ່ານມັກແອັບນີ້ ທ່ານສາມາດສະໜັບສະໜູນການພັດທະນາດ້ວຍການບໍລິຈາກ.';
+  String get info => 'Duck Share ຟຣີ, ໂອເພັນຊອດ ແລະ ບໍ່ມີໂຄສະນາ. ຖ້າທ່ານມັກແອັບນີ້ ທ່ານສາມາດສະໜັບສະໜູນການພັດທະນາດ້ວຍການບໍລິຈາກ.';
   @override
   String donate({required Object amount}) => 'ບໍລິຈາກ ${amount}';
   @override
@@ -742,7 +742,7 @@ class _Translations$tray$lo extends Translations$tray$en {
   @override
   String get open => _root.general.open;
   @override
-  String get close => 'ອອກຈາກ Duck';
+  String get close => 'ອອກຈາກ Duck Share';
   @override
   String get closeWindows => 'ອອກ';
 }
@@ -952,7 +952,7 @@ class _Translations$settingsTab$general$lo extends Translations$settingsTab$gene
   @override
   String get launchMinimized => 'ເປີດອັດຕະໂນມັດ: ເລີ່ມແບບເຊື່ອງ';
   @override
-  String get showInContextMenu => 'ສະແດງ Duck ໃນເມນູຄລິກຂວາ';
+  String get showInContextMenu => 'ສະແດງ Duck Share ໃນເມນູຄລິກຂວາ';
   @override
   String get animations => 'ອະນິເມຊັນ';
 }
@@ -1054,7 +1054,7 @@ class _Translations$settingsTab$other$lo extends Translations$settingsTab$other$
   @override
   String get title => 'ອື່ນໆ';
   @override
-  String get support => 'ສະໜັບສະໜູນ Duck';
+  String get support => 'ສະໜັບສະໜູນ Duck Share';
   @override
   String get donate => 'ບໍລິຈາກ';
   @override
@@ -1408,7 +1408,7 @@ class _Translations$dialogs$localNetworkUnauthorized$lo extends Translations$dia
   @override
   String get title => _root.dialogs.noPermission.title;
   @override
-  String get description => 'Duck ບໍ່ສາມາດຄົ້ນຫາອຸປະກອນອື່ນໄດ້ ຫາກບໍ່ໄດ້ຮັບອະນຸຍາດໃຫ້ສະແກນເຄືອຂ່າຍທ້ອງຖິ່ນ. ກະລຸນາອະນຸຍາດສິດນີ້ໃນການຕັ້ງຄ່າ.';
+  String get description => 'Duck Share ບໍ່ສາມາດຄົ້ນຫາອຸປະກອນອື່ນໄດ້ ຫາກບໍ່ໄດ້ຮັບອະນຸຍາດໃຫ້ສະແກນເຄືອຂ່າຍທ້ອງຖິ່ນ. ກະລຸນາອະນຸຍາດສິດນີ້ໃນການຕັ້ງຄ່າ.';
   @override
   String get gotoSettings => 'ການຕັ້ງຄ່າ';
 }
@@ -1550,7 +1550,7 @@ class _Translations$dialogs$sendModeHelp$lo extends Translations$dialogs$sendMod
   @override
   String get multiple => 'ສົ່ງໄຟລ໌ໃຫ້ຜູ້ຮັບຫຼາຍຄົນ. ການເລືອກຈະບໍ່ຖືກລ້າງຫຼັງຈາກການໂອນໄຟລ໌ສຳເລັດ.';
   @override
-  String get link => 'ຜູ້ຮັບທີ່ບໍ່ໄດ້ຕິດຕັ້ງ Duck ສາມາດດາວໂຫຼດໄຟລ໌ທີ່ເລືອກໄດ້ ໂດຍການເປີດລິ້ງໃນບຣາວເຊີ.';
+  String get link => 'ຜູ້ຮັບທີ່ບໍ່ໄດ້ຕິດຕັ້ງ Duck Share ສາມາດດາວໂຫຼດໄຟລ໌ທີ່ເລືອກໄດ້ ໂດຍການເປີດລິ້ງໃນບຣາວເຊີ.';
 }
 
 // Path: dialogs.zoom

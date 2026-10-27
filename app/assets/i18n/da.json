@@ -1,5 +1,5 @@
 {
-  "appName": "Duck",
+  "appName": "Duck Share",
   "general": {
     "accept": "Acceptér",
     "accepted": "Accepteret",
@@ -109,7 +109,7 @@
       "minimizeToTray": "Minimer til systembakken/menulinjen ved lukning",
       "launchAtStartup": "Autostart efter login",
       "launchMinimized": "Autostart: Start skjult",
-      "showInContextMenu": "Vis Duck i kontekstmenu",
+      "showInContextMenu": "Vis Duck Share i kontekstmenu",
       "animations": "Animationer"
     },
     "receive": {
@@ -152,7 +152,7 @@
     },
     "other": {
       "title": "Andet",
-      "support": "Støt Duck",
+      "support": "Støt Duck Share",
       "donate": "Donér",
       "privacyPolicy": "Privatlivspolitik",
       "termsOfUse": "Brugsbetingelser"
@@ -180,7 +180,7 @@
   },
   "networkInterfacesPage": {
     "title": "Netværksgrænseflader",
-    "info": "Som standard bruger Duck alle tilgængelige netværksgrænseflader. Du kan ekskludere uønskede netværk her. Du skal genstarte serveren for at anvende ændringerne.",
+    "info": "Som standard bruger Duck Share alle tilgængelige netværksgrænseflader. Du kan ekskludere uønskede netværk her. Du skal genstarte serveren for at anvende ændringerne.",
     "preview": "Forhåndsvisning",
     "whitelist": "Hvidliste",
     "blacklist": "Sortliste"
@@ -241,7 +241,7 @@
   "receiveOptionsPage": {
     "title": "Muligheder",
     "destination": "@:settingsTab.receive.destination",
-    "appDirectory": "(Duck mappe)",
+    "appDirectory": "(Duck Share mappe)",
     "saveToGallery": "@:settingsTab.receive.saveToGallery",
     "saveToGalleryOff": "Slået fra automatisk, fordi der er mapper."
   },
@@ -293,16 +293,16 @@
     "autoAccept": "Accepter automatisk anmodninger",
     "requirePin": "Kræv PIN-kode",
     "pinHint": "PIN-koden er \"{pin}\"",
-    "encryptionHint": "Duck bruger et selvsigneret certifikat. Du skal acceptere det i din browser.",
+    "encryptionHint": "Duck Share bruger et selvsigneret certifikat. Du skal acceptere det i din browser.",
     "pendingRequests": "Afventende forespørgsler: {n}"
   },
   "webReceivePage": {
     "title": "Modtag via link"
   },
   "aboutPage": {
-    "title": "Om Duck",
+    "title": "Om Duck Share",
     "description": [
-      "Duck er en gratis, open source-app, der lader dig dele filer og beskeder sikkert med enheder i nærheden over dit lokale netværk uden behov for en internetforbindelse.",
+      "Duck Share er en gratis, open source-app, der lader dig dele filer og beskeder sikkert med enheder i nærheden over dit lokale netværk uden behov for en internetforbindelse.",
       "Appen er tilgængelig på Android, iOS, macOS, Windows og Linux. Du finder alle downloadmuligheder på den officielle hjemmeside."
     ],
     "author": "Skaber",
@@ -312,7 +312,7 @@
   },
   "donationPage": {
     "title": "Donér",
-    "info": "Duck er gratis, open source og uden annoncer. Hvis du kan lide appen, kan du støtte udviklingen med en donation.",
+    "info": "Duck Share er gratis, open source og uden annoncer. Hvis du kan lide appen, kan du støtte udviklingen med en donation.",
     "donate": "Donér {amount}",
     "thanks": "Tusind tak for din støtte!",
     "restore": "Gendan køb"
@@ -400,7 +400,7 @@
     },
     "localNetworkUnauthorized": {
       "title": "@:dialogs.noPermission.title",
-      "description": "Duck kan ikke finde andre enheder uden tilladelse til at scanne det lokale netværk. Giv venligst tilladelse i systemindstillingerne.",
+      "description": "Duck Share kan ikke finde andre enheder uden tilladelse til at scanne det lokale netværk. Giv venligst tilladelse i systemindstillingerne.",
       "gotoSettings": "Indstillinger"
     },
     "messageInput": {
@@ -447,7 +447,7 @@
       "title": "Send-tilstande",
       "single": "Sender filer til én modtager. Valget ryddes efter filoverførsel er færdig.",
       "multiple": "Sender filer til flere modtager. Valget ryddes ikke efter filoverførsel er færdig.",
-      "link": "Modtagere, der ikke har Duck installeret, kan hente de valgte filer ved at åbne linket i deres browser."
+      "link": "Modtagere, der ikke har Duck Share installeret, kan hente de valgte filer ved at åbne linket i deres browser."
     },
     "zoom": {
       "title": "URL"
@@ -460,7 +460,7 @@
   "tray": {
     "@info": "Apples retningslinjer er meget strenge angående ordet \"luk\".",
     "open": "@:general.open",
-    "close": "Afslut Duck",
+    "close": "Afslut Duck Share",
     "closeWindows": "Luk"
   },
   "web": {
