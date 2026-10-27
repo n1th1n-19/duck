@@ -45,7 +45,7 @@ jobs:
         run: tar -czvf LocalSend-CLI-${{ needs.build.outputs.version }}-${{ matrix.suffix }}.tar.gz -C target/release localsend-cli
 
       - name: Upload CLI
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: cli-${{ matrix.suffix }}-result
           path: LocalSend-CLI-${{ needs.build.outputs.version }}-${{ matrix.suffix }}.tar.gz
