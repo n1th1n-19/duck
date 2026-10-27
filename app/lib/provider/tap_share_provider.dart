@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/model/cross_file.dart';
 import 'package:localsend_app/model/tap_share_identity.dart';
+import 'package:localsend_app/pages/progress_page.dart';
 import 'package:localsend_app/provider/device_info_provider.dart';
+import 'package:localsend_app/provider/file_transfer_provider.dart';
 import 'package:localsend_app/provider/http_provider.dart';
 import 'package:localsend_app/provider/last_devices.provider.dart';
 import 'package:localsend_app/provider/local_ip_provider.dart';
@@ -17,6 +19,7 @@ import 'package:localsend_app/util/native/channel/android_channel.dart';
 import 'package:localsend_app/util/ui/snackbar.dart';
 import 'package:localsend_app/widget/animations/tap_ripple_overlay.dart';
 import 'package:localsend_isolates/model/device.dart';
+import 'package:localsend_isolates/model/file_status.dart';
 import 'package:localsend_isolates/model/file_type.dart';
 import 'package:localsend_isolates/model/session_status.dart';
 import 'package:localsend_isolates/rust/api/model.dart';
@@ -32,6 +35,7 @@ final _logger = Logger('TapShare');
 /// The receiver may still be starting its server, so keep trying for a while.
 const _registerTimeout = Duration(seconds: 10);
 const _registerRetryInterval = Duration(milliseconds: 500);
+const _sheetProgressInterval = Duration(milliseconds: 300);
 
 class TapShareState {
   /// The device has NFC with host card emulation.
@@ -104,6 +108,13 @@ Future<void> initTapShare(Ref ref) async {
     },
     onEnabledChanged: (enabled) => ref.redux(tapShareProvider).dispatch(_SetStateAction(ref.read(tapShareProvider).copyWith(enabled: enabled))),
     onSendPending: () => unawaited(_runPendingSend(ref)),
+    onOpenSession: (sessionId) {
+      // "Open Duck Share" on the share sheet while it sends: show that transfer.
+      final context = Routerino.navigatorKey.currentContext;
+      if (context != null && ref.read(sendProvider).containsKey(sessionId)) {
+        unawaited(context.push(() => ProgressPage(showAppBar: true, closeSessionOnClose: false, sessionId: sessionId)));
+      }
+    },
   );
 
   // Reading initializes the view providers; later changes are pushed by their onChanged.
@@ -240,7 +251,12 @@ class TapShareSendAction extends AsyncGlobalAction {
     if (fromSheet) {
       // A background session closes itself on success; anything left behind ended otherwise.
       final before = ref.read(sendProvider).keys.toSet();
-      await ref.notifier(sendProvider).startSession(target: device, files: files, background: true);
+      final progress = Timer.periodic(_sheetProgressInterval, (_) => _reportSheetProgress(device.alias, before));
+      try {
+        await ref.notifier(sendProvider).startSession(target: device, files: files, background: true);
+      } finally {
+        progress.cancel();
+      }
       final leftover = ref.read(sendProvider).entries.where((e) => !before.contains(e.key)).map((e) => e.value.status);
       final ok = leftover.every((status) => status == SessionStatus.finished);
       await reportTapShareSendResultAndroid(alias: device.alias, ok: ok);
@@ -250,6 +266,25 @@ class TapShareSendAction extends AsyncGlobalAction {
     // The first tap opens the send page; further taps (more receivers) run in the background.
     final background = ref.read(sendProvider).values.any((s) => !s.background);
     await ref.notifier(sendProvider).startSession(target: device, files: files, background: background);
+  }
+
+  /// Sends the bytes done so far of the session started after [before] to the share sheet.
+  void _reportSheetProgress(String alias, Set<String> before) {
+    final session = ref.read(sendProvider).values.where((s) => !before.contains(s.sessionId)).firstOrNull;
+    if (session == null || session.status != SessionStatus.sending) {
+      return;
+    }
+    final transfer = ref.read(fileTransferProvider);
+    int sent = 0;
+    int total = 0;
+    for (final f in session.files.values) {
+      if (transfer.getStatus(sessionId: session.sessionId, fileId: f.file.id) == FileStatus.skipped) {
+        continue;
+      }
+      total += f.file.size;
+      sent += (transfer.getProgress(sessionId: session.sessionId, fileId: f.file.id) * f.file.size).round();
+    }
+    unawaited(reportTapShareSendProgressAndroid(sessionId: session.sessionId, alias: alias, sent: sent, total: total));
   }
 
   /// Finds the address the receiver answers on. The client is pinned to the fingerprint read over NFC.

@@ -213,7 +213,7 @@ class PersistenceService {
   static Future<void> _initColorSetting(SharedPreferences prefs, bool supportsDynamicColors) async {
     await prefs.setString(
       _colorKey,
-      checkPlatform([TargetPlatform.android]) && supportsDynamicColors ? ColorMode.system.name : ColorMode.localsend.name,
+      ColorMode.localsend.name,
     );
   }
 
@@ -313,9 +313,9 @@ class PersistenceService {
   ColorMode getColorMode() {
     final value = _prefs.getString(_colorKey);
     if (value == null) {
-      return ColorMode.system;
+      return ColorMode.localsend;
     }
-    return ColorMode.values.firstWhereOrNull((color) => color.name == value) ?? ColorMode.system;
+    return ColorMode.values.firstWhereOrNull((color) => color.name == value) ?? ColorMode.localsend;
   }
 
   Future<void> setColorMode(ColorMode color) async {

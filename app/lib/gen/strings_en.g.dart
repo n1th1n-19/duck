@@ -75,6 +75,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$assetPicker$en assetPicker = Translations$assetPicker$en.internal(_root);
   late final Translations$tapShare$en tapShare = Translations$tapShare$en.internal(_root);
   late final Translations$trust$en trust = Translations$trust$en.internal(_root);
+  late final Translations$onboarding$en onboarding = Translations$onboarding$en.internal(_root);
 }
 
 // Path: general
@@ -984,6 +985,8 @@ class Translations$tapShare$en {
 
   /// en: 'Receiving from {alias} failed'
   String receiveFailed({required Object alias}) => 'Receiving from ${alias} failed';
+
+  late final Translations$tapShare$guide$en guide = Translations$tapShare$guide$en.internal(_root);
 }
 
 // Path: trust
@@ -1038,6 +1041,22 @@ class Translations$trust$en {
 
   /// en: 'No blocked devices.'
   String get noBlocked => 'No blocked devices.';
+}
+
+// Path: onboarding
+class Translations$onboarding$en {
+  Translations$onboarding$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+  late final Translations$onboarding$welcome$en welcome = Translations$onboarding$welcome$en.internal(_root);
+  late final Translations$onboarding$spot$en spot = Translations$onboarding$spot$en.internal(_root);
+  late final Translations$onboarding$permissions$en permissions = Translations$onboarding$permissions$en.internal(_root);
+  late final Translations$onboarding$name$en name = Translations$onboarding$name$en.internal(_root);
+
+  /// en: 'Next'
+  String get next => 'Next';
 }
 
 // Path: receiveTab.infoBox
@@ -1927,6 +1946,123 @@ class Translations$dialogs$zoom$en {
 
   /// en: 'URL'
   String get title => 'URL';
+}
+
+// Path: tapShare.guide
+class Translations$tapShare$guide$en {
+  Translations$tapShare$guide$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Where to touch'
+  String get title => 'Where to touch';
+
+  /// en: 'Where is NFC on my phone?'
+  String get open => 'Where is NFC on my phone?';
+
+  /// en: 'Touch the backs of both phones at the blue spot. Hold until they buzz.'
+  String get exact => 'Touch the backs of both phones at the blue spot. Hold until they buzz.';
+
+  /// en: 'NFC is usually in the upper middle of the back. Slide the phones slowly until they buzz.'
+  String get approximate => 'NFC is usually in the upper middle of the back. Slide the phones slowly until they buzz.';
+
+  /// en: 'Back of your phone'
+  String get back => 'Back of your phone';
+}
+
+// Path: onboarding.welcome
+class Translations$onboarding$welcome$en {
+  Translations$onboarding$welcome$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Share files with phones nearby. Just hold them together.'
+  String get text => 'Share files with phones nearby. Just hold them together.';
+
+  /// en: 'Get started'
+  String get start => 'Get started';
+}
+
+// Path: onboarding.spot
+class Translations$onboarding$spot$en {
+  Translations$onboarding$spot$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Your NFC spot'
+  String get title => 'Your NFC spot';
+
+  /// en: 'Detected from your phone. Hold this spot against the other phone's back until both buzz.'
+  String get hint => 'Detected from your phone. Hold this spot against the other phone\'s back until both buzz.';
+}
+
+// Path: onboarding.permissions
+class Translations$onboarding$permissions$en {
+  Translations$onboarding$permissions$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'A few permissions'
+  String get title => 'A few permissions';
+
+  /// en: 'So Duck Share can tell you when files arrive and tap phones together.'
+  String get text => 'So Duck Share can tell you when files arrive and tap phones together.';
+
+  /// en: 'Notifications'
+  String get notifications => 'Notifications';
+
+  /// en: 'Know when a file arrives'
+  String get notificationsHint => 'Know when a file arrives';
+
+  /// en: 'Allow'
+  String get allow => 'Allow';
+
+  /// en: 'NFC'
+  String get nfc => 'NFC';
+
+  /// en: 'Turn on to tap phones together'
+  String get nfcHint => 'Turn on to tap phones together';
+
+  /// en: 'Turn on'
+  String get turnOn => 'Turn on';
+
+  /// en: 'You can change these later in Settings'
+  String get later => 'You can change these later in Settings';
+}
+
+// Path: onboarding.name
+class Translations$onboarding$name$en {
+  Translations$onboarding$name$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Name this phone'
+  String get title => 'Name this phone';
+
+  /// en: 'Others see this name when you share.'
+  String get text => 'Others see this name when you share.';
+
+  /// en: 'Add the Tap to share switch to your Quick Settings, to turn it on or off in one swipe.'
+  String get tileText => 'Add the Tap to share switch to your Quick Settings, to turn it on or off in one swipe.';
+
+  /// en: 'Add to Quick Settings'
+  String get addTile => 'Add to Quick Settings';
+
+  /// en: 'Added to Quick Settings'
+  String get tileAdded => 'Added to Quick Settings';
+
+  /// en: 'Start sharing'
+  String get finish => 'Start sharing';
 }
 
 // Path: settingsTab.general.brightnessOptions

@@ -28,6 +28,7 @@ import 'package:localsend_app/widget/dialogs/text_field_tv.dart';
 import 'package:localsend_app/widget/dialogs/text_field_with_actions.dart';
 import 'package:localsend_app/widget/labeled_checkbox.dart';
 import 'package:localsend_app/widget/local_send_logo.dart';
+import 'package:localsend_app/widget/nfc_spot_guide.dart';
 import 'package:localsend_app/widget/responsive_list_view.dart';
 import 'package:localsend_isolates/constants.dart';
 import 'package:localsend_isolates/model/device.dart';
@@ -176,6 +177,11 @@ class SettingsTab extends StatelessWidget {
                     onChanged: (b) async {
                       await ref.redux(tapShareProvider).dispatchAsync(SetTapShareAutoAcceptAction(b));
                     },
+                  ),
+                  _ButtonEntry(
+                    label: t.tapShare.guide.open,
+                    buttonLabel: t.general.open,
+                    onTap: () async => showNfcSpotGuide(context),
                   ),
                 ],
               ),

@@ -94,6 +94,7 @@ void setTapShareHandlersAndroid({
   required void Function(String senderFingerprint) onTapped,
   required void Function(bool enabled) onEnabledChanged,
   required void Function() onSendPending,
+  required void Function(String sessionId) onOpenSession,
 }) {
   _methodChannel.setMethodCallHandler((call) async {
     switch (call.method) {
@@ -105,6 +106,8 @@ void setTapShareHandlersAndroid({
         onEnabledChanged(call.arguments as bool);
       case 'onTapShareSendPending':
         onSendPending();
+      case 'onTapShareOpenSession':
+        onOpenSession(call.arguments as String);
     }
   });
 }
@@ -115,6 +118,31 @@ Future<String?> takeTapSharePendingSendAndroid() => _methodChannel.invokeMethod<
 /// Tells the share sheet how its send ended.
 Future<void> reportTapShareSendResultAndroid({required String alias, required bool ok}) =>
     _methodChannel.invokeMethod('tapShareSendResult', {'alias': alias, 'ok': ok});
+
+/// Progress of the share sheet send, for the sheet's progress bar.
+Future<void> reportTapShareSendProgressAndroid({required String sessionId, required String alias, required int sent, required int total}) =>
+    _methodChannel.invokeMethod('tapShareSendProgress', {'sessionId': sessionId, 'alias': alias, 'sent': sent, 'total': total});
+
+/// Where the NFC antennas sit (Android 14+): device size and antenna centres in mm,
+/// origin bottom-left as seen from the screen. Null when the phone does not say.
+Future<({Size device, List<Offset> antennas})?> getNfcAntennaAndroid() async {
+  final result = await _methodChannel.invokeMethod<Map>('tapShareGetAntenna');
+  if (result == null) {
+    return null;
+  }
+  final antennas = (result['antennas'] as List).cast<List>().map((a) => Offset((a[0] as num).toDouble(), (a[1] as num).toDouble())).toList();
+  if (antennas.isEmpty) {
+    return null;
+  }
+  return (device: Size((result['width'] as num).toDouble(), (result['height'] as num).toDouble()), antennas: antennas);
+}
+
+Future<bool> isNfcOnAndroid() async => await _methodChannel.invokeMethod<bool>('tapShareIsNfcOn') ?? false;
+
+Future<void> openNfcSettingsAndroid() => _methodChannel.invokeMethod('tapShareOpenNfcSettings');
+
+/// Asks to add the Tap to share Quick Settings tile (Android 13+). True once the tile is there.
+Future<bool> requestTapShareTileAndroid() async => await _methodChannel.invokeMethod<bool>('tapShareRequestTile') ?? false;
 
 /// Returns (available, enabled, autoAccept).
 Future<(bool, bool, bool)> getTapShareStateAndroid() async {

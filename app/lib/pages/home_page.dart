@@ -15,9 +15,9 @@ import 'package:localsend_app/widget/responsive_builder.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 enum HomeTab {
-  receive(Icons.wifi),
-  send(Icons.send),
-  settings(Icons.settings)
+  send(Icons.arrow_upward_rounded),
+  receive(Icons.arrow_downward_rounded),
+  settings(Icons.settings_rounded)
   ;
 
   const HomeTab(this.icon);
@@ -105,81 +105,181 @@ class _HomePageState extends State<HomePage> with Refena {
       },
       child: ResponsiveBuilder(
         builder: (sizingInformation) {
-          return Scaffold(
-            body: Row(
-              children: [
-                if (!sizingInformation.isMobile)
-                  NavigationRail(
-                    selectedIndex: vm.currentTab.index,
-                    onDestinationSelected: (index) => vm.changeTab(HomeTab.values[index]),
-                    extended: sizingInformation.isDesktop,
-                    backgroundColor: Theme.of(context).cardColorWithElevation,
-                    leading: sizingInformation.isDesktop
-                        ? const Column(
-                            children: [
-                              SizedBox(height: 20),
-                              Text(
-                                'Duck Share',
-                                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: 20),
-                            ],
-                          )
-                        : null,
-                    destinations: HomeTab.values.map((tab) {
-                      return NavigationRailDestination(
-                        icon: Icon(tab.icon),
-                        label: Text(tab.label),
-                      );
-                    }).toList(),
-                  ),
-                Expanded(
-                  child: SafeArea(
-                    left: sizingInformation.isMobile,
-                    child: Stack(
-                      children: [
-                        PageView(
-                          controller: vm.controller,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: const [
-                            ReceiveTab(),
-                            SendTab(),
-                            SettingsTab(),
-                          ],
-                        ),
-                        if (_dragAndDropIndicator)
-                          Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+          final settingsOnMobile = sizingInformation.isMobile && vm.currentTab == HomeTab.settings;
+          return PopScope(
+            canPop: !settingsOnMobile,
+            onPopInvokedWithResult: (didPop, _) {
+              if (!didPop) {
+                vm.changeTab(vm.previousTab);
+              }
+            },
+            child: Scaffold(
+              body: Row(
+                children: [
+                  if (!sizingInformation.isMobile)
+                    NavigationRail(
+                      selectedIndex: vm.currentTab.index,
+                      onDestinationSelected: (index) => vm.changeTab(HomeTab.values[index]),
+                      extended: sizingInformation.isDesktop,
+                      backgroundColor: Theme.of(context).cardColorWithElevation,
+                      leading: sizingInformation.isDesktop
+                          ? const Column(
                               children: [
-                                const Icon(Icons.file_download, size: 128),
-                                const SizedBox(height: 30),
-                                Text(t.sendTab.placeItems, style: Theme.of(context).textTheme.titleLarge),
+                                SizedBox(height: 20),
+                                Text(
+                                  'Duck Share',
+                                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 20),
+                              ],
+                            )
+                          : null,
+                      destinations: HomeTab.values.map((tab) {
+                        return NavigationRailDestination(
+                          icon: Icon(tab.icon),
+                          label: Text(tab.label),
+                        );
+                      }).toList(),
+                    ),
+                  Expanded(
+                    child: SafeArea(
+                      left: sizingInformation.isMobile,
+                      child: Column(
+                        children: [
+                          if (sizingInformation.isMobile) _MobileTopBar(vm: vm),
+                          Expanded(
+                            child: Stack(
+                              children: [
+                                PageView(
+                                  controller: vm.controller,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  children: const [
+                                    SendTab(),
+                                    ReceiveTab(),
+                                    SettingsTab(),
+                                  ],
+                                ),
+                                if (_dragAndDropIndicator)
+                                  Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.file_download, size: 128),
+                                        const SizedBox(height: 30),
+                                        Text(t.sendTab.placeItems, style: Theme.of(context).textTheme.titleLarge),
+                                      ],
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
-                      ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              bottomNavigationBar: sizingInformation.isMobile && !settingsOnMobile ? _PillNavigationBar(vm: vm) : null,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Mobile header: the gear opens settings; in settings, back returns to the last tab.
+class _MobileTopBar extends StatelessWidget {
+  final HomePageVm vm;
+
+  const _MobileTopBar({required this.vm});
+
+  @override
+  Widget build(BuildContext context) {
+    final inSettings = vm.currentTab == HomeTab.settings;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Row(
+        children: [
+          if (inSettings)
+            IconButton(
+              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+              icon: const Icon(Icons.arrow_back_rounded),
+              onPressed: () => vm.changeTab(vm.previousTab),
+            ),
+          const Spacer(),
+          if (!inSettings)
+            IconButton(
+              tooltip: t.settingsTab.title,
+              icon: Icon(HomeTab.settings.icon),
+              onPressed: () => vm.changeTab(HomeTab.settings),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Floating full-radius bar with the two main tabs.
+class _PillNavigationBar extends StatelessWidget {
+  final HomePageVm vm;
+
+  const _PillNavigationBar({required this.vm});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return SafeArea(
+      minimum: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: colors.surfaceContainer,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: colors.outlineVariant),
+        ),
+        child: Row(
+          children: [HomeTab.send, HomeTab.receive].map((tab) {
+            final selected = vm.currentTab == tab;
+            return Expanded(
+              child: Semantics(
+                selected: selected,
+                button: true,
+                child: Material(
+                  color: selected ? colors.primaryContainer : Colors.transparent,
+                  shape: const StadiumBorder(),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: () => vm.changeTab(tab),
+                    child: SizedBox(
+                      height: 48,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(tab.icon, size: 22, color: selected ? colors.onPrimaryContainer : colors.onSurfaceVariant),
+                          const SizedBox(width: 8),
+                          Text(
+                            tab.label,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: selected ? colors.onPrimaryContainer : colors.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ],
-            ),
-            bottomNavigationBar: sizingInformation.isMobile
-                ? NavigationBar(
-                    selectedIndex: vm.currentTab.index,
-                    onDestinationSelected: (index) => vm.changeTab(HomeTab.values[index]),
-                    destinations: HomeTab.values.map((tab) {
-                      return NavigationDestination(icon: Icon(tab.icon), label: tab.label);
-                    }).toList(),
-                  )
-                : null,
-          );
-        },
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

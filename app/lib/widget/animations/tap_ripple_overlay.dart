@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -68,23 +67,6 @@ class _RipplePainter extends CustomPainter {
     final maxRadius = size.height * 1.4;
     final t = progress.value;
 
-    // Soft glow along the top edge at the moment of contact.
-    final glow = (1 - t * 2).clamp(0.0, 1.0);
-    if (glow > 0) {
-      canvas.drawRect(
-        Offset.zero & size,
-        Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.center,
-            colors: [
-              color.withValues(alpha: 0.35 * glow),
-              color.withValues(alpha: 0),
-            ],
-          ).createShader(Offset.zero & size),
-      );
-    }
-
     for (var i = 0; i < _waves; i++) {
       final local = ((t - i * _stagger) / (1 - (_waves - 1) * _stagger)).clamp(0.0, 1.0);
       if (local <= 0 || local >= 1) {
@@ -93,21 +75,14 @@ class _RipplePainter extends CustomPainter {
       final eased = Curves.easeOutCubic.transform(local);
       final radius = maxRadius * eased;
       final alpha = 0.9 * (1 - local);
-      final width = 24.0 + 40 * eased;
+      // flat rings, no gradients
       canvas.drawCircle(
         origin,
         radius,
         Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = width
-          ..shader = RadialGradient(
-            colors: [
-              color.withValues(alpha: 0),
-              color.withValues(alpha: alpha),
-              color.withValues(alpha: 0),
-            ],
-            stops: [max(0, (radius - width) / (radius + width)), radius / (radius + width), 1],
-          ).createShader(Rect.fromCircle(center: origin, radius: radius + width)),
+          ..strokeWidth = 4
+          ..color = color.withValues(alpha: alpha),
       );
     }
   }

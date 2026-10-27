@@ -38,6 +38,9 @@ object TapShareState {
     /// Result of a share sheet send (receiver alias, success), for [TapShareActivity].
     var onSendResult: ((String, Boolean) -> Unit)? = null
 
+    /// Progress of a share sheet send (session id, receiver alias, bytes sent, bytes total).
+    var onSendProgress: ((String, String, Long, Long) -> Unit)? = null
+
     /// A tapped sender is auto-accepted when its upload request arrives within this window.
     private const val TAP_ACCEPT_WINDOW_MS = 30_000L
 

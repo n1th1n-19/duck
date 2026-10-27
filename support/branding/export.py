@@ -9,13 +9,13 @@ B, INK, WHITE = duck.BLUE, "#1C1B1F", "#FFFFFF"
 def png(svg, size):
     return Image.open(io.BytesIO(cairosvg.svg2png(bytestring=svg.encode(), output_width=size, output_height=size))).convert("RGBA")
 
-def body(col, scale=1.0, ring=True):
-    return f'<g transform="translate(256 256) scale({scale}) translate(-256 -256)">{duck.mark(col, ring)}</g>'
+def body(col, scale=1.0):
+    return f'<g transform="translate(256 256) scale({scale}) translate(-256 -256)">{duck.mark(col)}</g>'
 
 def wrap(inner):
     return f'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">{inner}</svg>'
 
-def tile(bg, shape="rect", scale=0.78, inset=0, radius=0):
+def tile(bg, shape="rect", scale=0.72, inset=0, radius=0):
     """Brand tile: white mark on blue. inset/radius for macOS-style padded squircle."""
     s = 512 - 2 * inset
     bgel = (f'<circle cx="256" cy="256" r="{s/2}" fill="{bg}"/>' if shape == "circle"
@@ -35,8 +35,8 @@ def save(im, path, rgb=False):
 for n in (512, 256, 128):
     save(png(wrap(body(B)), n), f"assets/img/logo-{n}.png")
 save(png(wrap(body(WHITE)), 512), "assets/img/logo-512-white.png")
-# tray: ring-less mark reads better at 32px
-mark = lambda col: wrap(body(col, 1.35, ring=False))
+# tray: the mark enlarged, so it reads at 32px
+mark = lambda col: wrap(body(col, 1.3))
 save(png(mark(B), 32), "assets/img/logo-32.png")
 save(png(mark(WHITE), 32), "assets/img/logo-32-white.png")
 save(png(mark(INK), 32), "assets/img/logo-32-black.png")

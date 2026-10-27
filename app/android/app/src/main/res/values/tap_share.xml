@@ -7,6 +7,7 @@
     <string name="tap_share_incoming_channel">Incoming transfers</string>
 
     <!-- Share sheet -->
+    <string name="tap_share_tile_label">Tap to share</string>
     <string name="tap_share_sheet_title">Hold near another phone</string>
     <string name="tap_share_sheet_files">%1$d item(s) ready to send</string>
     <string name="tap_share_sheet_sending">Sending to %1$s…</string>
@@ -16,9 +17,19 @@
     <string name="tap_share_sheet_title_sent">Sent</string>
     <string name="tap_share_sheet_title_failed">Couldn\'t send</string>
     <string name="tap_share_sheet_close">Close</string>
+    <string name="tap_share_sheet_hide">Hide</string>
+    <string name="tap_share_sheet_progress">%1$s of %2$s · %3$d%%</string>
+    <string name="tap_share_sheet_hide_hint">Hiding keeps sending. Progress stays in your notifications.</string>
     <string name="tap_share_sheet_open_app">Open Duck Share</string>
 
     <!-- Brand blue, see support/branding/duck.py -->
+    <!-- Duck tokens (light); dark values in values-night/tap_share_colors.xml -->
     <color name="tap_share_accent">#1E6FD9</color>
+    <color name="tap_share_surface">#FFFFFF</color>
+    <color name="tap_share_text">#111114</color>
+    <color name="tap_share_text_2">#5F5F66</color>
+    <color name="tap_share_outline">#E2E2E6</color>
+    <color name="tap_share_container">#E3EDFB</color>
+    <color name="tap_share_on_container">#0B3A78</color>
     <color name="tap_share_error">#D93025</color>
 </resources>

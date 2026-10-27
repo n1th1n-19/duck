@@ -15,6 +15,7 @@ import 'package:localsend_app/provider/network/scan_facade.dart';
 import 'package:localsend_app/provider/network/send_provider.dart';
 import 'package:localsend_app/provider/selection/selected_sending_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/provider/tap_share_provider.dart';
 import 'package:localsend_app/util/favorites.dart';
 import 'package:localsend_app/util/native/file_picker.dart';
 import 'package:localsend_app/util/native/platform_check.dart';
@@ -26,6 +27,7 @@ import 'package:localsend_app/widget/dialogs/send_mode_help_dialog.dart';
 import 'package:localsend_app/widget/file_thumbnail.dart';
 import 'package:localsend_app/widget/list_tile/device_list_tile.dart';
 import 'package:localsend_app/widget/list_tile/device_placeholder_list_tile.dart';
+import 'package:localsend_app/widget/nfc_spot_guide.dart';
 import 'package:localsend_app/widget/opacity_slideshow.dart';
 import 'package:localsend_app/widget/responsive_builder.dart';
 import 'package:localsend_app/widget/responsive_list_view.dart';
@@ -169,6 +171,7 @@ class SendTab extends StatelessWidget {
                   ),
                 ),
               ),
+              if (context.watch(tapShareProvider.select((s) => s.available && s.enabled))) const _TapShareCard(),
             ],
             Row(
               children: [
@@ -279,6 +282,44 @@ class SendTab extends StatelessWidget {
 
 /// A button that opens a popup menu to select [T].
 /// This is used for the scan button and the send mode button.
+/// Tap to share hint: the selection goes to any phone held against this one.
+class _TapShareCard extends StatelessWidget {
+  const _TapShareCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10, left: _horizontalPadding, right: _horizontalPadding),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () async => showNfcSpotGuide(context),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const NfcSpotGuide(height: 80, withCaption: false),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(t.tapShare.title, style: textTheme.titleMedium),
+                    const SizedBox(height: 4),
+                    Text(t.tapShare.description, style: textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                    const SizedBox(height: 4),
+                    Text(t.tapShare.guide.open, style: textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _CircularPopupButton<T> extends StatelessWidget {
   final String tooltip;
   final PopupMenuItemBuilder<T> itemBuilder;

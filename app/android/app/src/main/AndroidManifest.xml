@@ -118,7 +118,7 @@
         <service
             android:name=".TapShareTileService"
             android:icon="@drawable/ic_tap_share"
-            android:label="Tap to share"
+            android:label="@string/tap_share_tile_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
             android:exported="true"
             tools:targetApi="24">

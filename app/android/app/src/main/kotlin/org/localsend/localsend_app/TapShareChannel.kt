@@ -4,10 +4,14 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.StatusBarManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.ContentResolver
 import android.content.Intent
+import android.graphics.drawable.Icon
 import android.net.Uri
+import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Environment
 import android.provider.Settings
@@ -77,6 +81,61 @@ object TapShareChannel {
                 val alias = call.argument<String>("alias") ?: ""
                 val ok = call.argument<Boolean>("ok") ?: false
                 TapShareState.onSendResult?.invoke(alias, ok)
+                result.success(null)
+            }
+
+            "tapShareIsNfcOn" -> result.success(TapShareState.isNfcOn(context))
+
+            "tapShareOpenNfcSettings" -> {
+                context.startActivity(Intent(Settings.ACTION_NFC_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                result.success(null)
+            }
+
+            "tapShareRequestTile" -> {
+                // Android 13+ asks the user to add the tile; older versions need it added by hand.
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                    result.success(false)
+                } else {
+                    context.getSystemService(StatusBarManager::class.java).requestAddTileService(
+                        ComponentName(context, TapShareTileService::class.java),
+                        context.getString(R.string.tap_share_tile_label),
+                        Icon.createWithResource(context, R.drawable.ic_tap_share),
+                        context.mainExecutor,
+                    ) { code ->
+                        result.success(
+                            code == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED ||
+                                code == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED
+                        )
+                    }
+                }
+            }
+
+            "tapShareGetAntenna" -> {
+                // Android 14+ knows where the NFC antenna sits (mm, origin bottom-left, seen from the screen).
+                val info = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    NfcAdapter.getDefaultAdapter(context)?.nfcAntennaInfo
+                } else {
+                    null
+                }
+                result.success(
+                    info?.takeIf { it.deviceWidth > 0 && it.deviceHeight > 0 }?.let {
+                        mapOf(
+                            "width" to it.deviceWidth,
+                            "height" to it.deviceHeight,
+                            "foldable" to it.isDeviceFoldable,
+                            "antennas" to it.availableNfcAntennas.map { a -> listOf(a.locationX, a.locationY) },
+                        )
+                    }
+                )
+            }
+
+            "tapShareSendProgress" -> {
+                TapShareState.onSendProgress?.invoke(
+                    call.argument<String>("sessionId") ?: "",
+                    call.argument<String>("alias") ?: "",
+                    call.argument<Number>("sent")?.toLong() ?: 0,
+                    call.argument<Number>("total")?.toLong() ?: 0,
+                )
                 result.success(null)
             }
 
@@ -151,6 +210,11 @@ object TapShareChannel {
     /// it up itself once tap share is initialized (tapShareTakePendingSend).
     fun notifySendPending() {
         channel?.invokeMethod("onTapShareSendPending", null)
+    }
+
+    /// Opens the progress page of a running share sheet send in the app.
+    fun openSession(sessionId: String) {
+        channel?.invokeMethod("onTapShareOpenSession", sessionId)
     }
 
     /// Shown while no UI is on screen; tapping it opens the app (and a pending receive page).

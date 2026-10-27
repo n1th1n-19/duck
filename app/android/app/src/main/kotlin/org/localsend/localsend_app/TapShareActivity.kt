@@ -7,7 +7,10 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.util.Log
+import android.text.format.Formatter
+import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import org.json.JSONArray
 import org.json.JSONObject
@@ -16,19 +19,26 @@ private const val TAG = "TapShare"
 
 /**
  * Share target: "Hold near another phone". Sends the shared items to the tapped phone
- * without opening the app. "Open Duck" hands the share to [MainActivity] as before.
+ * without opening the app. "Open Duck Share" hands the share to [MainActivity], or shows the
+ * running transfer there.
  *
- * Stays open until closed, so further phones can be tapped and the content URI grants
- * of the share (which live with this activity) stay valid during the transfer.
+ * Stays open until closed, so further phones can be tapped. The content URI grants of the share
+ * live with this activity, so while sending, closing only hides it; it finishes after the send.
  */
 class TapShareActivity : Activity() {
     private lateinit var reader: TapShareReader
     private lateinit var status: TextView
     private lateinit var title: TextView
     private lateinit var ripple: TapRippleView
+    private lateinit var progress: ProgressBar
+    private lateinit var hint: TextView
+    private lateinit var close: Button
 
     /// The share's content URI grants live with this activity, so it must stay while sending.
     private var sending = false
+
+    /// Send session of the current transfer, reported by Dart with the first progress.
+    private var sessionId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,19 +55,45 @@ class TapShareActivity : Activity() {
         status = findViewById(R.id.status)
         title = findViewById(R.id.title)
         ripple = findViewById(R.id.ripple)
+        progress = findViewById(R.id.progress)
+        hint = findViewById(R.id.hint)
+        close = findViewById(R.id.close)
         status.text = getString(R.string.tap_share_sheet_files, items)
-        findViewById<Button>(R.id.close).setOnClickListener { finish() }
+        close.setOnClickListener { dismiss() }
         findViewById<Button>(R.id.open_app).setOnClickListener { openApp() }
-        findViewById<android.view.View>(R.id.scrim).setOnClickListener { finish() }
+        findViewById<View>(R.id.scrim).setOnClickListener { dismiss() }
+
+        TapShareState.onSendProgress = { id, alias, sent, total ->
+            runOnUiThread {
+                if (sending) {
+                    sessionId = id
+                    progress.isIndeterminate = total <= 0
+                    if (total > 0) {
+                        progress.progress = (sent * 1000 / total).toInt()
+                        status.text = getString(
+                            R.string.tap_share_sheet_progress,
+                            Formatter.formatShortFileSize(this, sent),
+                            Formatter.formatShortFileSize(this, total),
+                            (sent * 100 / total).toInt(),
+                        )
+                    }
+                    title.text = getString(R.string.tap_share_sheet_sending, alias)
+                }
+            }
+        }
 
         TapShareState.onSendResult = { alias, ok ->
             runOnUiThread {
-                sending = false
+                setSending(false)
                 TapShareFeedback.vibrate(this, if (ok) TapShareFeedback.Kind.SUCCESS else TapShareFeedback.Kind.FAILURE)
-                ripple.visibility = android.view.View.INVISIBLE
+                ripple.visibility = View.INVISIBLE
                 title.setText(if (ok) R.string.tap_share_sheet_title_sent else R.string.tap_share_sheet_title_failed)
                 title.setTextColor(getColor(if (ok) R.color.tap_share_accent else R.color.tap_share_error))
                 status.text = getString(if (ok) R.string.tap_share_sheet_sent else R.string.tap_share_sheet_failed, alias)
+                if (stopped) {
+                    // Hidden while sending: nothing left to show, the notification has the result.
+                    finish()
+                }
             }
         }
 
@@ -89,9 +125,9 @@ class TapShareActivity : Activity() {
             return
         }
         val items = sharedUris().size + if (sharedText() != null) 1 else 0
-        ripple.visibility = android.view.View.VISIBLE
+        ripple.visibility = View.VISIBLE
         title.setText(R.string.tap_share_sheet_title)
-        title.setTextColor(status.currentTextColor)
+        title.setTextColor(getColor(R.color.tap_share_text))
         status.text = getString(R.string.tap_share_sheet_files, items)
     }
 
@@ -105,24 +141,59 @@ class TapShareActivity : Activity() {
     /// Left without sending: close, so no hidden sheet keeps NFC in reader mode.
     override fun onStop() {
         super.onStop()
+        stopped = true
         if (!sending && !isChangingConfigurations) {
             finish()
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        stopped = false
+    }
+
     override fun onDestroy() {
         TapShareState.onSendResult = null
+        TapShareState.onSendProgress = null
         super.onDestroy()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        dismiss()
+    }
+
+    /// Hidden mid-send (Hide, back or home), so the result closes the sheet.
+    private var stopped = false
+
+    /// Close, or only hide while sending: finishing would revoke the share's URI grants.
+    private fun dismiss() {
+        if (sending) {
+            moveTaskToBack(true)
+        } else {
+            finish()
+        }
+    }
+
+    private fun setSending(value: Boolean) {
+        sending = value
+        if (!value) {
+            sessionId = null
+        }
+        progress.visibility = if (value) View.VISIBLE else View.GONE
+        progress.isIndeterminate = true
+        hint.visibility = progress.visibility
+        close.setText(if (value) R.string.tap_share_sheet_hide else R.string.tap_share_sheet_close)
     }
 
     private fun onRead(identity: String) {
         val alias = JSONObject(identity).optString("a")
         TapShareFeedback.vibrate(this, TapShareFeedback.Kind.TAP)
-        sending = true
+        setSending(true)
         // A further phone after a finished send: back to the waiting look.
-        ripple.visibility = android.view.View.VISIBLE
+        ripple.visibility = View.VISIBLE
         title.setText(R.string.tap_share_sheet_title_sending)
-        title.setTextColor(status.currentTextColor)
+        title.setTextColor(getColor(R.color.tap_share_text))
         status.text = getString(R.string.tap_share_sheet_sending, alias)
 
         val files = JSONArray()
@@ -139,6 +210,14 @@ class TapShareActivity : Activity() {
     }
 
     private fun openApp() {
+        val id = sessionId
+        if (sending && id != null) {
+            // Show this transfer in the app; the sheet only hides, it must outlive the send.
+            TapShareChannel.openSession(id)
+            startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            moveTaskToBack(true)
+            return
+        }
         startActivity(
             Intent(intent)
                 .setClass(this, MainActivity::class.java)

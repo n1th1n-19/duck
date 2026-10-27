@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="tap_share_accent">#4C8DF0</color>
+    <color name="tap_share_error">#F2675C</color>
+    <color name="tap_share_surface">#1A1A1D</color>
+    <color name="tap_share_text">#F2F2F4</color>
+    <color name="tap_share_text_2">#A4A4AC</color>
+    <color name="tap_share_outline">#2E2E33</color>
+    <color name="tap_share_container">#16304F</color>
+    <color name="tap_share_on_container">#CFE0FA</color>
+</resources>

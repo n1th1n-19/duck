@@ -588,7 +588,14 @@
       "one": "Received a file from {alias}",
       "other": "Received {n} files from {alias}"
     },
-    "receiveFailed": "Receiving from {alias} failed"
+    "receiveFailed": "Receiving from {alias} failed",
+    "guide": {
+      "title": "Where to touch",
+      "open": "Where is NFC on my phone?",
+      "exact": "Touch the backs of both phones at the blue spot. Hold until they buzz.",
+      "approximate": "NFC is usually in the upper middle of the back. Slide the phones slowly until they buzz.",
+      "back": "Back of your phone"
+    }
   },
   "trust": {
     "question": "Trust {alias}?",
@@ -606,5 +613,35 @@
     "blockedDevices": "Blocked devices",
     "noTrusted": "No trusted devices yet. Choose \"Always allow\" when a device sends to you.",
     "noBlocked": "No blocked devices."
+  },
+  "onboarding": {
+    "welcome": {
+      "text": "Share files with phones nearby. Just hold them together.",
+      "start": "Get started"
+    },
+    "spot": {
+      "title": "Your NFC spot",
+      "hint": "Detected from your phone. Hold this spot against the other phone's back until both buzz."
+    },
+    "permissions": {
+      "title": "A few permissions",
+      "text": "So Duck Share can tell you when files arrive and tap phones together.",
+      "notifications": "Notifications",
+      "notificationsHint": "Know when a file arrives",
+      "allow": "Allow",
+      "nfc": "NFC",
+      "nfcHint": "Turn on to tap phones together",
+      "turnOn": "Turn on",
+      "later": "You can change these later in Settings"
+    },
+    "name": {
+      "title": "Name this phone",
+      "text": "Others see this name when you share.",
+      "tileText": "Add the Tap to share switch to your Quick Settings, to turn it on or off in one swipe.",
+      "addTile": "Add to Quick Settings",
+      "tileAdded": "Added to Quick Settings",
+      "finish": "Start sharing"
+    },
+    "next": "Next"
   }
 }
