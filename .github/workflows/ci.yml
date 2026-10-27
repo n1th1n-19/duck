@@ -57,10 +57,10 @@ jobs:
       - name: Test (app)
         working-directory: app
         run: flutter test
-      - name: Dependencies (localsend_isolates)
+      - name: Dependencies (isolates)
         working-directory: packages/localsend_isolates
         run: flutter pub get
-      - name: Test (localsend_isolates)
+      - name: Test (isolates)
         working-directory: packages/localsend_isolates
         run: flutter test
 
