@@ -5,7 +5,9 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.ContentResolver
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.Settings
@@ -25,8 +27,11 @@ private const val INCOMING_NOTIFICATION_ID = 7301
  */
 object TapShareChannel {
     /// Wires the channel and the tap callbacks to [engine]. Called again when the activity detaches.
+    private var channel: MethodChannel? = null
+
     fun install(context: Context, engine: FlutterEngine) {
         val channel = MethodChannel(engine.dartExecutor.binaryMessenger, CHANNEL)
+        this.channel = channel
         TapShareState.onTapped = { fingerprint -> channel.invokeMethod("onTapShareTapped", fingerprint) }
         TapShareState.onEnabledChanged = { enabled -> channel.invokeMethod("onTapShareEnabledChanged", enabled) }
         channel.setMethodCallHandler { call, result -> handle(context, call, result) }
@@ -62,10 +67,24 @@ object TapShareChannel {
             // The reader needs an activity; without one this phone can only receive.
             "tapShareSetSender" -> result.success(null)
 
+            "tapShareTakePendingSend" -> {
+                result.success(TapShareState.pendingSend)
+                TapShareState.pendingSend = null
+            }
+
+            "tapShareSendResult" -> {
+                val alias = call.argument<String>("alias") ?: ""
+                val ok = call.argument<Boolean>("ok") ?: false
+                TapShareState.onSendResult?.invoke(alias, ok)
+                result.success(null)
+            }
+
             "tapShareNotifyIncoming" -> {
                 notifyIncoming(context, call.arguments as String)
                 result.success(null)
             }
+
+            "getFileDescriptor" -> getFileDescriptor(context, call, result)
 
             "getDownloadsDirectory" -> result.success(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
@@ -80,6 +99,45 @@ object TapShareChannel {
 
             else -> result.notImplemented()
         }
+    }
+
+    /// Opens a content URI for Rust (hashing and upload). Headless too, e.g. for files from the share sheet.
+    private fun getFileDescriptor(context: Context, call: MethodCall, result: MethodChannel.Result) {
+        val uriString = call.argument<String>("uri")
+        if (uriString == null) {
+            result.error("INVALID_ARGUMENT", "Missing content URI", null)
+            return
+        }
+
+        val uri = Uri.parse(uriString)
+        if (uri.scheme != ContentResolver.SCHEME_CONTENT) {
+            result.error("INVALID_ARGUMENT", "Expected a content:// URI", null)
+            return
+        }
+
+        try {
+            val parcelFileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
+            if (parcelFileDescriptor == null) {
+                result.error("OPEN_FAILED", "The content provider did not return a file descriptor", null)
+                return
+            }
+
+            // Ownership of the detached descriptor is transferred to the caller. It must be
+            // closed by Rust (or whichever native consumer receives it) after use.
+            parcelFileDescriptor.use {
+                result.success(it.detachFd())
+            }
+        } catch (e: SecurityException) {
+            result.error("PERMISSION_DENIED", e.message ?: "Permission denied for content URI", null)
+        } catch (e: Exception) {
+            result.error("OPEN_FAILED", e.message ?: "Failed to open content URI", null)
+        }
+    }
+
+    /// Tells Dart a share sheet send is waiting. A Dart side that is still booting picks
+    /// it up itself once tap share is initialized (tapShareTakePendingSend).
+    fun notifySendPending() {
+        channel?.invokeMethod("onTapShareSendPending", null)
     }
 
     /// A request arrived while no UI is shown: tapping the notification opens the receive page.

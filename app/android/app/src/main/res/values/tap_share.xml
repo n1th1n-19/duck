@@ -5,4 +5,16 @@
     <string name="tap_share_ready_channel">Tap to share</string>
     <string name="tap_share_ready">Ready to receive</string>
     <string name="tap_share_incoming_channel">Incoming transfers</string>
+
+    <!-- Share sheet -->
+    <string name="tap_share_sheet_title">Hold near another phone</string>
+    <string name="tap_share_sheet_files">%1$d item(s) ready to send</string>
+    <string name="tap_share_sheet_sending">Sending to %1$s…</string>
+    <string name="tap_share_sheet_sent">Sent to %1$s. Tap another phone or close.</string>
+    <string name="tap_share_sheet_failed">Could not send to %1$s. Are both phones on the same Wi-Fi?</string>
+    <string name="tap_share_sheet_close">Close</string>
+    <string name="tap_share_sheet_open_app">Open Duck</string>
+
+    <!-- Brand blue, see support/branding/duck.py -->
+    <color name="tap_share_accent">#1E6FD9</color>
 </resources>

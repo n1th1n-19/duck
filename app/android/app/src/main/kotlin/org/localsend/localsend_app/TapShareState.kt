@@ -31,6 +31,13 @@ object TapShareState {
     /// Called when [setEnabled] changed the value, so the Flutter toggle can follow the tile.
     var onEnabledChanged: ((Boolean) -> Unit)? = null
 
+    /// Share sheet send waiting for Dart: JSON {identity, files: [{uri, name, size}], text}.
+    @Volatile
+    var pendingSend: String? = null
+
+    /// Result of a share sheet send (receiver alias, success), for [TapShareActivity].
+    var onSendResult: ((String, Boolean) -> Unit)? = null
+
     /// A tapped sender is auto-accepted when its upload request arrives within this window.
     private const val TAP_ACCEPT_WINDOW_MS = 30_000L
 

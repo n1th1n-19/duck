@@ -93,6 +93,7 @@ void setTapShareHandlersAndroid({
   required void Function(String identityJson) onRead,
   required void Function(String senderFingerprint) onTapped,
   required void Function(bool enabled) onEnabledChanged,
+  required void Function() onSendPending,
 }) {
   _methodChannel.setMethodCallHandler((call) async {
     switch (call.method) {
@@ -102,9 +103,18 @@ void setTapShareHandlersAndroid({
         onTapped(call.arguments as String);
       case 'onTapShareEnabledChanged':
         onEnabledChanged(call.arguments as bool);
+      case 'onTapShareSendPending':
+        onSendPending();
     }
   });
 }
+
+/// The send the share sheet (TapShareActivity) is waiting for, as JSON {identity, files, text}, or null.
+Future<String?> takeTapSharePendingSendAndroid() => _methodChannel.invokeMethod<String>('tapShareTakePendingSend');
+
+/// Tells the share sheet how its send ended.
+Future<void> reportTapShareSendResultAndroid({required String alias, required bool ok}) =>
+    _methodChannel.invokeMethod('tapShareSendResult', {'alias': alias, 'ok': ok});
 
 /// Returns (available, enabled, autoAccept).
 Future<(bool, bool, bool)> getTapShareStateAndroid() async {

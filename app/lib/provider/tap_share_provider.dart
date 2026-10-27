@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:localsend_app/gen/strings.g.dart';
+import 'package:localsend_app/model/cross_file.dart';
 import 'package:localsend_app/model/tap_share_identity.dart';
 import 'package:localsend_app/provider/device_info_provider.dart';
 import 'package:localsend_app/provider/http_provider.dart';
@@ -15,11 +17,15 @@ import 'package:localsend_app/util/native/channel/android_channel.dart';
 import 'package:localsend_app/util/ui/snackbar.dart';
 import 'package:localsend_app/widget/animations/tap_ripple_overlay.dart';
 import 'package:localsend_isolates/model/device.dart';
+import 'package:localsend_isolates/model/file_type.dart';
+import 'package:localsend_isolates/model/session_status.dart';
 import 'package:localsend_isolates/rust/api/model.dart';
+import 'package:localsend_isolates/util/file_path_helper.dart';
 import 'package:localsend_isolates/util/rust.dart';
 import 'package:logging/logging.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 import 'package:routerino/routerino.dart';
+import 'package:uuid/uuid.dart';
 
 final _logger = Logger('TapShare');
 
@@ -97,11 +103,55 @@ Future<void> initTapShare(Ref ref) async {
       showTapRipple(Routerino.navigatorKey.currentContext);
     },
     onEnabledChanged: (enabled) => ref.redux(tapShareProvider).dispatch(_SetStateAction(ref.read(tapShareProvider).copyWith(enabled: enabled))),
+    onSendPending: () => unawaited(_runPendingSend(ref)),
   );
 
   // Reading initializes the view providers; later changes are pushed by their onChanged.
   await setTapShareIdentityAndroid(ref.read(_identityProvider));
   await setTapShareSenderAndroid(ref.read(_senderProvider));
+
+  // The share sheet may have read a phone while this engine was still booting.
+  await _runPendingSend(ref);
+}
+
+/// Sends what the share sheet (TapShareActivity) handed over, without any UI.
+Future<void> _runPendingSend(Ref ref) async {
+  final json = await takeTapSharePendingSendAndroid();
+  if (json == null) {
+    return;
+  }
+  final map = jsonDecode(json) as Map<String, dynamic>;
+  final files = [
+    for (final f in (map['files'] as List).cast<Map<String, dynamic>>())
+      CrossFile(
+        name: f['name'] as String,
+        fileType: (f['name'] as String).guessFileType(),
+        size: f['size'] as int,
+        thumbnail: null,
+        asset: null,
+        path: f['uri'] as String,
+        bytes: null,
+        lastModified: null,
+        lastAccessed: null,
+      ),
+    if (map['text'] case final String text) _textFile(text),
+  ];
+  await ref.global.dispatchAsync(TapShareSendAction(TapShareIdentity.decode(map['identity'] as String), sheetFiles: files));
+}
+
+CrossFile _textFile(String text) {
+  final bytes = utf8.encode(text);
+  return CrossFile(
+    name: '${const Uuid().v4()}.txt',
+    fileType: FileType.text,
+    size: bytes.length,
+    thumbnail: null,
+    asset: null,
+    path: null,
+    bytes: bytes,
+    lastModified: null,
+    lastAccessed: null,
+  );
 }
 
 class _SetStateAction extends ReduxAction<TapShareService, TapShareState> {
@@ -151,23 +201,33 @@ Future<bool> isRecentlyTappedSender(Ref ref, String senderFingerprint) async {
 class TapShareSendAction extends AsyncGlobalAction {
   final TapShareIdentity identity;
 
-  TapShareSendAction(this.identity);
+  /// Files from the share sheet; null sends the selection of the send tab.
+  final List<CrossFile>? sheetFiles;
+
+  TapShareSendAction(this.identity, {this.sheetFiles});
 
   @override
   Future<void> reduce() async {
-    final files = ref.read(selectedSendingFilesProvider);
+    final fromSheet = sheetFiles != null;
+    final List<CrossFile> files = sheetFiles ?? ref.read(selectedSendingFilesProvider);
     if (files.isEmpty) {
       return;
     }
-    unawaited(HapticFeedback.heavyImpact());
-    showTapRipple(Routerino.navigatorKey.currentContext);
+    // The share sheet shows its own status; the app UI is not on screen then.
+    if (!fromSheet) {
+      unawaited(HapticFeedback.heavyImpact());
+      showTapRipple(Routerino.navigatorKey.currentContext);
+    }
 
     final device = await _register();
-    // Fresh after the await; null while no UI exists.
-    final context = Routerino.navigatorKey.currentContext;
+    // Fresh after the await; null while no UI is on screen.
+    final context = fromSheet ? null : visibleUiContext;
     if (device == null) {
       if (context != null && context.mounted) {
         context.showSnackBar(t.tapShare.unreachable(alias: identity.alias));
+      }
+      if (fromSheet) {
+        await reportTapShareSendResultAndroid(alias: identity.alias, ok: false);
       }
       return;
     }
@@ -175,6 +235,16 @@ class TapShareSendAction extends AsyncGlobalAction {
     ref.redux(lastDevicesProvider).dispatch(AddLastDeviceAction(device));
     if (context != null && context.mounted) {
       context.showSnackBar(t.tapShare.sending(alias: device.alias));
+    }
+
+    if (fromSheet) {
+      // A background session closes itself on success; anything left behind ended otherwise.
+      final before = ref.read(sendProvider).keys.toSet();
+      await ref.notifier(sendProvider).startSession(target: device, files: files, background: true);
+      final leftover = ref.read(sendProvider).entries.where((e) => !before.contains(e.key)).map((e) => e.value.status);
+      final ok = leftover.every((status) => status == SessionStatus.finished);
+      await reportTapShareSendResultAndroid(alias: device.alias, ok: ok);
+      return;
     }
 
     // The first tap opens the send page; further taps (more receivers) run in the background.

@@ -67,7 +67,17 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
             </intent-filter>
 
-            <!-- localsend: Receive share intent (share_handler) -->
+            <!-- localsend: share intents arrive via TapShareActivity, which forwards them here (share_handler). -->
+        </activity>
+
+        <!-- Share target "Hold near another phone": sends without opening the app, or forwards
+             the share to MainActivity when tap share is off or unavailable. -->
+        <activity
+            android:name=".TapShareActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/TapShareTheme">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -78,7 +88,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="*/*" />
             </intent-filter>
-
         </activity>
 
         <!-- Quick tile to launch the app -->

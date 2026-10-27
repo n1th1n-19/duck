@@ -277,13 +277,17 @@ class SendNotifier extends Notifier<Map<String, SendSessionState>> {
               // wait until animation is finished
               await sleepAsync(500);
 
-              pin = await showDialog<String>(
-                context: Routerino.context, // ignore: use_build_context_synchronously
-                builder: (_) => PinDialog(
-                  obscureText: true,
-                  showInvalidPin: !pinFirstAttempt,
-                ),
-              );
+              // No UI (headless send from the share sheet): nobody can enter a PIN.
+              final pinContext = Routerino.navigatorKey.currentContext;
+              pin = pinContext == null
+                  ? null
+                  : await showDialog<String>(
+                      context: pinContext, // ignore: use_build_context_synchronously
+                      builder: (_) => PinDialog(
+                        obscureText: true,
+                        showInvalidPin: !pinFirstAttempt,
+                      ),
+                    );
 
               pinFirstAttempt = false;
 

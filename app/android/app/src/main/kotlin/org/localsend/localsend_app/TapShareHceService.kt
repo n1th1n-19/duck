@@ -58,7 +58,8 @@ class TapShareHceService : HostApduService() {
         Handler(Looper.getMainLooper()).post {
             TapShareState.onTapped?.invoke(senderFingerprint)
             // App closed or in the background: boot the server and keep the process awake for the upload.
-            if (!MainActivity.isVisible) {
+            // Not from a locked phone: such a tap is never auto-accepted, so it must not expose the server.
+            if (unlocked && !MainActivity.isVisible) {
                 TapShareWakeService.start(this)
             }
         }

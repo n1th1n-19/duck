@@ -74,7 +74,7 @@ class ReceiveController {
   void Function()? _pendingReceivePage;
 
   /// Null while the engine runs headless (started by a tap while the app was closed).
-  BuildContext? get _uiContext => Routerino.navigatorKey.currentContext;
+  BuildContext? get _uiContext => visibleUiContext;
 
   /// A sender requests to upload files.
   /// The Rust server already checked the PIN and enforces that only one

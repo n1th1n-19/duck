@@ -135,8 +135,6 @@ class MainActivity : FlutterActivity() {
 
                 "createDirectory" -> handleCreateDirectory(call, result)
 
-                "getFileDescriptor" -> handleGetFileDescriptor(call, result)
-
                 "createFile" -> handleCreateFile(call, result)
 
                 "openFileForWriting" -> handleOpenFileForWriting(call, result)
@@ -187,37 +185,6 @@ class MainActivity : FlutterActivity() {
 
     /// Absolute path of the shared "Download" directory (usually /storage/emulated/0/Download).
     @Suppress("DEPRECATION")
-    private fun handleGetFileDescriptor(call: MethodCall, result: MethodChannel.Result) {
-        val uriString = call.argument<String>("uri")
-        if (uriString == null) {
-            result.error("INVALID_ARGUMENT", "Missing content URI", null)
-            return
-        }
-
-        val uri = Uri.parse(uriString)
-        if (uri.scheme != ContentResolver.SCHEME_CONTENT) {
-            result.error("INVALID_ARGUMENT", "Expected a content:// URI", null)
-            return
-        }
-
-        try {
-            val parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "r")
-            if (parcelFileDescriptor == null) {
-                result.error("OPEN_FAILED", "The content provider did not return a file descriptor", null)
-                return
-            }
-
-            // Ownership of the detached descriptor is transferred to the caller. It must be
-            // closed by Rust (or whichever native consumer receives it) after use.
-            parcelFileDescriptor.use {
-                result.success(it.detachFd())
-            }
-        } catch (e: SecurityException) {
-            result.error("PERMISSION_DENIED", e.message ?: "Permission denied for content URI", null)
-        } catch (e: Exception) {
-            result.error("OPEN_FAILED", e.message ?: "Failed to open content URI", null)
-        }
-    }
 
     /// Creates a new file inside a SAF directory and opens it for writing.
     ///
