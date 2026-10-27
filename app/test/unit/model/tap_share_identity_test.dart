@@ -17,6 +17,15 @@ void main() {
     expect(decoded.ips, ['192.168.1.2']);
   });
 
+  test('only accepts local network addresses', () {
+    for (final ip in ['192.168.1.2', '10.0.0.1', '172.20.1.1', '169.254.3.4', '100.91.5.171', 'fe80::1%3', 'fd12::1']) {
+      expect(isLanAddress(ip), true, reason: ip);
+    }
+    for (final ip in ['8.8.8.8', '172.32.0.1', '127.0.0.1', '2001:db8::1', 'example.com', '']) {
+      expect(isLanAddress(ip), false, reason: ip);
+    }
+  });
+
   test('fits into one APDU with a long alias and many addresses', () {
     final identity = TapShareIdentity(
       alias: '😀 Very long device name ' * 10,

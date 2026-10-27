@@ -31,13 +31,12 @@ object TapShareState {
     /// Called when [setEnabled] changed the value, so the Flutter toggle can follow the tile.
     var onEnabledChanged: ((Boolean) -> Unit)? = null
 
-    @Volatile
-    var lastTappedFingerprint: String? = null
-        private set
+    /// A tapped sender is auto-accepted when its upload request arrives within this window.
+    private const val TAP_ACCEPT_WINDOW_MS = 30_000L
 
-    @Volatile
-    var lastTappedAt: Long = 0
-        private set
+    private var lastTappedFingerprint: String? = null
+    private var lastTappedAt: Long = 0
+    private var lastTapUnlocked = false
 
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
@@ -78,8 +77,22 @@ object TapShareState {
         prefs(context).edit().putString(KEY_IDENTITY, json).apply()
     }
 
-    fun recordTap(fingerprint: String) {
+    /// [unlocked]: a tap on a locked phone (e.g. in a pocket) is answered but never auto-accepted.
+    @Synchronized
+    fun recordTap(fingerprint: String, unlocked: Boolean) {
         lastTappedFingerprint = fingerprint
         lastTappedAt = System.currentTimeMillis()
+        lastTapUnlocked = unlocked
+    }
+
+    /// Whether an upload from [fingerprint] may skip the prompt. Single use: a match clears the tap.
+    @Synchronized
+    fun consumeTap(fingerprint: String): Boolean {
+        if (fingerprint != lastTappedFingerprint) {
+            return false
+        }
+        val ok = lastTapUnlocked && System.currentTimeMillis() - lastTappedAt < TAP_ACCEPT_WINDOW_MS
+        lastTappedFingerprint = null
+        return ok
     }
 }

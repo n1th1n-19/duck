@@ -185,11 +185,8 @@ class MainActivity : FlutterActivity() {
                     result.success(null)
                 }
 
-                "tapShareLastTap" -> {
-                    val fingerprint = TapShareState.lastTappedFingerprint
-                    result.success(
-                        if (fingerprint == null) null else mapOf("fingerprint" to fingerprint, "at" to TapShareState.lastTappedAt)
-                    )
+                "tapShareConsumeTap" -> {
+                    result.success(TapShareState.consumeTap(call.arguments as String))
                 }
 
                 else -> result.notImplemented()

@@ -122,13 +122,9 @@ Future<void> setTapShareIdentityAndroid(String? identityJson) => _methodChannel.
 /// Enables NFC reader mode (this phone sends) with our fingerprint, or disables it with null.
 Future<void> setTapShareSenderAndroid(String? fingerprint) => _methodChannel.invokeMethod('tapShareSetSender', fingerprint);
 
-/// The fingerprint of the last phone that tapped us and when, or null.
-Future<(String, DateTime)?> getTapShareLastTapAndroid() async {
-  final result = await _methodChannel.invokeMethod<Map>('tapShareLastTap');
-  if (result == null) {
-    return null;
-  }
-  return (result['fingerprint'] as String, DateTime.fromMillisecondsSinceEpoch(result['at'] as int));
+/// Whether [fingerprint] tapped this (unlocked) phone moments ago. Single use: a match clears the tap.
+Future<bool> consumeTapShareTapAndroid(String fingerprint) async {
+  return await _methodChannel.invokeMethod<bool>('tapShareConsumeTap', fingerprint) ?? false;
 }
 
 @MappableClass()

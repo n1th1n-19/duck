@@ -1,4 +1,22 @@
 import 'dart:convert';
+import 'dart:io';
+
+/// Private, link-local or CGNAT (e.g. Tailscale) address. Anything else is not "the phone next to me".
+bool isLanAddress(String ip) {
+  final addr = InternetAddress.tryParse(ip.split('%').first);
+  if (addr == null) {
+    return false;
+  }
+  final b = addr.rawAddress;
+  if (addr.type == InternetAddressType.IPv4) {
+    return b[0] == 10 ||
+        (b[0] == 172 && b[1] >= 16 && b[1] <= 31) ||
+        (b[0] == 192 && b[1] == 168) ||
+        (b[0] == 169 && b[1] == 254) ||
+        (b[0] == 100 && b[1] >= 64 && b[1] <= 127);
+  }
+  return (b[0] == 0xFE && (b[1] & 0xC0) == 0x80) || (b[0] & 0xFE) == 0xFC; // fe80::/10, fc00::/7
+}
 
 /// The identity a receiver hands out over NFC on "Tap to share".
 ///

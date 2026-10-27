@@ -1,5 +1,6 @@
 package org.localsend.localsend_app
 
+import android.app.KeyguardManager
 import android.nfc.cardemulation.HostApduService
 import android.os.Bundle
 import android.os.Handler
@@ -44,8 +45,9 @@ class TapShareHceService : HostApduService() {
             return SW_WRONG_DATA
         }
 
-        Log.d(TAG, "Tapped by $senderFingerprint")
-        TapShareState.recordTap(senderFingerprint)
+        val unlocked = !(getSystemService(KEYGUARD_SERVICE) as KeyguardManager).isKeyguardLocked
+        Log.d(TAG, "Tapped by $senderFingerprint (unlocked: $unlocked)")
+        TapShareState.recordTap(senderFingerprint, unlocked)
         Handler(Looper.getMainLooper()).post { TapShareState.onTapped?.invoke(senderFingerprint) }
 
         return identity.toByteArray(Charsets.UTF_8) + SW_OK

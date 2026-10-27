@@ -23,9 +23,6 @@ import 'package:routerino/routerino.dart';
 
 final _logger = Logger('TapShare');
 
-/// A tapped sender is auto-accepted when its upload request arrives within this window.
-const tapShareAcceptWindow = Duration(seconds: 60);
-
 /// The receiver may still be starting its server, so keep trying for a while.
 const _registerTimeout = Duration(seconds: 10);
 const _registerRetryInterval = Duration(milliseconds: 500);
@@ -139,13 +136,13 @@ class SetTapShareAutoAcceptAction extends AsyncReduxAction<TapShareService, TapS
 }
 
 /// Whether an upload request from [senderFingerprint] follows a tap and may skip the prompt.
+/// The native side enforces the window, the unlocked screen and single use.
 Future<bool> isRecentlyTappedSender(Ref ref, String senderFingerprint) async {
   final state = ref.read(tapShareProvider);
   if (!state.available || !state.enabled || !state.autoAccept) {
     return false;
   }
-  final lastTap = await getTapShareLastTapAndroid();
-  return lastTap != null && lastTap.$1 == senderFingerprint && DateTime.now().difference(lastTap.$2) < tapShareAcceptWindow;
+  return consumeTapShareTapAndroid(senderFingerprint);
 }
 
 /// We read the identity of a tapped phone: send the selected files to it.
@@ -190,8 +187,10 @@ class TapShareSendAction extends AsyncGlobalAction {
     final protocol = identity.https ? ProtocolType.https : ProtocolType.http;
     final deadline = DateTime.now().add(_registerTimeout);
 
-    while (DateTime.now().isBefore(deadline)) {
-      for (final ip in identity.ips) {
+    // A rogue tag could hand out any host; only dial addresses on a local network.
+    final ips = identity.ips.where(isLanAddress).toList();
+    while (ips.isNotEmpty && DateTime.now().isBefore(deadline)) {
+      for (final ip in ips) {
         try {
           final response = await client.register(protocol: protocol, ip: ip, port: identity.port, payload: payload);
           return response.body.toDevice(ip, identity.port, identity.https);
