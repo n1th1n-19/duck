@@ -24,6 +24,11 @@ private const val TAG = "TapShare"
 class TapShareActivity : Activity() {
     private lateinit var reader: TapShareReader
     private lateinit var status: TextView
+    private lateinit var title: TextView
+    private lateinit var ripple: TapRippleView
+
+    /// The share's content URI grants live with this activity, so it must stay while sending.
+    private var sending = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +43,8 @@ class TapShareActivity : Activity() {
 
         setContentView(R.layout.tap_share_sheet)
         status = findViewById(R.id.status)
+        title = findViewById(R.id.title)
+        ripple = findViewById(R.id.ripple)
         status.text = getString(R.string.tap_share_sheet_files, items)
         findViewById<Button>(R.id.close).setOnClickListener { finish() }
         findViewById<Button>(R.id.open_app).setOnClickListener { openApp() }
@@ -45,6 +52,11 @@ class TapShareActivity : Activity() {
 
         TapShareState.onSendResult = { alias, ok ->
             runOnUiThread {
+                sending = false
+                TapShareFeedback.vibrate(this, if (ok) TapShareFeedback.Kind.SUCCESS else TapShareFeedback.Kind.FAILURE)
+                ripple.visibility = android.view.View.INVISIBLE
+                title.setText(if (ok) R.string.tap_share_sheet_title_sent else R.string.tap_share_sheet_title_failed)
+                title.setTextColor(getColor(if (ok) R.color.tap_share_accent else R.color.tap_share_error))
                 status.text = getString(if (ok) R.string.tap_share_sheet_sent else R.string.tap_share_sheet_failed, alias)
             }
         }
@@ -62,10 +74,39 @@ class TapShareActivity : Activity() {
         }
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && ::reader.isInitialized) {
+            reader.rearm()
+        }
+    }
+
+    /// singleTask: a new share replaces the items of the open sheet instead of stacking sheets.
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (!::status.isInitialized) {
+            return
+        }
+        val items = sharedUris().size + if (sharedText() != null) 1 else 0
+        ripple.visibility = android.view.View.VISIBLE
+        title.setText(R.string.tap_share_sheet_title)
+        title.setTextColor(status.currentTextColor)
+        status.text = getString(R.string.tap_share_sheet_files, items)
+    }
+
     override fun onPause() {
         super.onPause()
         if (::reader.isInitialized) {
             reader.pause()
+        }
+    }
+
+    /// Left without sending: close, so no hidden sheet keeps NFC in reader mode.
+    override fun onStop() {
+        super.onStop()
+        if (!sending && !isChangingConfigurations) {
+            finish()
         }
     }
 
@@ -76,6 +117,12 @@ class TapShareActivity : Activity() {
 
     private fun onRead(identity: String) {
         val alias = JSONObject(identity).optString("a")
+        TapShareFeedback.vibrate(this, TapShareFeedback.Kind.TAP)
+        sending = true
+        // A further phone after a finished send: back to the waiting look.
+        ripple.visibility = android.view.View.VISIBLE
+        title.setText(R.string.tap_share_sheet_title_sending)
+        title.setTextColor(status.currentTextColor)
         status.text = getString(R.string.tap_share_sheet_sending, alias)
 
         val files = JSONArray()

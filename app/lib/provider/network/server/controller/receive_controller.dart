@@ -452,6 +452,17 @@ class ReceiveController {
           ),
         ),
       );
+      if (_uiContext == null && checkPlatform([TargetPlatform.android])) {
+        // Nothing on screen (received headless): say how it went.
+        final alias = session.senderAlias;
+        unawaited(
+          notifyReceivedAndroid(
+            ok: !hasError,
+            text: hasError ? t.tapShare.receiveFailed(alias: alias) : t.tapShare.received(n: session.files.length, alias: alias),
+          ),
+        );
+      }
+
       final settings = server.ref.read(settingsProvider);
       // Only auto-close fully successful sessions: a failed file may still be
       // retried by the sender (e.g. after a checksum mismatch), which requires

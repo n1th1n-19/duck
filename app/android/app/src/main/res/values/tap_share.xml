@@ -12,9 +12,13 @@
     <string name="tap_share_sheet_sending">Sending to %1$s…</string>
     <string name="tap_share_sheet_sent">Sent to %1$s. Tap another phone or close.</string>
     <string name="tap_share_sheet_failed">Could not send to %1$s. Are both phones on the same Wi-Fi?</string>
+    <string name="tap_share_sheet_title_sending">Sending…</string>
+    <string name="tap_share_sheet_title_sent">Sent</string>
+    <string name="tap_share_sheet_title_failed">Couldn\'t send</string>
     <string name="tap_share_sheet_close">Close</string>
     <string name="tap_share_sheet_open_app">Open Duck</string>
 
     <!-- Brand blue, see support/branding/duck.py -->
     <color name="tap_share_accent">#1E6FD9</color>
+    <color name="tap_share_error">#D93025</color>
 </resources>

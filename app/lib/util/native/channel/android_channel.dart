@@ -167,3 +167,7 @@ class FileInfo with FileInfoMappable {
 
 /// Notification for a request that arrived while no UI exists (engine started headless by a tap).
 Future<void> notifyIncomingAndroid(String text) => _methodChannel.invokeMethod('tapShareNotifyIncoming', text);
+
+/// Result notification (with vibration) for a transfer received while no UI was on screen.
+Future<void> notifyReceivedAndroid({required bool ok, required String text}) =>
+    _methodChannel.invokeMethod('tapShareNotifyReceived', {'ok': ok, 'text': text});

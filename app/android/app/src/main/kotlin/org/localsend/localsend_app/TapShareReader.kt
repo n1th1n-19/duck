@@ -12,6 +12,10 @@ import org.json.JSONObject
 private const val TAG = "TapShare"
 private const val DEDUPE_MS = 3000L
 
+/// Android keeps a single reader mode owner, and Google Play Services clears it now and
+/// then (setReaderMode(0)). Re-claiming is a no-op while we still own it.
+private const val RECLAIM_MS = 1000L
+
 /**
  * Sender side of "Tap to share": NFC reader mode that reads the identity of a phone running [TapShareHceService].
  */
@@ -23,6 +27,21 @@ class TapShareReader(
     private var lastFingerprint: String? = null
     private var lastReadAt = 0L
 
+    private val handler = Handler(Looper.getMainLooper())
+    private val reclaim = object : Runnable {
+        override fun run() {
+            if (reading) {
+                handler.postDelayed(this, RECLAIM_MS)
+            } else {
+                apply() // reschedules itself
+            }
+        }
+    }
+
+    /// Set while a tag exchange runs: re-claiming then could restart discovery mid-exchange.
+    @Volatile
+    private var reading = false
+
     /// [senderFingerprint] null disables reading.
     fun setSender(senderFingerprint: String?) {
         senderJson = senderFingerprint?.let { JSONObject().put("v", 1).put("f", it).toString() }
@@ -32,8 +51,10 @@ class TapShareReader(
     /// Reader mode only works while the activity is resumed, so call this from onResume as well.
     fun apply() {
         val adapter = NfcAdapter.getDefaultAdapter(activity) ?: return
+        handler.removeCallbacks(reclaim)
         try {
             if (senderJson != null) {
+                handler.postDelayed(reclaim, RECLAIM_MS)
                 adapter.enableReaderMode(
                     activity,
                     ::onTag,
@@ -48,7 +69,15 @@ class TapShareReader(
         }
     }
 
+    /// Off and on again: right after an activity opens, the NFC controller may keep its
+    /// previous discovery configuration, and a tap then gets a plain NDEF scan instead.
+    fun rearm() {
+        pause()
+        apply()
+    }
+
     fun pause() {
+        handler.removeCallbacks(reclaim)
         try {
             NfcAdapter.getDefaultAdapter(activity)?.disableReaderMode(activity)
         } catch (_: IllegalStateException) {
@@ -59,6 +88,7 @@ class TapShareReader(
     private fun onTag(tag: Tag) {
         val sender = senderJson ?: return
         val isoDep = IsoDep.get(tag) ?: return
+        reading = true
         try {
             isoDep.connect()
             isoDep.timeout = 2000
@@ -92,6 +122,7 @@ class TapShareReader(
         } catch (e: Exception) {
             Log.w(TAG, "Tap read failed", e)
         } finally {
+            reading = false
             try {
                 isoDep.close()
             } catch (_: Exception) {

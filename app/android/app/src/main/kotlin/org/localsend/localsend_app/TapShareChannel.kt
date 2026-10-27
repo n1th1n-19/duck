@@ -19,6 +19,7 @@ const val CHANNEL = "org.localsend.localsend_app/localsend"
 
 private const val INCOMING_CHANNEL_ID = "incoming"
 private const val INCOMING_NOTIFICATION_ID = 7301
+private const val RECEIVED_NOTIFICATION_ID = 7302
 
 /**
  * The method channel part that works without an activity, so the engine can run
@@ -80,7 +81,14 @@ object TapShareChannel {
             }
 
             "tapShareNotifyIncoming" -> {
-                notifyIncoming(context, call.arguments as String)
+                notify(context, INCOMING_NOTIFICATION_ID, call.arguments as String)
+                result.success(null)
+            }
+
+            "tapShareNotifyReceived" -> {
+                val ok = call.argument<Boolean>("ok") ?: true
+                TapShareFeedback.vibrate(context, if (ok) TapShareFeedback.Kind.SUCCESS else TapShareFeedback.Kind.FAILURE)
+                notify(context, RECEIVED_NOTIFICATION_ID, call.argument<String>("text") ?: "")
                 result.success(null)
             }
 
@@ -140,8 +148,8 @@ object TapShareChannel {
         channel?.invokeMethod("onTapShareSendPending", null)
     }
 
-    /// A request arrived while no UI is shown: tapping the notification opens the receive page.
-    private fun notifyIncoming(context: Context, text: String) {
+    /// Shown while no UI is on screen; tapping it opens the app (and a pending receive page).
+    private fun notify(context: Context, id: Int, text: String) {
         val manager = context.getSystemService(NotificationManager::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             manager.createNotificationChannel(
@@ -157,7 +165,7 @@ object TapShareChannel {
         @Suppress("DEPRECATION")
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Notification.Builder(context, INCOMING_CHANNEL_ID) else Notification.Builder(context)
         manager.notify(
-            INCOMING_NOTIFICATION_ID,
+            id,
             builder
                 .setSmallIcon(R.drawable.ic_tap_share)
                 .setContentTitle(context.getString(R.string.app_name_duck))

@@ -18,6 +18,9 @@ private val SW_NOT_FOUND = byteArrayOf(0x6A, 0x82.toByte())
 private val SW_INS_NOT_SUPPORTED = byteArrayOf(0x6D, 0x00)
 private val SW_WRONG_DATA = byteArrayOf(0x6A, 0x80.toByte())
 
+/// Time for the reply APDU to reach the reader before the receiver vibrates.
+private const val REPLY_DELIVERED_MS = 250L
+
 // Must match TapShareIdentity in Dart: the response has to fit into one short APDU.
 private const val MAX_IPS = 3
 private const val MAX_IDENTITY_BYTES = 240
@@ -55,7 +58,10 @@ class TapShareHceService : HostApduService() {
         val unlocked = !(getSystemService(KEYGUARD_SERVICE) as KeyguardManager).isKeyguardLocked
         Log.d(TAG, "Tapped by $senderFingerprint (unlocked: $unlocked)")
         TapShareState.recordTap(senderFingerprint, unlocked)
-        Handler(Looper.getMainLooper()).post {
+        val handler = Handler(Looper.getMainLooper())
+        // Buzz once our reply is on its way, not before: people pull the phones apart when they feel it.
+        handler.postDelayed({ TapShareFeedback.vibrate(this, TapShareFeedback.Kind.TAP) }, REPLY_DELIVERED_MS)
+        handler.post {
             TapShareState.onTapped?.invoke(senderFingerprint)
             // App closed or in the background: boot the server and keep the process awake for the upload.
             // Not from a locked phone: such a tap is never auto-accepted, so it must not expose the server.

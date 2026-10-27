@@ -24,6 +24,8 @@
 
     <!-- localsend: "Tap to share" between phones (HCE receiver + reader mode sender). Optional hardware. -->
     <uses-permission android:name="android.permission.NFC" />
+    <!-- Feedback when phones touch and when a transfer ends, also without UI. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Keeps the process awake between a tap and the sender's upload while the app is closed. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
@@ -74,6 +76,7 @@
              the share to MainActivity when tap share is off or unavailable. -->
         <activity
             android:name=".TapShareActivity"
+            android:launchMode="singleTask"
             android:exported="true"
             android:excludeFromRecents="true"
             android:taskAffinity=""

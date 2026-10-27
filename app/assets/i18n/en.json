@@ -583,7 +583,12 @@
     "autoAccept": "Auto-accept from tapped phones",
     "sending": "Sending to {alias}",
     "unreachable": "Could not reach {alias}. Are both phones on the same Wi-Fi?",
-    "incoming": "{alias} wants to send you something. Tap to review."
+    "incoming": "{alias} wants to send you something. Tap to review.",
+    "received": {
+      "one": "Received a file from {alias}",
+      "other": "Received {n} files from {alias}"
+    },
+    "receiveFailed": "Receiving from {alias} failed"
   },
   "trust": {
     "question": "Trust {alias}?",

@@ -974,6 +974,16 @@ class Translations$tapShare$en {
 
   /// en: '{alias} wants to send you something. Tap to review.'
   String incoming({required Object alias}) => '${alias} wants to send you something. Tap to review.';
+
+  /// en: '(one) {Received a file from {alias}} (other) {Received {n} files from {alias}}'
+  String received({required num n, required Object alias}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+    n,
+    one: 'Received a file from ${alias}',
+    other: 'Received ${n} files from ${alias}',
+  );
+
+  /// en: 'Receiving from {alias} failed'
+  String receiveFailed({required Object alias}) => 'Receiving from ${alias} failed';
 }
 
 // Path: trust
