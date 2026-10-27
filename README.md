@@ -28,7 +28,9 @@ Everything LocalSend does, plus:
 
 - **Tap to share (Android):** hold two phones back to back to send. No pairing, no picking a device from a list.
 - **Works with the app closed:** share from any app via **Share → Duck Share**; the receiving phone wakes up from the tap and saves the file in the background.
-- **Clear feedback:** both phones vibrate on touch and when done; the receiver gets a "Received…" notification that opens the file.
+- **Clear feedback:** both phones vibrate on touch and when done; the sender sees live progress, the receiver gets a "Received…" notification that opens the file.
+- **Where to touch:** the app shows where the NFC antenna sits on your phone (read from the phone on Android 14+, estimated before).
+- **History with previews:** received photos and videos show thumbnails; tap one to open it.
 - **Trusted devices:** files from devices you trust arrive without a prompt, skip your PIN, and shared text lands on your clipboard.
 - **Blocked devices:** requests from blocked devices are declined and they are hidden from the nearby list.
 
@@ -40,7 +42,8 @@ Requires two Android phones with NFC (host card emulation) on the same Wi-Fi.
 
 1. In any app (Gallery, Files, …) tap **Share → Duck Share**. A sheet slides up: *Hold near another phone*.
 2. Hold the phones back to back, camera ends lined up.
-3. Pull them apart when both vibrate. The sheet shows **Sent**; tap more phones to send to them too.
+3. Pull them apart when both vibrate. The sheet shows the progress, then **Sent**; tap more phones to send to them too.
+   **Hide** (or Back) keeps sending in the background, and **Open Duck Share** shows the transfer in the app.
 
 Inside Duck Share, selecting files on the Send tab and tapping another phone works the same way.
 
@@ -50,7 +53,8 @@ Nothing to do: keep the screen on and unlocked. Duck Share may be closed. The ph
 
 **Good to know**
 
-- The touch only exchanges the address and the security fingerprint (well under a second). The file itself goes over Wi-Fi, so the phones can be apart while it transfers. Keep the share sheet open until it says *Sent*.
+- The touch only exchanges the address and the security fingerprint (well under a second). The file itself goes over Wi-Fi, so the phones can be apart while it transfers.
+- Not sure where to touch? Settings → Tap to share → *Where is NFC on my phone?* shows the spot on the back of your phone.
 - Taps from a locked phone, or from a device that was not tapped, show the normal accept prompt.
 - Turn tap to share on or off with the **Tap to share** tile in Quick Settings or in Duck Share's settings.
 - **Pixel phones:** Google's own *Tap to Share* (Quick Share) competes for NFC. Turn it off under *Settings → Connected devices → Connection preferences → Quick Share* if taps are unreliable.

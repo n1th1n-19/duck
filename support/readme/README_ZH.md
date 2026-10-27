@@ -11,8 +11,10 @@ Duck Share 是 [LocalSend](https://github.com/localsend/localsend) 的分支，�
 需要两部支持 NFC（主机卡模拟）的 Android 手机，并连接同一个 Wi-Fi。
 
 1. 在任意应用中点击 **分享 → Duck Share**，底部会弹出"Hold near another phone"。
-2. 将两部手机背靠背贴在一起，两部手机振动后即可分开。
+2. 将两部手机背靠背贴在一起，两部手机振动后即可分开。底部弹窗会显示发送进度；点击 **Hide** 可在后台继续发送。
 3. 文件通过 Wi-Fi 传输；接收方会收到"已接收"通知，点击即可打开文件。
+
+不确定 NFC 在哪里？在 设置 → 碰一碰分享 → *Where is NFC on my phone?* 中可以查看手机背面的感应位置。
 
 **Pixel 手机：** Google 自带的 *Tap to Share*（Quick Share）会占用 NFC，如果碰一碰不稳定，请在 Quick Share 设置中将其关闭。
 

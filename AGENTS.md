@@ -136,9 +136,9 @@ NFC is only the handshake; the transfer is the normal pinned-TLS register + sess
 
 - `TapShareHceService` (receiver): host card emulation, AID `F04C4F43414C53454E44` (`F0` + "LOCALSEND"). SELECT, then a custom APDU (CLA `0x80`, INS `0x01`) carrying the sender JSON `{v, f}`; answers with the identity JSON `{v, a, f, p, h, i}` (≤ 240 bytes, ≤ 3 IPs, IPs re-read natively at tap time) + `9000`, or `6A82` without identity. Records the tap and wakes the app.
 - `TapShareReader` (sender): reader mode (`NFC_A | SKIP_NDEF_CHECK | NO_PLATFORM_SOUNDS`). Android has a single reader mode owner and Google Play Services clears it now and then, so the reader re-claims it every second (a no-op while owned) and never during an exchange.
-- `TapShareState`: native source of truth (SharedPreferences file `tap_share`: `enabled`, `auto_accept`, `identity`), single-use tap record for auto-accept (30 s, only if the receiver was unlocked), pending share sheet send. Disabling also disables the HCE component.
+- `TapShareState`: native source of truth (SharedPreferences file `tap_share`: `enabled`, `auto_accept`, `identity`), single-use tap record for auto-accept (30 s, only if the receiver was unlocked), pending share sheet send, and the sender fingerprint that arms `MainActivity`'s reader (kept here, not in the reader, so a recreated activity re-arms from it). Disabling also disables the HCE component.
 - `TapShareTileService`: Quick Settings toggle. `TapShareFeedback`: native vibration (works without UI).
-- Dart side: `app/lib/provider/tap_share_provider.dart` (identity/sender sync, `TapShareSendAction`, `isRecentlyTappedSender`), `app/lib/model/tap_share_identity.dart` (encoding, `isLanAddress` — the sender only dials private/link-local/CGNAT addresses).
+- Dart side: `app/lib/provider/tap_share_provider.dart` (identity/sender sync, `TapShareSendAction`, `isRecentlyTappedSender`). The identity and sender are Refena `ViewProvider`s, which recompute lazily: they are pushed to native through `ref.stream` subscriptions, because `onChanged` alone never fires while nothing watches them, `app/lib/model/tap_share_identity.dart` (encoding, `isLanAddress` — the sender only dials private/link-local/CGNAT addresses).
 
 **Running without UI.** `LocalSendApplication` owns the single `FlutterEngine` (`FlutterEngineCache` id `main`); `MainActivity` attaches to it (`provideFlutterEngine`, `shouldDestroyEngineWithHost = false`), so closing the app does not stop the server and reopening never starts a second one.
 
@@ -147,6 +147,16 @@ NFC is only the handshake; the transfer is the normal pinned-TLS register + sess
 - `TapShareChannel` serves the activity-free channel methods (tap share, `getFileDescriptor`, notifications) and is reinstalled when the activity detaches; `MainActivity` delegates unknown methods to it.
 - Headless code must not touch UI: use `visibleUiContext` (`app/lib/util/ui/snackbar.dart`), which is null unless the app is in the foreground — the navigator exists headless, so `Routerino.navigatorKey.currentContext` alone is not enough. Receive requests without UI post a notification and open the receive page with the app (`showPendingReceivePage`); finished transfers post a "Received" notification whose tap opens the file (`ReceivedFileResolver`).
 - On Android the isolates are not disposed on `AppLifecycleState.detached` (the engine outlives the UI).
+- A recreated `MainActivity` (rotation, theme) configures the engine before the old instance is cleaned up, so only the last attached activity hands the channel back to `TapShareChannel` in `cleanUpFlutterEngine`.
+
+### UI (Duck redesign)
+
+- Theme: `app/lib/config/theme.dart` builds the color schemes from the design tokens (light, dark, OLED) and uses bundled Nunito (`app/assets/fonts/nunito/`, OFL). The Duck palette (`ColorMode.localsend`) is the default, not dynamic colors.
+- Mobile navigation: Send/Receive in a floating pill, settings behind the gear (`home_page.dart`); settings stays a `HomeTab` so shortcuts and deep links keep working.
+- The in-app logo (`LocalSendLogo`) is drawn in code from the `duck.py` geometry and animates while waiting to receive.
+- `NfcSpotGuide` shows the antenna position from `NfcAdapter.getNfcAntennaInfo` (Android 14+), with an estimate otherwise. `OnboardingPage` runs on the first Android start.
+- Thumbnails of content URIs and videos come from Android (`loadThumbnail` channel method); gallery saves store their content URI in the history so they can be previewed and opened.
+- Do not change device behavior (orientation locks, forced refresh rate, keeping the screen on) beyond what a feature strictly needs.
 
 ### Trusted and blocked devices
 
