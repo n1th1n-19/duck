@@ -97,7 +97,10 @@ class ReceiveController {
       server.ref.redux(parentIsolateProvider).dispatch(IsolateHttpServerPrepareUploadDecisionAction(config: null));
       return;
     }
-    final trusted = isTrustedDevice(server.ref, senderFingerprint);
+    // Privileges need the mTLS certificate: the payload fingerprint (encryption off) can be forged.
+    // Blocking above may use it, a forged value only makes that stricter.
+    final certFingerprint = event.certFingerprint;
+    final trusted = certFingerprint != null && isTrustedDevice(server.ref, certFingerprint);
 
     _logger.info('Session Id: $sessionId');
     _logger.info('Destination Directory: $destinationDir');
@@ -425,6 +428,7 @@ class ReceiveController {
       // Only auto-close fully successful sessions: a failed file may still be
       // retried by the sender (e.g. after a checksum mismatch), which requires
       // the session to stay open.
+      // Only decides whether to auto-close the finished session; the files were already accepted.
       final trusted = isTrustedDevice(server.ref, session.sender.fingerprint);
       final quickSave = (settings.quickSave || trusted) && !hasError && server.getState().session?.message == null;
       if (quickSave) {
