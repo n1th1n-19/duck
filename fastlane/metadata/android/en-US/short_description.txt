@@ -1,1 +1,1 @@
-Cross-Platform file sharing solution via WiFi.
+Tap phones together to share files over Wi-Fi.

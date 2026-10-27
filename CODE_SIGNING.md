@@ -1,18 +1,11 @@
 # Code signing policy
 
-Free code signing provided by [SignPath.io](https://signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
+Duck's Windows builds are **not signed**. Windows SmartScreen may warn when you run them; build from source if you prefer.
 
-Official Windows release artifacts (portable ZIP, EXE installer, MSIX helper) are built automatically from the source code in the [LocalSend repository](https://github.com/localsend/localsend) using GitHub Actions ([release workflow](.github/workflows/release.yml)) and signed through SignPath. Every signing request is manually approved by an approver listed below.
+Android release builds are signed with the maintainer's own key (see [CONTRIBUTING.md](CONTRIBUTING.md#compile-a-release-apk)). Debug builds use the Android debug key and the package `app.duck.share.debug`, so they install next to a release build.
 
-Only binaries built by LocalSend are signed. Third-party binaries that are packaged with the app are distributed as provided by their upstream projects and do not receive the LocalSend signing operation.
-
-Signed Windows files show **SignPath Foundation** as the publisher because the certificate belongs to the foundation, not to the LocalSend project.
-
-## Team roles
-
-- Committers and reviewers: [@Tienisto](https://github.com/Tienisto)
-- Approvers: [@Tienisto](https://github.com/Tienisto)
+The original LocalSend binaries are signed through SignPath by the LocalSend project; that signing does not cover Duck.
 
 ## Privacy
 
-LocalSend's privacy policy is available at [localsend.org/privacy](https://localsend.org/privacy).
+Duck has no servers, accounts or analytics. Files and messages go directly between devices on your local network. Tap to share exchanges only the device alias, port, local IP addresses and certificate fingerprint over NFC.

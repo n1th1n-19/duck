@@ -1,3 +1,17 @@
+## Duck (unreleased)
+
+Duck is a fork of LocalSend. Changes on top of LocalSend 1.18.2:
+
+- feat: rebrand to Duck (name, Pond blue logo and icons, Android package `app.duck.share`)
+- feat(android): tap to share — hold two phones together to send, over NFC
+- feat(android): receive with the app closed; the tap wakes the app in the background
+- feat(android): send from the share sheet without opening the app
+- feat(android): vibration and notifications when phones touch and when a transfer ends; the notification opens the received file
+- feat(android): Quick Settings tile to turn tap to share on or off
+- feat: trusted devices (favorites) are auto-accepted, skip the PIN and get shared text copied to the clipboard
+- feat: block devices; their requests are declined and they are hidden from the nearby list
+- fix(android): closing the app no longer stops the server
+
 ## Unreleased
 
 - fix: avoid adding a trailing dot when renaming files without an extension (@ShlomoCode)

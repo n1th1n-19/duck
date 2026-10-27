@@ -1,7 +1,12 @@
-LocalSend is an open source app to share files and messages between nearby devices using the local wifi network.
-The communication between devices is entirely end-to-end encrypted via HTTPS.
-No Internet required. No tracking*. No ads.
+Duck shares files and messages between nearby devices over your local Wi-Fi network.
 
-Currently, this app is available on Android, iOS, macOS, Windows and Linux. You can find all download options on the official homepage.
+Hold two phones together to send, like AirDrop: tap to share works over NFC, even when Duck is closed on both phones. Share from any app with Share → Duck, and the other phone saves the file in the background.
+
+- No internet, no account, no ads, no tracking*
+- End-to-end encrypted with HTTPS
+- Trusted devices send without asking; block devices you don't want to hear from
+- Works with LocalSend on Windows, macOS, Linux, iOS and Android
+
+Duck is a fork of LocalSend (Apache 2.0).
 
 *The operating system may still gather usage data.

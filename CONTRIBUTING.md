@@ -1,155 +1,86 @@
-# Contributing to LocalSend
+# Contributing to Duck
 
-LocalSend is an open-source project, and we welcome contributions from anyone who is interested in helping improve the app. Whether you're a developer, a translator, or a documentation writer, there are many ways to get involved.
-
-LocalSend disallows AI generated contributions unless:
-
-- they are bug fixes or
-- very small or
-- you prove your expertise in your field
-
-## Getting Started
-
-If you're interested in contributing code to LocalSend, you'll need to follow these steps:
+Duck is a fork of [LocalSend](https://github.com/localsend/localsend). This guide covers working on it; [AGENTS.md](AGENTS.md) describes the architecture.
 
 ## Run
 
-After you have installed [Flutter](https://flutter.dev), then you can start this app by typing the following commands:
+Install [Flutter](https://flutter.dev) via [fvm](https://fvm.app) (version in [.fvmrc](.fvmrc)) and [Rust](https://www.rust-lang.org/tools/install), then:
 
 ```shell
 cd app
-flutter pub get
-dart run build_runner build -d
-flutter run
+fvm flutter pub get
+fvm dart run build_runner build -d
+fvm dart run slang
+fvm flutter run
 ```
 
-## Translation
+## Checks
 
-You can help in translating this app to other languages!
+The same as CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)):
 
-1. Fork this repository
-2. Choose one
-   - Add missing translations in existing languages: Only update `_missing_translations_<locale>.json` in [assets/i18n](https://github.com/localsend/localsend/tree/main/app/assets/i18n)
-   - Fix existing translations: Update `strings_<locale>.i18n.json` in [assets/i18n](https://github.com/localsend/localsend/tree/main/app/assets/i18n)
-   - Add new languages: Create a new file, see also: [locale codes](https://saimana.com/list-of-country-locale-code/).
-3. Optional: Re-run this app
-   1. Run `cd app` to enter the app directory.
-   2. Make sure you have [run](#run) this app once.
-   3. Update translations via `flutter pub run slang`
-   4. Run the app via `flutter run`
-4. Open a pull request
+```shell
+cd app
+fvm dart format --set-exit-if-changed lib test
+fvm flutter analyze
+fvm flutter test
 
-**_Take note:_ Fields decorated with `@` are not meant to be translated, they are not used in the app in any way, being merely informative text about the file or to give context to the translator.**
+cd ../packages/core
+cargo test --features full
+cargo clippy --features full
+```
 
-Thanks to all [translators](https://github.com/localsend/localsend/tree/main/app/lib/pages/about/translators.dart)!
+Formatting is 150 columns. Generated Dart (`lib/gen`) is not format-checked.
 
-## Contributing Guidelines
+## Testing tap to share
 
-Before you submit a pull request to LocalSend, please ensure that you have followed these guidelines:
+Tap to share needs two real Android phones with NFC; the emulator has none.
 
-- Code should be well-documented and formatted according to the [Dart Style Guide](https://dart.dev/guides/language/effective-dart/style).
-- All changes should be covered by tests.
-- Commits should be well-written and descriptive, with a clear summary of the changes made and any relevant context.
-- Pull requests should target the `main` branch and include a clear summary of the changes made.
+1. Pair both phones over wireless debugging (*Developer options → Wireless debugging → Pair device with QR code*).
+2. Install on both: `adb -s <device> install -r app/build/app/outputs/flutter-apk/app-debug.apk`. Debug builds use the package `app.duck.share.debug`.
+3. Watch the exchange: `adb -s <device> logcat -s TapShare flutter`.
+4. To test with the app closed: `adb shell input keyevent KEYCODE_HOME && adb shell am kill app.duck.share.debug`.
 
-## Bug Reports and Feature Requests
+On Pixel phones, turn off Google's *Tap to Share* first; it competes for NFC.
 
-If you encounter a bug in LocalSend or have a feature request, please submit an issue to the [issue tracker](https://github.com/localsend/localsend/issues). Please be sure to provide a clear description of the problem or feature request, along with any relevant context or steps to reproduce the issue.
+## Translations
 
-## Security Issues
+Add new strings to `app/assets/i18n/en.json` only, then run `fvm dart run slang`. The other locale files come from LocalSend and may lag behind; missing keys fall back to English.
 
-If you discover a security issue in LocalSend, please do not submit an issue to the public issue tracker. Instead, please email us directly at [support@localsend.org](mailto:support@localsend.org) so that we can address the issue as quickly and effectively as possible.
+Fields starting with `@` are notes for translators and are not used by the app.
 
-## Distribution
+## Branding
 
-Git based distribution:
+The logo and every platform icon are generated from one script, see [support/branding](support/branding/README.md). Edit `duck.py`, then run `python support/branding/export.py app`. Brand colors: Pond blue `#1E6FD9`, ink `#1C1B1F`.
 
-| Channel        | Repository          | Maintainer                                         |
-|----------------|---------------------|----------------------------------------------------|
-| [Winget][]     | [Winget Repo][]     | [@sitiom][], [@Tienisto], Github Actions           |
-| [Scoop][]      | [Scoop Repo][]      | [@sitiom][], [@Tienisto], Github Actions           |
-| [Chocolatey][] | [Chocolatey Repo][] | [@brogers5][]                                      |
-| [Homebrew][]   | [Homebrew Repo][]   | [@Tienisto][], Github Actions                      |
-| [Flathub][]    | [Flathub Repo][]    | [@proletarius101][], [@Tienisto][], Github Actions |
-| [AUR][]        | [AUR Repo][]        | [@Nixuge][]                                        |
-| [Nixpkgs][]    | [Nixpkgs Repo][]    | [@sikmir][], [@linsui][]                           |
-| [F-Droid][]    | [F-Droid Repo][]    | [@linsui][], [@Tienisto][], [F-Droid CI][]         |
-| [Snap][]       | [Snap Repo][]       | [@thatLeaflet][]                                   |
+## Guidelines
 
-[winget]: https://github.com/microsoft/winget-pkgs/tree/master/manifests/l/LocalSend/LocalSend
-[winget repo]: https://github.com/microsoft/winget-pkgs/tree/master/manifests/l/LocalSend/LocalSend
-[scoop]: https://scoop.sh/#/apps?s=0&d=1&o=true&q=localsend&id=fb88113be361ca32c0dcac423cb4afdeda0b0c66
-[scoop repo]: https://github.com/ScoopInstaller/Extras/blob/master/bucket/localsend.json
-[chocolatey]: https://community.chocolatey.org/packages/localsend
-[chocolatey repo]: https://github.com/brogers5/chocolatey-package-localsend/tree/main
-[homebrew]: https://formulae.brew.sh/cask/localsend
-[homebrew repo]: https://github.com/Homebrew/homebrew-cask/blob/master/Casks/l/localsend.rb
-[flathub]: https://flathub.org/apps/details/org.localsend.localsend_app
-[flathub repo]: https://github.com/flathub/org.localsend.localsend_app
-[aur]: https://aur.archlinux.org/packages/localsend-bin
-[aur repo]: https://aur.archlinux.org/localsend-bin.git
-[nixpkgs]: https://search.nixos.org/packages?show=localsend
-[nixpkgs repo]: https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/networking/localsend/default.nix
-[f-droid]: https://f-droid.org/packages/org.localsend.localsend_app
-[f-droid repo]: https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/org.localsend.localsend_app.yml
-[snap]: https://snapcraft.io/localsend
-[snap repo]: https://github.com/localsend/snap
+- Keep code formatted and covered by tests where it has logic worth testing.
+- Write descriptive commit messages (Conventional Commits: `feat:`, `fix:`, …).
+- Pull requests target `main`.
 
-Manual distribution:
+## Bug reports and security issues
 
-| Channel        | Maintainer                               |
-|----------------|------------------------------------------|
-| [App Store][]  | [@Tienisto](https://github.com/Tienisto) |
-| [Play Store][] | [@Tienisto](https://github.com/Tienisto) |
-| [Amazon][]     | [@Tienisto](https://github.com/Tienisto) |
+Report bugs in the [issue tracker](https://github.com/n1th1n-19/duck/issues). Report security issues privately via [GitHub security advisories](https://github.com/n1th1n-19/duck/security/advisories/new), not in a public issue.
 
-[app store]: https://apps.apple.com/us/app/localsend/id1661733229
-[play store]: https://play.google.com/store/apps/details?id=org.localsend.localsend_app
-[amazon]: https://www.amazon.com/dp/B0BW6MP732
+## Pulling changes from LocalSend
 
-Binary distribution:
+The original project is the `upstream` remote:
 
-| Type        | Maintainer    | Credits                      |
-|-------------|---------------|------------------------------|
-| Windows ZIP | [@Tienisto][] |                              |
-| MSIX        | [@Tienisto][] |                              |
-| EXE         | [@Tienisto][] |                              |
-| APK         | [@Tienisto][] |                              |
-| TAR         | [@Tienisto][] |                              |
-| DEB         | [@Tienisto][] |                              |
-| AppImage    | [@Tienisto][] | [@TheGB0077][]               |
-| DMG         | [@Tienisto][] |                              |
+```shell
+git fetch upstream
+git merge upstream/main
+```
 
-[@Tienisto]: https://github.com/Tienisto
-[@TheGB0077]: https://github.com/TheGB0077
-[@sitiom]: https://github.com/sitiom
-[@Nixuge]: https://github.com/Nixuge
-[@proletarius101]: https://github.com/proletarius101
-[@brogers5]: https://github.com/brogers5
-[@sikmir]: https://github.com/sikmir
-[@linsui]: https://github.com/linsui
-[@thatLeaflet]: https://github.com/thatLeaflet
-[F-Droid CI]: https://gitlab.com/fdroidci
-
-TODO:
-
-You can help in publishing LocalSend on more platforms. Please create an issue to notify us!
-
-- Traditional Linux distributions (Debian, Fedora, etc.)
-- (Your idea here)
+Expect conflicts in the rebranded files (app name, icons, `applicationId`, i18n). Duck keeps LocalSend's internal identifiers (method channel names, settings keys, the Kotlin package `org.localsend.localsend_app`) so that merges stay small.
 
 ## Notes
 
-Useful notes.
+### Compile a release APK
 
-### Compile production APK
-
-You will need the signing keys to generate an APK.
-
-Either generate one or use the debug signing options:
+Release builds need a signing key. Create `app/android/key.properties` with your keystore, or sign with the debug key:
 
 ```groovy
-// File: android/app/build.gradle
+// File: app/android/app/build.gradle
 buildTypes {
   release {
     signingConfig signingConfigs.debug // using debug signing
@@ -159,48 +90,20 @@ buildTypes {
 
 ### Bump Flutter
 
-Suppose we want to update flutter to `3.41.9`:
+Suppose we want to update Flutter to `3.41.9`:
 
-1. Update flutter from fvm: `fvm use 3.41.9`
-2. Update flutter from submodule:
+1. Update Flutter from fvm: `fvm use 3.41.9`
+2. Update Flutter from the submodule:
    1. `git submodule update --init`
    2. `cd support/submodules/flutter`
    3. `git fetch`
    4. `git checkout 3.41.9`
    5. `cd ../../..`
    6. `git add support/submodules/flutter`
-3. Update flutter constraints:
+3. Update the Flutter constraints:
    1. In CI: `.github/workflows/ci.yml`
    2. In pubspec: `pubspec.yaml`
 
 ### Release
 
-Make sure to set up the self-hosted runner to compile arm64 linux binaries.
-
-To set up the runner, follow the following instructions:
-
-Install Flutter
-
-```bash
-sudo apt install git
-git clone https://github.com/flutter/flutter.git $HOME/flutter
-nano $HOME/.bashrc
-```
-
-Add the following to the end of the file:
-
-```bash
-export PATH="$PATH:$HOME/flutter/bin"
-```
-
-Restart the terminal.
-
-```bash
-flutter doctor
-```
-
-Next, follow the instructions to set up the GitHub runner.
-
-Start the "Release Draft" workflow from the "Actions" tab: https://github.com/localsend/localsend/actions/workflows/release.yml
-
-Finally, compile binaries not yet supported by the pipeline.
+`app/pubspec.yaml`'s version must match `#define MyAppVersion` in `support/scripts/compile_windows_exe-inno.iss` and the `version` in `cli/Cargo.toml`; CI fails on a mismatch. The "Release Draft" workflow ([release.yml](.github/workflows/release.yml)) builds the binaries; arm64 Linux binaries need a self-hosted runner.

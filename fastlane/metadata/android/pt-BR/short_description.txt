@@ -1,1 +1,1 @@
-Solução de compartilhamento de arquivos por WiFi multi-plataforma.
+Encoste os celulares para compartilhar arquivos por Wi-Fi.

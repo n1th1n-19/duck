@@ -1,3 +1,3 @@
-# LocalSend Signaling Server
+# Duck Signaling Server
 
-A signaling server for LocalSend. Using Rust and WebSockets.
+A WebRTC signaling server (Rust, WebSockets) inherited from LocalSend. Duck works without it: transfers on the local network use HTTPS directly.

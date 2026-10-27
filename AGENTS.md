@@ -1,12 +1,12 @@
 # AGENTS.md
 
-LocalSend disallows AI generated contributions unless:
-
-- they are bug fixes or
-- very small or
-- you prove your expertise in your field
-
 This file provides guidance to LLMs when working with code in this repository.
+
+**Duck** is a fork of [LocalSend](https://github.com/localsend/localsend) (Apache 2.0) that adds Android tap to share (NFC), background receiving and sending, and trusted/blocked devices. It stays protocol-compatible with LocalSend.
+
+- User-facing name: "Duck"; Android `applicationId` `app.duck.share` (debug: `app.duck.share.debug`); brand color Pond blue `#1E6FD9`.
+- Internal identifiers are deliberately unchanged to keep upstream merges small: Dart package `localsend_app`, Kotlin package `org.localsend.localsend_app`, method channel `org.localsend.localsend_app/localsend`, settings keys `ls_*`, crate names. Do not rename them.
+- The original project is the `upstream` git remote; this repository is `origin` (`n1th1n-19/duck`).
 
 ## Repository layout
 
@@ -21,6 +21,7 @@ This is a multi-language monorepo: a Flutter app on top of a Rust protocol imple
 | `server/`                      | Axum WebSocket signaling server for WebRTC (`/v1/ws`). Deployed separately, see `server/Dockerfile`.                                                        |
 | `cli/`                         | Rust CLI crate (`localsend-cli`): interactive terminal client on top of `packages/core` (v2 HTTP + multicast).                                              |
 | `support/scripts/`             | Release/packaging scripts (per-platform builds, MSIX, Inno Setup, FOSS stripping).                                                                          |
+| `support/branding/`            | Duck logo source (`duck.py`) and `export.py`, which regenerates every platform icon. Edit there, never the PNGs by hand.                                    |
 
 The four Rust crates (`packages/core`, `packages/localsend_isolates/rust`, `server`, `cli`) form a single Cargo workspace rooted at the repository root: one shared `Cargo.lock` and `target/`, and `[profile.*]` settings live only in the root `Cargo.toml` (member profiles would be ignored). Cargokit still builds the plugin crate into its own target dir during Flutter builds.
 
@@ -129,9 +130,31 @@ UDP is **announce-only**: responses go back over HTTP as a unicast register requ
 
 One socket is bound per interface IPv4 address (`SO_REUSEPORT`/`SO_REUSEADDR` + `IP_MULTICAST_IF`), because a single socket only sends on one interface. Multicast loopback stays on so that instances on one host see each other; own messages are dropped by fingerprint. IPv6 is a LocalSend extension (group `ff12::fd3a:e420`, `DEFAULT_MULTICAST_GROUP_V6`), enabled by setting `group_v6`: one `IPV6_V6ONLY` socket per interface, joined by interface index. `Discovered` carries the source's scope ID (interface index), which link-local IPv6 sources need for the HTTP answer.
 
+### Tap to share (Android)
+
+NFC is only the handshake; the transfer is the normal pinned-TLS register + session. Native code lives in `app/android/app/src/main/kotlin/org/localsend/localsend_app/`:
+
+- `TapShareHceService` (receiver): host card emulation, AID `F04C4F43414C53454E44` (`F0` + "LOCALSEND"). SELECT, then a custom APDU (CLA `0x80`, INS `0x01`) carrying the sender JSON `{v, f}`; answers with the identity JSON `{v, a, f, p, h, i}` (≤ 240 bytes, ≤ 3 IPs, IPs re-read natively at tap time) + `9000`, or `6A82` without identity. Records the tap and wakes the app.
+- `TapShareReader` (sender): reader mode (`NFC_A | SKIP_NDEF_CHECK | NO_PLATFORM_SOUNDS`). Android has a single reader mode owner and Google Play Services clears it now and then, so the reader re-claims it every second (a no-op while owned) and never during an exchange.
+- `TapShareState`: native source of truth (SharedPreferences file `tap_share`: `enabled`, `auto_accept`, `identity`), single-use tap record for auto-accept (30 s, only if the receiver was unlocked), pending share sheet send. Disabling also disables the HCE component.
+- `TapShareTileService`: Quick Settings toggle. `TapShareFeedback`: native vibration (works without UI).
+- Dart side: `app/lib/provider/tap_share_provider.dart` (identity/sender sync, `TapShareSendAction`, `isRecentlyTappedSender`), `app/lib/model/tap_share_identity.dart` (encoding, `isLanAddress` — the sender only dials private/link-local/CGNAT addresses).
+
+**Running without UI.** `LocalSendApplication` owns the single `FlutterEngine` (`FlutterEngineCache` id `main`); `MainActivity` attaches to it (`provideFlutterEngine`, `shouldDestroyEngineWithHost = false`), so closing the app does not stop the server and reopening never starts a second one.
+
+- A tap while no UI is visible starts `TapShareWakeService` (connectedDevice foreground service, 90 s), which boots the engine with `--headless`; `main()` then runs `startBackgroundServices` instead of waiting for `postInit`. Locked taps never wake the app.
+- `TapShareActivity` is the share target (the SEND filters moved off `MainActivity`): a native sheet that reads a phone and hands the items to Dart via `tapShareTakePendingSend`; "Open Duck" forwards the intent to `MainActivity`.
+- `TapShareChannel` serves the activity-free channel methods (tap share, `getFileDescriptor`, notifications) and is reinstalled when the activity detaches; `MainActivity` delegates unknown methods to it.
+- Headless code must not touch UI: use `visibleUiContext` (`app/lib/util/ui/snackbar.dart`), which is null unless the app is in the foreground — the navigator exists headless, so `Routerino.navigatorKey.currentContext` alone is not enough. Receive requests without UI post a notification and open the receive page with the app (`showPendingReceivePage`); finished transfers post a "Received" notification whose tap opens the file (`ReceivedFileResolver`).
+- On Android the isolates are not disposed on `AppLifecycleState.detached` (the engine outlives the UI).
+
+### Trusted and blocked devices
+
+Favorites are the trusted devices; blocked devices are a separate list (`app/lib/provider/device_trust_provider.dart`, persisted under `ls_blocked_devices`, reusing `FavoriteDevice`). Trusted devices are auto-accepted, skip the receive PIN and get text copied to the clipboard; trust is granted **only** from `event.certFingerprint` (the payload fingerprint can be forged with encryption off), while blocking may use either. The PIN bypass lives in Rust: `ServerHandle::set_trusted_fingerprints` / `RsHttpServer.set_trusted_fingerprints` updates a set checked in `v2::prepare_upload`, pushed live from Dart (`IsolateHttpServerTrustedFingerprintsAction`) and kept across server restarts.
+
 ### i18n
 
-Slang, source files in `app/assets/i18n/` (`<locale>.json` plus `_missing_translations_<locale>.json`), generated output in `app/lib/gen/`. Translations are managed on Weblate; fields prefixed with `@` are metadata for translators and are not used by the app. `app/test/unit/i18n_test.dart` guards the locale set.
+Slang, source files in `app/assets/i18n/` (Duck adds new keys to `en.json` only) (`<locale>.json` plus `_missing_translations_<locale>.json`), generated output in `app/lib/gen/`. Translations are managed on Weblate; fields prefixed with `@` are metadata for translators and are not used by the app. `app/test/unit/i18n_test.dart` guards the locale set.
 
 ### FOSS build
 

@@ -1,318 +1,150 @@
-# LocalSend
+# Duck
 
 [![CI status][ci-badge]][ci-workflow]
-[![Translations][translate-badge]][translate-link]
-[![Packaging status][packaging-badge]][packaging-link]
 
-[ci-badge]: https://github.com/localsend/localsend/actions/workflows/ci.yml/badge.svg
-[ci-workflow]: https://github.com/localsend/localsend/actions/workflows/ci.yml
-[translate-badge]: https://hosted.weblate.org/widget/localsend/app/svg-badge.svg
-[translate-link]: https://hosted.weblate.org/engage/localsend/
-[packaging-badge]: https://repology.org/badge/tiny-repos/localsend.svg
-[packaging-link]: https://repology.org/project/localsend/versions
+[ci-badge]: https://github.com/n1th1n-19/duck/actions/workflows/ci.yml/badge.svg
+[ci-workflow]: https://github.com/n1th1n-19/duck/actions/workflows/ci.yml
 
-[Homepage][homepage] • [Discord][discord] • [GitHub][github] • [Codeberg][codeberg]
+<img src="support/branding/logo.svg" alt="Duck logo" width="96" />
 
-[English (Default)](README.md) • [中文](/support/readme/README_ZH.md)
+Duck shares files and messages between nearby devices over your local network, with no internet connection and no account. On Android, **hold two phones together** and the file goes across, like AirDrop or Quick Share — even when Duck is closed on both phones.
 
-[homepage]: https://localsend.org
-[discord]: https://discord.gg/GSRWmQNP87
-[github]: https://github.com/localsend/localsend
-[codeberg]: https://codeberg.org/localsend/localsend
+Duck is a fork of [LocalSend](https://github.com/localsend/localsend) and speaks the same protocol, so it works with every LocalSend device on Windows, macOS, Linux, iOS and Android.
 
-LocalSend is a free, open-source app that allows you to securely share files and messages with nearby devices over your local network without needing an internet connection.
-
-- [About](#about)
-- [Sponsors](#sponsors)
-- [Screenshots](#screenshots)
-- [Download](#download)
-- [How It Works](#how-it-works)
-- [Dependency Hierarchy](#dependency-hierarchy)
-- [Getting Started](#getting-started)
-- [Command Line Interface](#command-line-interface)
-- [Contributing](#contributing)
-  - [Translation](#translation)
-  - [Bug Fixes and Improvements](#bug-fixes-and-improvements)
+- [Features](#features)
+- [Tap to share](#tap-to-share)
+- [Trusted and blocked devices](#trusted-and-blocked-devices)
+- [Setup](#setup)
+- [How it works](#how-it-works)
+- [Getting started](#getting-started)
+- [Command line interface](#command-line-interface)
 - [Troubleshooting](#troubleshooting)
 - [Building](#building)
-  - [Android](#android)
-  - [iOS](#ios)
-  - [macOS](#macos)
-  - [Windows](#windows)
-  - [Linux](#linux)
+- [Credits and license](#credits-and-license)
 
-## About
+## Features
 
-LocalSend is a cross-platform app that enables secure communication between devices using a REST API and HTTPS encryption. Unlike other messaging apps that rely on external servers, LocalSend doesn't require an internet connection or third-party servers, making it a fast and reliable solution for local communication.
+Everything LocalSend does, plus:
 
-## Sponsors
+- **Tap to share (Android):** hold two phones back to back to send. No pairing, no picking a device from a list.
+- **Works with the app closed:** share from any app via **Share → Duck**; the receiving phone wakes up from the tap and saves the file in the background.
+- **Clear feedback:** both phones vibrate on touch and when done; the receiver gets a "Received…" notification that opens the file.
+- **Trusted devices:** files from devices you trust arrive without a prompt, skip your PIN, and shared text lands on your clipboard.
+- **Blocked devices:** requests from blocked devices are declined and they are hidden from the nearby list.
 
-This project is tested with BrowserStack
+## Tap to share
 
-Supported by TestMu AI
+Requires two Android phones with NFC (host card emulation) on the same Wi-Fi.
 
-<a href="https://www.testmuai.com/?utm_medium=sponsor&utm_source=localsend" target="_blank">
-    <img src="https://localsend.org/img/sponsors/tesmu.svg" style="vertical-align: middle;" width="250" height="45" />
-</a>
+**Send**
 
-## Screenshots
+1. In any app (Gallery, Files, …) tap **Share → Duck**. A sheet slides up: *Hold near another phone*.
+2. Hold the phones back to back, camera ends lined up.
+3. Pull them apart when both vibrate. The sheet shows **Sent**; tap more phones to send to them too.
 
-<img src="https://localsend.org/img/screenshot-iphone.webp" alt="iPhone screenshot" height="300"/> <img src="https://localsend.org/img/screenshot-pc.webp" alt="PC screenshot" height="300"/>
+Inside Duck, selecting files on the Send tab and tapping another phone works the same way.
 
-## Download
+**Receive**
 
-[![Packaging status](https://repology.org/badge/tiny-repos/localsend.svg)](https://repology.org/project/localsend/versions)
+Nothing to do: keep the screen on and unlocked. Duck may be closed. The phone vibrates on touch and again when the file is saved, and the notification opens it.
 
-It is recommended to download the app either from an app store or from a package manager because the app does not have an auto-update.
+**Good to know**
 
-| Windows                 | macOS                   | Linux              | Android        | iOS           | Fire OS    |
-|-------------------------|-------------------------|--------------------|----------------|---------------|------------|
-| [Winget][]              | [App Store][]           | [Flathub][]        | [Play Store][] | [App Store][] | [Amazon][] |
-| [Scoop][]               | [Homebrew][]            | [Nixpkgs][]        | [F-Droid][]    |               |            |
-| [Chocolatey][]          | [DMG Installer][latest] | [Snap][]           | [APK][latest]  |               |            |
-| [EXE Installer][latest] |                         | [AUR][]            |                |               |            |
-| [Portable ZIP][latest]  |                         | [TAR][latest]      |                |               |            |
-|                         |                         | [DEB][latest]      |                |               |            |
-|                         |                         | [AppImage][latest] |                |               |            |
+- The touch only exchanges the address and the security fingerprint (well under a second). The file itself goes over Wi-Fi, so the phones can be apart while it transfers. Keep the share sheet open until it says *Sent*.
+- Taps from a locked phone, or from a device that was not tapped, show the normal accept prompt.
+- Turn tap to share on or off with the **Tap to share** tile in Quick Settings or in Duck's settings.
+- **Pixel phones:** Google's own *Tap to Share* (Quick Share) competes for NFC. Turn it off under *Settings → Connected devices → Connection preferences → Quick Share* if taps are unreliable.
 
-Read more about [distribution channels][].
+## Trusted and blocked devices
 
-Windows binaries are signed. Read more about the [Code signing policy][].
+When an unknown device sends you something, the receive screen asks **Trust this device?**
 
-> [!CAUTION]
-> **Unofficial MSIX preview:** you can try builds from the latest commits at [localsend.ob-buff.dev](https://localsend.ob-buff.dev/). Stability is not guaranteed and all custom code tweaks are listed on that site.
+- **Always allow** — the device becomes trusted (it is also listed under favorites). Trusted devices skip the prompt and the receive PIN, and text they share is copied to your clipboard. You are never asked again.
+- **Block** — the request is declined; future requests are declined silently.
 
-[windows store]: https://www.microsoft.com/store/apps/9NCB4Z0TZ6RR
-[app store]: https://apps.apple.com/us/app/localsend/id1661733229
-[play store]: https://play.google.com/store/apps/details?id=org.localsend.localsend_app
-[f-droid]: https://f-droid.org/packages/org.localsend.localsend_app
-[amazon]: https://www.amazon.com/dp/B0BW6MP732
-[winget]: https://github.com/microsoft/winget-pkgs/tree/master/manifests/l/LocalSend/LocalSend
-[scoop]: https://scoop.sh/#/apps?s=0&d=1&o=true&q=localsend&id=fb88113be361ca32c0dcac423cb4afdeda0b0c66
-[chocolatey]: https://community.chocolatey.org/packages/localsend
-[homebrew]: https://formulae.brew.sh/cask/localsend
-[flathub]: https://flathub.org/apps/details/org.localsend.localsend_app
-[nixpkgs]: https://search.nixos.org/packages?show=localsend
-[snap]: https://snapcraft.io/localsend
-[aur]: https://aur.archlinux.org/packages/localsend-bin
-[latest]: https://github.com/localsend/localsend/releases/latest
-[distribution channels]: https://github.com/localsend/localsend/blob/main/CONTRIBUTING.md#distribution
-[code signing policy]: https://github.com/localsend/localsend/blob/main/CODE_SIGNING.md
-
-**Compatibility**
-
-| Platform | Minimum Version | Note                                                                                                                        |
-|----------|-----------------|-----------------------------------------------------------------------------------------------------------------------------|
-| Android  | 7.0             | The last version to support Android 5 and 6 is v1.17.0.                                                                     |
-| iOS      | 13.0            | The last version to support iOS 12 is v1.17.0. Sharing from other apps requires iOS 14 or later.                               |
-| macOS    | 11 Big Sur      | Use OpenCore Legacy Patcher 2.0.2 (See [#1005](https://github.com/localsend/localsend/issues/1005#issuecomment-2449899384)) |
-| Windows  | 10              | The last version to support Windows 7 is v1.15.4.   |
-| Linux    | N.A.            | Deps: Gnome: `xdg-desktop-portal` and `xdg-desktop-portal-gtk`, KDE: `xdg-desktop-portal` and `xdg-desktop-portal-kde`      |
+Long-press a device on the Send tab, or open **Settings → Trusted & blocked devices**, to change it later. Trust is tied to the device's TLS certificate, so another device cannot pretend to be a trusted one.
 
 ## Setup
 
-In most cases, LocalSend should work out of the box. However, if you are having trouble sending or receiving files, you may need to configure your firewall to allow LocalSend to communicate over your local network.
+Duck should work out of the box. If devices cannot see each other, allow Duck through your firewall:
 
 | Traffic Type | Protocol | Port  | Action |
 |--------------|----------|-------|--------|
 | Incoming     | TCP, UDP | 53317 | Allow  |
 | Outgoing     | TCP, UDP | Any   | Allow  |
 
-On Linux, for example with `ufw`: `sudo ufw allow 53317`. With `firewalld`: `sudo firewall-cmd --permanent --add-port=53317/tcp`, `sudo firewall-cmd --permanent --add-port=53317/udp`, then `sudo firewall-cmd --reload`.
+On Linux with `ufw`: `sudo ufw allow 53317`. With `firewalld`: `sudo firewall-cmd --permanent --add-port=53317/tcp`, `sudo firewall-cmd --permanent --add-port=53317/udp`, then `sudo firewall-cmd --reload`.
 
-Also make sure to disable AP isolation on your router. It should be usually disabled by default but some routers may have it enabled (especially guest networks).
-See [troubleshooting](#troubleshooting) for more information.
+Also make sure AP isolation is disabled on your router (guest networks often enable it).
 
-**Portable Mode**
+**Portable mode:** create an empty `settings.json` next to the executable; settings are stored there instead of the default location.
 
-(Introduced in v1.13.0)
+**Start hidden:** pass `--hidden` to start in the tray only.
 
-Create a file named `settings.json` located in the same directory as the executable.
-This file can be empty.
-The app will use this file to store settings instead of the default location.
+## How it works
 
-**Start hidden**
+Devices talk to each other over a REST API using HTTPS. Each device generates its TLS certificate on the fly, and the peer identity is the SHA-256 fingerprint of that certificate. See the [LocalSend protocol](https://github.com/localsend/protocol) for details.
 
-(Updated in v1.15.0)
+Tap to share adds an NFC handshake in front of it: the receiving phone emulates a card (Android host card emulation, AID `F04C4F43414C53454E44`) that answers with its alias, port, local IPs and certificate fingerprint. The sender reads it in NFC reader mode, connects over HTTPS pinned to that fingerprint, and starts a normal transfer. The fingerprint coming from physical contact makes the connection harder to intercept than LAN discovery.
 
-To start the app hidden (only in tray), use the `--hidden` flag (example: `localsend_app.exe --hidden`).
+## Getting started
 
-On v1.14.0 and earlier, the app starts hidden if `autostart` flag is set, and the hidden setting is enabled.
+To build Duck from source:
 
-## How It Works
-
-LocalSend uses a secure communication protocol that allows devices to communicate with each other using a REST API. All data is sent securely over HTTPS, and the TLS/SSL certificate is generated on the fly on each device, ensuring maximum security.
-
-For more information on the LocalSend Protocol, see the [documentation](https://github.com/localsend/protocol).
-
-## Dependency Hierarchy
-
-![Dependency hierarchy](support/docs/dependency-hierarchy.svg)
-
-## Getting Started
-
-To compile LocalSend from the source code, follow these steps:
-
-1. Install Flutter [directly](https://flutter.dev) or using [fvm](https://fvm.app) (see [version required](.fvmrc))
+1. Install Flutter [directly](https://flutter.dev) or with [fvm](https://fvm.app) (see the [required version](.fvmrc))
 2. Install [Rust](https://www.rust-lang.org/tools/install)
-3. Clone the `LocalSend` repository
-4. Run `cd app` to enter the app directory
-5. Run `flutter pub get` to download dependencies
-6. Run `flutter run` to start the app
+3. Clone this repository
+4. `cd app`
+5. `fvm flutter pub get`
+6. `fvm flutter run`
 
 > [!NOTE]
-> LocalSend currently requires an older Flutter version (specified in [.fvmrc](.fvmrc))
-> and thus build issues may be caused by a mismatch between the required and the (system-wide) installed Flutter version.  
-> To make development more consistent, LocalSend uses [fvm](https://fvm.app) to manage the project Flutter version.
-> After installing `fvm`, run `fvm flutter` instead of `flutter`.
+> Duck pins its Flutter version in [.fvmrc](.fvmrc). Use `fvm flutter` instead of a system-wide `flutter` to avoid build issues from a version mismatch.
 
-## Command Line Interface
+The app icons for every platform are generated from [support/branding](support/branding/README.md).
 
-The LocalSend CLI is a terminal client built on LocalSend Protocol v2.
-Run `localsend-cli --help` to see every available option and hotkey.
+## Command line interface
 
-Use the `send` command with one or more files, directories, or a mixture of both:
+The repository also contains a terminal client (`localsend-cli`) built on the same protocol, so it works with Duck too.
+Run `localsend-cli --help` to see every option.
 
 ```shell
 localsend-cli send report.pdf photo.jpg ./project-backup
-```
-
-The command opens the discovered-device list; select the destination interactively
-and press Enter to start the transfer.
-
-To select the destination without an interactive device list, pass its exact alias
-or IP address:
-
-```shell
 localsend-cli send --to "Cute Tomato" report.pdf
-localsend-cli send --to 192.168.27.26 report.pdf
+localsend-cli send --to 192.168.27.26 --text "hello"
 ```
 
-An alias must uniquely identify a discovered device. An IP address is probed directly
-over HTTPS on LocalSend's default port (`53317`).
-
-To send a text message instead of files, use `--text` together with `--to`.
-Pass `-` to read the text from stdin:
-
-```shell
-localsend-cli send --to "Cute Tomato" --text "https://localsend.org"
-echo "Hello" | localsend-cli send --to "Cute Tomato" --text -
-```
-
-A single trailing line break is dropped from stdin. Text longer than 64 KB is sent as
-a `.txt` file instead. Stdin must be UTF-8 and at most 16 MB; send other data as a file.
-
-Directories are collected recursively. Their selected root names and nested paths
-are preserved on the receiver. Empty directories are not sent because LocalSend
-transfers file entries rather than directory entries.
-
-## Contributing
-
-We welcome contributions from anyone interested in helping improve LocalSend. If you'd like to contribute, there are a few ways to get involved:
-
-### Translation
-
-You can help translate LocalSend into other languages. We use the [Weblate](https://hosted.weblate.org/projects/localsend/app) platform to manage translations.
-
-Alternatively, you can also contribute by forking this repository and adding translations manually.
-
-The translations are located in the [app/assets/i18n](https://github.com/localsend/localsend/tree/main/app/assets/i18n) directory. Edit the `_missing_translations_<locale>.json` or `strings_<locale>.i18n.json` file to add or update translations.
-
-<a href="https://hosted.weblate.org/engage/localsend/">
-<img src="https://hosted.weblate.org/widget/localsend/app/multi-auto.svg" alt="Translation status" />
-</a>
-
-**_Take note:_ Fields decorated with `@` are not meant to be translated; they are not used in the app in any way, being merely informative text about the file or to give context to the translator.**
-
-### Bug Fixes and Improvements
-
-- **Bug Fixes:** If you find a bug, please create a pull request with a clear description of the issue and how to fix it.
-- **Improvements:** Have an idea for how to improve LocalSend? Please create an issue first to discuss why the improvement is needed.
-
-For more information, see the [contributing guide](https://github.com/localsend/localsend/blob/main/CONTRIBUTING.md).
+Without `--to`, the command opens the list of discovered devices. An IP address is probed directly over HTTPS on the default port (`53317`).
 
 ## Troubleshooting
 
 | Issue              | Platform (Sending) | Platform (Receiving) | Solution                                                                                                                                |
 |--------------------|--------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| Device not visible | Any                | Any                  | Make sure to disable AP-Isolation on your router. If it is enabled, connections between devices are forbidden.                          |
-| Device not visible | Any                | Windows              | Make sure to configure your network as a "private" network. Windows might be more restrictive when the network is configured as public. |
-| Device not visible | macOS, iOS         | Any                  | You can try to toggle the "Local Network" permission under "Privacy" in the OS settings.                                                |
-| Device not visible | Any                | Any                  | If a VPN is active, allow local/LAN traffic or temporarily disable the VPN. Some VPNs block local network connections by default.       |
-| Device not visible | Any                | Any                  | Use manual sending to enter the receiver's IP address directly. If that works, add the device to favorites so it is probed directly.    |
-| Speed too slow     | Any                | Any                  | Use 5 Ghz; Disable encryption on both devices                                                                                           |
-| Speed too slow     | Any                | Android              | Known issue. https://github.com/flutter-cavalry/saf_stream/issues/4                                                                     |
+| Tap does nothing   | Android            | Android              | Turn on NFC on both phones; keep the receiver's screen on and unlocked; line up the camera ends and hold still for a second.            |
+| Tap does nothing   | Pixel              | Android              | Turn off Google's *Tap to Share* (Quick Share settings); it takes over NFC.                                                             |
+| "Could not send"   | Android            | Android              | Both phones must be on the same Wi-Fi.                                                                                                  |
+| Device not visible | Any                | Any                  | Disable AP isolation on your router. If it is enabled, connections between devices are forbidden.                                      |
+| Device not visible | Any                | Windows              | Set your network to "private". Windows is more restrictive on public networks.                                                          |
+| Device not visible | macOS, iOS         | Any                  | Toggle the "Local Network" permission under "Privacy" in the OS settings.                                                               |
+| Device not visible | Any                | Any                  | If a VPN is active, allow local/LAN traffic or disable the VPN.                                                                         |
+| Device not visible | Any                | Any                  | Send manually to the receiver's IP address. If that works, add the device to favorites so it is probed directly.                       |
+| Speed too slow     | Any                | Any                  | Use 5 GHz; disable encryption on both devices.                                                                                          |
 
 ## Building
 
-These commands are intended for maintainers only. Make sure to run them from the `app` directory.
+Run from the `app` directory.
 
-### Android
+| Platform | Command |
+|----------|---------|
+| Android APK | `fvm flutter build apk` |
+| Android App Bundle | `fvm flutter build appbundle` |
+| iOS | `fvm flutter build ipa` |
+| macOS | `fvm flutter build macos` |
+| Windows | `fvm flutter build windows` (MSIX: `fvm flutter pub run msix:create`) |
+| Linux | `fvm flutter build linux` (AppImage: `appimage-builder --recipe AppImageBuilder.yml`) |
 
-Traditional APK
+Release APKs need a signing key: create `app/android/key.properties`, or sign with the debug key (see [CONTRIBUTING.md](CONTRIBUTING.md#compile-a-release-apk)).
 
-```bash
-flutter build apk
-```
+## Credits and license
 
-AppBundle for Google Play
-
-```bash
-flutter build appbundle
-```
-
-### iOS
-
-```bash
-flutter build ipa
-```
-
-### macOS
-
-```bash
-flutter build macos
-```
-
-### Windows
-
-**Traditional**
-
-```bash
-flutter build windows
-```
-
-**Local MSIX App**
-
-```bash
-flutter pub run msix:create
-```
-
-**Store ready**
-
-```bash
-flutter pub run msix:create --store
-```
-
-### Linux
-
-**Traditional**
-
-```bash
-flutter build linux
-```
-
-**AppImage**
-
-```bash
-appimage-builder --recipe AppImageBuilder.yml
-```
-
-**Snap**
-
-Instructions in [localsend/snap/README.md](https://github.com/localsend/snap/blob/main/README.md)
-
-## Contributors
-
-<a href="https://github.com/localsend/localsend/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=localsend/localsend"  alt="Localsend Contributors"/>
-</a>
+Duck is based on [LocalSend](https://github.com/localsend/localsend) by Tien Do Nam and contributors, and is licensed under the [Apache License 2.0](LICENSE), like the original. "LocalSend" and its logo belong to their owners; Duck is not affiliated with or endorsed by the LocalSend project.
