@@ -2,6 +2,8 @@
 
 [English](../../README.md) • 中文
 
+**网站：** <https://n1th1n-19.github.io/duck-share/> · [隐私政策](https://n1th1n-19.github.io/duck-share/privacy.html)
+
 Duck Share 可以在局域网内与附近的设备分享文件和消息，无需互联网连接，也无需账号。在 Android 上，**把两部手机背靠背贴在一起**即可发送文件，类似 AirDrop 或 Quick Share——即使两部手机上的 Duck Share 都处于关闭状态。
 
 Duck Share 是 [LocalSend](https://github.com/localsend/localsend) 的分支，使用相同的协议，因此可以与 Windows、macOS、Linux、iOS 和 Android 上的所有 LocalSend 设备互通。

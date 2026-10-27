@@ -60,7 +60,7 @@ The logo and every platform icon are generated from one script, see [support/bra
 
 ## Bug reports and security issues
 
-Report bugs in the [issue tracker](https://github.com/n1th1n-19/duck/issues). Report security issues privately via [GitHub security advisories](https://github.com/n1th1n-19/duck/security/advisories/new), not in a public issue.
+Report bugs in the [issue tracker](https://github.com/n1th1n-19/duck-share/issues). Report security issues privately via [GitHub security advisories](https://github.com/n1th1n-19/duck-share/security/advisories/new), not in a public issue.
 
 ## Pulling changes from LocalSend
 

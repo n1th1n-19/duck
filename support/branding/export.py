@@ -74,6 +74,9 @@ for kind, folder in (("success", "AppIconWithSuccessMark"), ("error", "AppIconWi
     png(mac_svg.replace("</svg>", badge(kind) + "</svg>"), 256).save(f"{mac}/{folder}.imageset/logo-1024-mac-256.png")
 png(mark("#000000"), 32).save(f"{mac}/StatusBarItemIcon.imageset/logo-32-black.png")
 
+# --- store listing (F-Droid / Play): the launcher tile at 512 ---
+png(tile(B, radius=96), 512).save(f"{APP}/../fastlane/metadata/android/en-US/images/icon.png")
+
 # --- Windows ---
 png(tile(B, radius=96), 256).save(f"{APP}/windows/runner/resources/app_icon.ico", sizes=ico_sizes)
 print("exported")

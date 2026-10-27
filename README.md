@@ -2,8 +2,8 @@
 
 [![CI status][ci-badge]][ci-workflow]
 
-[ci-badge]: https://github.com/n1th1n-19/duck/actions/workflows/ci.yml/badge.svg
-[ci-workflow]: https://github.com/n1th1n-19/duck/actions/workflows/ci.yml
+[ci-badge]: https://github.com/n1th1n-19/duck-share/actions/workflows/ci.yml/badge.svg
+[ci-workflow]: https://github.com/n1th1n-19/duck-share/actions/workflows/ci.yml
 
 <img src="support/branding/logo.svg" alt="Duck Share logo" width="96" />
 

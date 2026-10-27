@@ -19,6 +19,8 @@ Duck Share is a fork of LocalSend. Changes on top of LocalSend 1.18.2:
 - feat: history shows photo and video previews and opens received files, also from the gallery
 - fix(android): tap to share works again when files are picked in the app, also after rotating the phone
 - fix(android): the app no longer forces the highest screen refresh rate
+- feat: website with a privacy policy (https://n1th1n-19.github.io/duck-share/); the app links to it
+- feat: About page describes Duck Share and credits LocalSend; the donation entry is removed
 
 ## Unreleased
 

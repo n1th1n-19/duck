@@ -6,7 +6,7 @@ This file provides guidance to LLMs when working with code in this repository.
 
 - User-facing name: "Duck Share"; Android `applicationId` `com.duck.daystack` (debug: `com.duck.daystack.debug`); brand color Pond blue `#1E6FD9`.
 - Internal identifiers are deliberately unchanged to keep upstream merges small: Dart package `localsend_app`, Kotlin package `org.localsend.localsend_app`, method channel `org.localsend.localsend_app/localsend`, settings keys `ls_*`, crate names. Do not rename them.
-- The original project is the `upstream` git remote; this repository is `origin` (`n1th1n-19/duck`).
+- The original project is the `upstream` git remote; this repository is `origin` (`n1th1n-19/duck-share`, website at `https://n1th1n-19.github.io/duck-share/`).
 
 ## Repository layout
 
@@ -21,6 +21,7 @@ This is a multi-language monorepo: a Flutter app on top of a Rust protocol imple
 | `server/`                      | Axum WebSocket signaling server for WebRTC (`/v1/ws`). Deployed separately, see `server/Dockerfile`.                                                        |
 | `cli/`                         | Rust CLI crate (`localsend-cli`): interactive terminal client on top of `packages/core` (v2 HTTP + multicast).                                              |
 | `support/scripts/`             | Release/packaging scripts (per-platform builds, MSIX, Inno Setup, FOSS stripping).                                                                          |
+| `site/`                        | Website (home page + privacy policy), plain HTML/CSS, published to GitHub Pages by `.github/workflows/pages.yml`. The privacy policy lives here (`PRIVACY.md` only points to it); keep it true to what the app does. |
 | `support/branding/`            | Duck Share logo source (`duck.py`) and `export.py`, which regenerates every platform icon. Edit there, never the PNGs by hand.                                    |
 
 The four Rust crates (`packages/core`, `packages/localsend_isolates/rust`, `server`, `cli`) form a single Cargo workspace rooted at the repository root: one shared `Cargo.lock` and `target/`, and `[profile.*]` settings live only in the root `Cargo.toml` (member profiles would be ignored). Cargokit still builds the plugin crate into its own target dir during Flutter builds.
@@ -168,7 +169,7 @@ Slang, source files in `app/assets/i18n/` (Duck Share adds new keys to `en.json`
 
 ### FOSS build
 
-`in_app_purchase` and the donation UI are stripped for F-Droid by `support/scripts/remove_proprietary_dependencies.sh`, which relies on the `# [FOSS_REMOVE]` pubspec marker and `// [FOSS_REMOVE_START]` / `// [FOSS_REMOVE_END]` comment pairs. Preserve those markers when editing `lib/config/init.dart`, `lib/pages/donation/*`, or `lib/provider/purchase_provider.dart`.
+The donation page is no longer reachable from settings in Duck Share. `in_app_purchase` and the donation UI are stripped for F-Droid by `support/scripts/remove_proprietary_dependencies.sh`, which relies on the `# [FOSS_REMOVE]` pubspec marker and `// [FOSS_REMOVE_START]` / `// [FOSS_REMOVE_END]` comment pairs. Preserve those markers when editing `lib/config/init.dart`, `lib/pages/donation/*`, or `lib/provider/purchase_provider.dart`.
 
 ## Release notes
 

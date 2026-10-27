@@ -25,3 +25,6 @@
 
 # Claude Code local config
 .claude/
+
+# Python bytecode (support/branding)
+__pycache__/
