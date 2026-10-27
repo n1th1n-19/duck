@@ -217,6 +217,20 @@ class Translations$receiveTab$en {
 
   /// en: 'Receive via link'
   String get link => 'Receive via link';
+
+  /// en: 'Ready to receive'
+  String get ready => 'Ready to receive';
+
+  /// en: 'Accept files from everyone without asking'
+  String get quickSaveHint => 'Accept files from everyone without asking';
+
+  /// en: '(zero) {Nothing received yet} (one) {1 file received} (other) {{n} files received}'
+  String historyCount({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+    n,
+    zero: 'Nothing received yet',
+    one: '1 file received',
+    other: '${n} files received',
+  );
 }
 
 // Path: sendTab
@@ -261,6 +275,18 @@ class Translations$sendTab$en {
 
   /// en: 'Place items to share.'
   String get placeItems => 'Place items to share.';
+
+  /// en: 'Pick something, then hold your phone near another'
+  String get hero => 'Pick something, then hold your phone near another';
+
+  /// en: 'Or share from any app: Share, then Duck Share'
+  String get heroShare => 'Or share from any app: Share, then Duck Share';
+
+  /// en: 'Tap phones to send'
+  String get tapTitle => 'Tap phones to send';
+
+  /// en: 'Hold the blue spot against the other phone'
+  String get tapHint => 'Hold the blue spot against the other phone';
 }
 
 // Path: settingsTab
@@ -1111,6 +1137,13 @@ class Translations$sendTab$selection$en {
 
   /// en: 'Size: {size}'
   String size({required Object size}) => 'Size: ${size}';
+
+  /// en: '(one) {1 file · {size}} (other) {{n} files · {size}}'
+  String count({required num n, required Object size}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+    n,
+    one: '1 file · ${size}',
+    other: '${n} files · ${size}',
+  );
 }
 
 // Path: sendTab.picker
@@ -1478,14 +1511,14 @@ class Translations$progressPage$total$en {
   // Translations
   late final Translations$progressPage$total$title$en title = Translations$progressPage$total$title$en.internal(_root);
 
-  /// en: 'Files: {curr} / {n}'
-  String count({required Object curr, required Object n}) => 'Files: ${curr} / ${n}';
+  /// en: '{curr} of {n} files'
+  String count({required Object curr, required Object n}) => '${curr} of ${n} files';
 
-  /// en: 'Size: {curr} / {n}'
-  String size({required Object curr, required Object n}) => 'Size: ${curr} / ${n}';
+  /// en: '{curr} of {n}'
+  String size({required Object curr, required Object n}) => '${curr} of ${n}';
 
-  /// en: 'Speed: {speed}/s'
-  String speed({required Object speed}) => 'Speed: ${speed}/s';
+  /// en: '{speed}/s'
+  String speed({required Object speed}) => '${speed}/s';
 }
 
 // Path: progressPage.remainingTime

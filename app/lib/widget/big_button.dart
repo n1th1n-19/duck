@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:localsend_app/config/theme.dart';
 import 'package:localsend_app/widget/responsive_builder.dart';
 
 class BigButton extends StatelessWidget {
@@ -27,27 +26,33 @@ class BigButton extends StatelessWidget {
     final buttonWidth = width ?? (sizingInformation.isDesktop ? desktopWidth : mobileWidth);
     return SizedBox(
       width: buttonWidth,
-      height: 65.0,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: filled ? colorScheme.primary : colorScheme.secondaryContainerIfDark,
-          foregroundColor: filled ? colorScheme.onPrimary : colorScheme.onSecondaryContainerIfDark,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.only(left: 2, right: 2, top: 10, bottom: 8),
-        ),
-        onPressed: onTap,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Icon(icon),
-            FittedBox(
-              alignment: Alignment.bottomCenter,
-              child: Text(label, maxLines: 1),
+      height: 96,
+      child: Material(
+        color: filled ? colorScheme.primary : colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(24),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CircleAvatar(
+                  radius: 21,
+                  backgroundColor: filled ? colorScheme.onPrimary.withValues(alpha: 0.16) : colorScheme.primaryContainer,
+                  child: Icon(icon, size: 22, color: filled ? colorScheme.onPrimary : colorScheme.onPrimaryContainer),
+                ),
+                FittedBox(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(color: filled ? colorScheme.onPrimary : colorScheme.onSurface),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

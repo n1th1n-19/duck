@@ -31,7 +31,6 @@ import 'package:localsend_app/widget/nfc_spot_guide.dart';
 import 'package:localsend_app/widget/opacity_slideshow.dart';
 import 'package:localsend_app/widget/responsive_builder.dart';
 import 'package:localsend_app/widget/responsive_list_view.dart';
-import 'package:localsend_app/widget/responsive_wrap_view.dart';
 import 'package:localsend_app/widget/rotating_widget.dart';
 import 'package:localsend_isolates/model/device.dart';
 import 'package:localsend_isolates/model/session_status.dart';
@@ -60,91 +59,64 @@ class SendTab extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             if (vm.selectedFiles.isEmpty) ...[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
-                child: Text(
-                  t.sendTab.selection.title,
-                  style: Theme.of(context).textTheme.titleMedium,
+              if (!sizingInformation.isMobile)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+                  child: Text(
+                    t.sendTab.selection.title,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
-              ),
-              ResponsiveWrapView(
-                outerHorizontalPadding: 15,
-                outerVerticalPadding: 10,
-                childPadding: 10,
-                minChildWidth: buttonWidth,
-                children: pickerOptions.map((option) {
-                  return BigButton(
-                    icon: option.icon,
-                    label: option.label,
-                    filled: false,
-                    onTap: () async => ref.global.dispatchAsync(
-                      PickFileAction(
-                        option: option,
-                        context: context,
-                      ),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  // four tiles per row on phones, fixed width on larger screens
+                  const spacing = 10.0;
+                  final mobileWidth = (constraints.maxWidth - 2 * _horizontalPadding - 3 * spacing) / 4;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding, vertical: 10),
+                    child: Wrap(
+                      spacing: spacing,
+                      runSpacing: spacing,
+                      children: pickerOptions.map((option) {
+                        return BigButton(
+                          icon: option.icon,
+                          label: option.label,
+                          filled: false,
+                          width: sizingInformation.isMobile ? mobileWidth : buttonWidth,
+                          onTap: () async => ref.global.dispatchAsync(
+                            PickFileAction(
+                              option: option,
+                              context: context,
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
                   );
-                }).toList(),
+                },
               ),
+              if (context.watch(tapShareProvider.select((s) => s.available && s.enabled))) const _TapShareHero(),
             ] else ...[
               Card(
                 margin: const EdgeInsets.only(bottom: 10, left: _horizontalPadding, right: _horizontalPadding),
                 child: Padding(
-                  padding: const EdgeInsetsDirectional.only(start: 15, top: 5, bottom: 15),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 8, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Text(
-                            t.sendTab.selection.title,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const Spacer(),
-                          CustomIconButton(
-                            onPressed: () => ref.redux(selectedSendingFilesProvider).dispatch(ClearSelectionAction()),
-                            child: Icon(Icons.close, color: Theme.of(context).colorScheme.secondary),
-                          ),
-                          const SizedBox(width: 5),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Text(t.sendTab.selection.files(files: vm.selectedFiles.length)),
-                      Text(t.sendTab.selection.size(size: vm.selectedFiles.fold(0, (prev, curr) => prev + curr.size).asReadableFileSize)),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: defaultThumbnailSize,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: vm.selectedFiles.length,
-                          itemBuilder: (context, index) {
-                            final file = vm.selectedFiles[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: SmartFileThumbnail.fromCrossFile(file),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            style: TextButton.styleFrom(
-                              foregroundColor: Theme.of(context).colorScheme.onSurface,
+                          Expanded(
+                            child: Text(
+                              t.sendTab.selection.count(
+                                n: vm.selectedFiles.length,
+                                size: vm.selectedFiles.fold(0, (prev, curr) => prev + curr.size).asReadableFileSize,
+                              ),
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
-                            onPressed: () async {
-                              await context.push(() => const SelectedFilesPage());
-                            },
-                            child: Text(t.general.edit),
                           ),
-                          const SizedBox(width: 15),
-                          ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.primary,
-                              foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                            ),
+                          IconButton(
+                            tooltip: t.general.add,
                             onPressed: () async {
                               if (pickerOptions.length == 1) {
                                 // open directly
@@ -161,11 +133,38 @@ class SendTab extends StatelessWidget {
                                 options: pickerOptions,
                               );
                             },
-                            icon: const Icon(Icons.add),
-                            label: Text(t.general.add),
+                            icon: const Icon(Icons.add_rounded),
                           ),
-                          const SizedBox(width: 15),
+                          TextButton(
+                            onPressed: () async {
+                              await context.push(() => const SelectedFilesPage());
+                            },
+                            child: Text(t.general.edit),
+                          ),
+                          IconButton(
+                            tooltip: t.general.delete,
+                            onPressed: () => ref.redux(selectedSendingFilesProvider).dispatch(ClearSelectionAction()),
+                            icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.outline),
+                          ),
                         ],
+                      ),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        height: defaultThumbnailSize,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: vm.selectedFiles.length,
+                          itemBuilder: (context, index) {
+                            final file = vm.selectedFiles[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: SmartFileThumbnail.fromCrossFile(file),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -179,7 +178,10 @@ class SendTab extends StatelessWidget {
                 Flexible(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(t.sendTab.nearbyDevices, style: Theme.of(context).textTheme.titleMedium),
+                    child: Text(
+                      t.sendTab.nearbyDevices,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -280,35 +282,69 @@ class SendTab extends StatelessWidget {
   }
 }
 
-/// A button that opens a popup menu to select [T].
-/// This is used for the scan button and the send mode button.
-/// Tap to share hint: the selection goes to any phone held against this one.
+/// Tap to share, nothing picked yet: where to touch.
+class _TapShareHero extends StatelessWidget {
+  const _TapShareHero();
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
+    return Card(
+      margin: const EdgeInsets.only(top: 4, bottom: 10, left: _horizontalPadding, right: _horizontalPadding),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () async => showNfcSpotGuide(context),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+          child: Column(
+            children: [
+              const NfcSpotGuide(height: 200, withCaption: false),
+              const SizedBox(height: 20),
+              Text(t.sendTab.hero, style: textTheme.titleMedium, textAlign: TextAlign.center),
+              if (checkPlatformCanReceiveShareIntent()) ...[
+                const SizedBox(height: 8),
+                Text(
+                  t.sendTab.heroShare,
+                  style: textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Tap to share with a selection: any phone held against this one receives it.
 class _TapShareCard extends StatelessWidget {
   const _TapShareCard();
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
     return Card(
+      color: colors.primaryContainer,
       margin: const EdgeInsets.only(bottom: 10, left: _horizontalPadding, right: _horizontalPadding),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () async => showNfcSpotGuide(context),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           child: Row(
             children: [
-              const NfcSpotGuide(height: 80, withCaption: false),
-              const SizedBox(width: 16),
+              const NfcSpotGuide(height: 84, withCaption: false),
+              const SizedBox(width: 20),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t.tapShare.title, style: textTheme.titleMedium),
+                    Text(t.sendTab.tapTitle, style: textTheme.titleMedium?.copyWith(color: colors.onPrimaryContainer)),
                     const SizedBox(height: 4),
-                    Text(t.tapShare.description, style: textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                    const SizedBox(height: 4),
-                    Text(t.tapShare.guide.open, style: textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary)),
+                    Text(t.sendTab.tapHint, style: textTheme.bodySmall?.copyWith(color: colors.onPrimaryContainer)),
                   ],
                 ),
               ),
@@ -320,6 +356,8 @@ class _TapShareCard extends StatelessWidget {
   }
 }
 
+/// A button that opens a popup menu to select [T].
+/// This is used for the scan button and the send mode button.
 class _CircularPopupButton<T> extends StatelessWidget {
   final String tooltip;
   final PopupMenuItemBuilder<T> itemBuilder;

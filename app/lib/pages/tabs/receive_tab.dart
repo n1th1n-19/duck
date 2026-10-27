@@ -8,14 +8,12 @@ import 'package:localsend_app/pages/web_share_page.dart';
 import 'package:localsend_app/provider/animation_provider.dart';
 import 'package:localsend_app/provider/local_ip_provider.dart';
 import 'package:localsend_app/provider/network/server/server_provider.dart';
+import 'package:localsend_app/provider/receive_history_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
-import 'package:localsend_app/util/ip_helper.dart';
 import 'package:localsend_app/widget/animations/initial_fade_transition.dart';
 import 'package:localsend_app/widget/column_list_view.dart';
-import 'package:localsend_app/widget/custom_icon_button.dart';
 import 'package:localsend_app/widget/local_send_logo.dart';
 import 'package:localsend_app/widget/responsive_list_view.dart';
-import 'package:localsend_isolates/util/sleep.dart';
 import 'package:refena_flutter/addons.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 import 'package:routerino/routerino.dart';
@@ -31,23 +29,8 @@ class _ReceiveTabState extends State<ReceiveTab> {
   /// Whether the advanced network info is shown
   bool _showAdvanced = false;
 
-  /// Whether the history button is shown
-  /// This extra boolean is needed to delay the animation
-  bool _showHistoryButton = true;
-
   Future<void> _toggleAdvanced() async {
-    if (_showAdvanced) {
-      setState(() => _showAdvanced = false);
-      await sleepAsync(200);
-      if (mounted) {
-        setState(() => _showHistoryButton = true);
-      }
-    } else {
-      setState(() {
-        _showAdvanced = true;
-        _showHistoryButton = false;
-      });
-    }
+    setState(() => _showAdvanced = !_showAdvanced);
   }
 
   @override
@@ -56,13 +39,19 @@ class _ReceiveTabState extends State<ReceiveTab> {
     final serverState = context.watch(serverProvider);
     final localIps = context.watch(localIpProvider.select((s) => s.localIps));
 
+    final quickSave = context.watch(settingsProvider.select((s) => s.quickSave));
+    final historyCount = context.watch(receiveHistoryProvider).length;
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
+    final ip = localIps.firstOrNull;
+
     return Stack(
       children: [
         Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: ResponsiveListView.defaultMaxWidth),
             child: Padding(
-              padding: const EdgeInsets.all(30),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
               child: ColumnListView(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -77,42 +66,68 @@ class _ReceiveTabState extends State<ReceiveTab> {
                             builder: (context, ref) {
                               final animations = ref.watch(animationProvider);
                               final activeTab = ref.watch(homePageControllerProvider.select((state) => state.currentTab));
-                              return LocalSendLogo(
-                                withText: false,
-                                animate: serverState != null && animations && activeTab == HomeTab.receive,
+                              return _Pond(
+                                child: LocalSendLogo(
+                                  withText: false,
+                                  size: 180,
+                                  animate: serverState != null && animations && activeTab == HomeTab.receive,
+                                ),
                               );
                             },
                           ),
                         ),
+                        const SizedBox(height: 24),
                         FittedBox(
                           fit: BoxFit.scaleDown,
-                          child: Text(serverState?.alias ?? alias, style: const TextStyle(fontSize: 48)),
+                          child: Text(serverState?.alias ?? alias, style: textTheme.headlineMedium),
                         ),
+                        const SizedBox(height: 8),
                         InitialFadeTransition(
                           duration: const Duration(milliseconds: 300),
                           delay: const Duration(milliseconds: 500),
-                          child: Text(
-                            serverState == null ? t.general.offline : localIps.map((ip) => '#${ip.visualId}').toSet().join(' '),
-                            style: const TextStyle(fontSize: 24),
-                            textAlign: TextAlign.center,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(999),
+                            onTap: _toggleAdvanced,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              child: Text(
+                                serverState == null ? t.general.offline : [t.receiveTab.ready, ?ip].join(' · '),
+                                style: textTheme.bodyLarge?.copyWith(color: colors.onSurfaceVariant),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Center(
-                      child: OutlinedButton.icon(
-                        onPressed: () async {
-                          await context.global.dispatchAsync(NavigateAction.push(const WebSharePage()));
-                        },
-                        icon: Icon(Icons.language),
-                        label: Text(t.receiveTab.link),
-                      ),
+                  Card(
+                    clipBehavior: Clip.antiAlias,
+                    child: Column(
+                      children: [
+                        SwitchListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                          title: Text(t.general.quickSave, style: textTheme.titleSmall),
+                          subtitle: Text(t.receiveTab.quickSaveHint, style: textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant)),
+                          value: quickSave,
+                          onChanged: (b) async => context.ref.notifier(settingsProvider).setQuickSave(b),
+                        ),
+                        const Divider(indent: 20, endIndent: 20),
+                        _CardRow(
+                          icon: Icons.history_rounded,
+                          title: t.receiveHistoryPage.title,
+                          subtitle: t.receiveTab.historyCount(n: historyCount),
+                          onTap: () async => context.push(() => const ReceiveHistoryPage()),
+                        ),
+                        const Divider(indent: 20, endIndent: 20),
+                        _CardRow(
+                          icon: Icons.link_rounded,
+                          title: t.receiveTab.link,
+                          onTap: () async => context.global.dispatchAsync(NavigateAction.push(const WebSharePage())),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 15),
                 ],
               ),
             ),
@@ -123,55 +138,64 @@ class _ReceiveTabState extends State<ReceiveTab> {
           localIps: localIps,
           showAdvanced: _showAdvanced,
         ),
-        _CornerButtons(
-          showAdvanced: _showAdvanced,
-          showHistoryButton: _showHistoryButton,
-          toggleAdvanced: _toggleAdvanced,
-        ),
       ],
     );
   }
 }
 
-class _CornerButtons extends StatelessWidget {
-  final bool showAdvanced;
-  final bool showHistoryButton;
-  final Future<void> Function() toggleAdvanced;
+/// The duck sits on a flat pond ring.
+class _Pond extends StatelessWidget {
+  final Widget child;
 
-  const _CornerButtons({
-    required this.showAdvanced,
-    required this.showHistoryButton,
-    required this.toggleAdvanced,
-  });
+  const _Pond({required this.child});
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topRight,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            if (!showAdvanced)
-              AnimatedOpacity(
-                opacity: showHistoryButton ? 1 : 0,
-                duration: const Duration(milliseconds: 200),
-                child: CustomIconButton(
-                  onPressed: () async {
-                    await context.push(() => const ReceiveHistoryPage());
-                  },
-                  child: const Icon(Icons.history),
-                ),
-              ),
-            CustomIconButton(
-              key: const ValueKey('info-btn'),
-              onPressed: toggleAdvanced,
-              child: const Icon(Icons.info),
+    final colors = Theme.of(context).colorScheme;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Positioned(
+          bottom: 22,
+          child: Container(
+            width: 260,
+            height: 68,
+            decoration: ShapeDecoration(
+              shape: OvalBorder(side: BorderSide(color: colors.primary.withValues(alpha: 0.3), width: 2)),
+              color: colors.primary.withValues(alpha: 0.06),
             ),
-          ],
+          ),
         ),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 40), child: child),
+      ],
+    );
+  }
+}
+
+class _CardRow extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final VoidCallback onTap;
+
+  const _CardRow({required this.icon, required this.title, this.subtitle, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+      shape: const RoundedRectangleBorder(),
+      leading: CircleAvatar(
+        radius: 18,
+        backgroundColor: colors.surfaceContainerHigh,
+        child: Icon(icon, size: 20, color: colors.onSurface),
       ),
+      title: Text(title, style: textTheme.titleSmall),
+      subtitle: subtitle == null ? null : Text(subtitle!, style: textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant)),
+      trailing: Icon(Icons.chevron_right_rounded, color: colors.outline),
+      onTap: onTap,
     );
   }
 }

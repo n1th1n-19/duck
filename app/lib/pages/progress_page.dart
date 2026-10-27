@@ -33,7 +33,6 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 /// Extra space needed below the file list while the progress details are expanded.
-const _advancedProgressPanelExtraPadding = 100.0;
 
 class ProgressPage extends StatefulWidget {
   final bool showAppBar;
@@ -62,8 +61,6 @@ class _ProgressPageState extends State<ProgressPage> with Refena {
   int _finishCounter = 3;
   Timer? _finishTimer;
   Timer? _wakelockPlusTimer;
-
-  bool _advanced = false;
 
   /// On Android the foreground service keeps the process and the connection alive,
   /// so there is no reason to also keep the screen on.
@@ -274,7 +271,7 @@ class _ProgressPageState extends State<ProgressPage> with Refena {
             ListView.builder(
               padding: EdgeInsets.only(
                 top: MediaQuery.of(context).padding.top + 20,
-                bottom: 150 + (_advanced ? _advancedProgressPanelExtraPadding : 0) + getNavBarPadding(context),
+                bottom: 200 + getNavBarPadding(context),
                 left: 15,
                 right: 30,
               ),
@@ -291,7 +288,7 @@ class _ProgressPageState extends State<ProgressPage> with Refena {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(title, style: Theme.of(context).textTheme.titleLarge),
+                        Text(title, style: Theme.of(context).textTheme.headlineMedium),
                         if (checkPlatformWithFileSystem() && receiveSession != null)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
@@ -463,90 +460,66 @@ class _ProgressPageState extends State<ProgressPage> with Refena {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: Card(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5, top: 10),
+                      padding: const EdgeInsets.all(20),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            status.getLabel(
-                              remainingTime: _remainingTime ?? '-',
-                            ),
-                            style: const TextStyle(fontSize: 20),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  status.getLabel(remainingTime: _remainingTime ?? '-'),
+                                  style: Theme.of(context).textTheme.titleMedium,
+                                ),
+                              ),
+                              if (_totalBytes > 0 && _totalBytes != double.maxFinite.toInt())
+                                Text(
+                                  '${(100 * currBytes / _totalBytes).floor()}%',
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                            ],
                           ),
-                          const SizedBox(height: 5),
+                          const SizedBox(height: 12),
                           TweenAnimationBuilder(
                             tween: Tween<double>(begin: 0, end: _totalBytes == 0 ? 0 : currBytes / _totalBytes),
                             duration: const Duration(milliseconds: 200),
                             curve: Curves.easeOut,
                             builder: (context, value, child) {
-                              return CustomProgressBar(
-                                progress: value,
-                                borderRadius: 5,
-                              );
+                              return CustomProgressBar(progress: value);
                             },
                           ),
-                          AnimatedCrossFade(
-                            crossFadeState: _advanced ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-                            duration: const Duration(milliseconds: 200),
-                            alignment: Alignment.topLeft,
-                            firstChild: Container(),
-                            secondChild: Padding(
-                              padding: const EdgeInsets.only(top: 10, bottom: 5),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    t.progressPage.total.count(
-                                      curr: finishedCount,
-                                      n: _selectedFiles.length,
-                                    ),
-                                  ),
-                                  Text(
-                                    t.progressPage.total.size(
-                                      curr: currBytes.asReadableFileSize,
-                                      n: _totalBytes == double.maxFinite.toInt() ? '-' : _totalBytes.asReadableFileSize,
-                                    ),
-                                  ),
-                                  if (speedInBytes != null)
-                                    Text(
-                                      t.progressPage.total.speed(
-                                        speed: speedInBytes.asReadableFileSize,
-                                      ),
-                                    ),
-                                ],
+                          const SizedBox(height: 10),
+                          Text(
+                            [
+                              t.progressPage.total.count(curr: finishedCount, n: _selectedFiles.length),
+                              t.progressPage.total.size(
+                                curr: currBytes.asReadableFileSize,
+                                n: _totalBytes == double.maxFinite.toInt() ? '-' : _totalBytes.asReadableFileSize,
                               ),
+                              if (speedInBytes != null) t.progressPage.total.speed(speed: speedInBytes.asReadableFileSize),
+                            ].join(' · '),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          ),
+                          const SizedBox(height: 16),
+                          if (status == SessionStatus.sending)
+                            OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(52),
+                                foregroundColor: Theme.of(context).colorScheme.onSurface,
+                              ),
+                              onPressed: () => _exit(closeSession: true),
+                              child: Text(t.general.cancel),
+                            )
+                          else
+                            FilledButton(
+                              style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                              onPressed: () => _exit(closeSession: true),
+                              child: Text(_finishTimer != null ? '${t.general.done} ($_finishCounter)' : t.general.done),
                             ),
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton.icon(
-                                style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.onSurface),
-                                onPressed: () {
-                                  setState(() => _advanced = !_advanced);
-                                },
-                                icon: const Icon(Icons.info),
-                                label: Text(_advanced ? t.general.hide : t.general.advanced),
-                              ),
-                              TextButton.icon(
-                                style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.onSurface),
-                                onPressed: () => _exit(closeSession: true),
-                                icon: Icon(status == SessionStatus.sending ? Icons.close : Icons.check_circle),
-                                label: Text(
-                                  status == SessionStatus.sending
-                                      ? t.general.cancel
-                                      : _finishTimer != null
-                                      ? '${t.general.done} ($_finishCounter)'
-                                      : t.general.done,
-                                ),
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ),

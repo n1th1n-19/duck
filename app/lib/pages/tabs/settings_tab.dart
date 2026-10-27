@@ -29,6 +29,7 @@ import 'package:localsend_app/widget/dialogs/text_field_with_actions.dart';
 import 'package:localsend_app/widget/labeled_checkbox.dart';
 import 'package:localsend_app/widget/local_send_logo.dart';
 import 'package:localsend_app/widget/nfc_spot_guide.dart';
+import 'package:localsend_app/widget/responsive_builder.dart';
 import 'package:localsend_app/widget/responsive_list_view.dart';
 import 'package:localsend_isolates/constants.dart';
 import 'package:localsend_isolates/model/device.dart';
@@ -45,14 +46,18 @@ class SettingsTab extends StatelessWidget {
       provider: (ref) => settingsTabControllerProvider,
       builder: (context, vm) {
         final ref = context.ref;
+        // On mobile the home header already shows the title.
+        final mobile = SizingInformation(MediaQuery.sizeOf(context).width).isMobile;
         return ResponsiveListView(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 40),
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: mobile ? 8 : 40),
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Text(t.settingsTab.title, style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center),
-            ),
-            const SizedBox(height: 30),
+            if (!mobile) ...[
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(t.settingsTab.title, style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center),
+              ),
+              const SizedBox(height: 30),
+            ],
             _SettingsSection(
               title: t.settingsTab.general.title,
               children: [
@@ -653,7 +658,7 @@ class _SettingsEntry extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label),
+                Text(label, style: Theme.of(context).textTheme.bodyLarge),
                 if (description != null)
                   Text(
                     description!,
@@ -765,25 +770,33 @@ class _SettingsSection extends StatelessWidget {
   const _SettingsSection({
     required this.title,
     required this.children,
-    this.padding = const EdgeInsets.only(bottom: 15),
+    this.padding = const EdgeInsets.only(bottom: 24),
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: padding,
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 10),
-              ...children,
-            ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 12, bottom: 8),
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            ),
           ),
-        ),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20, right: 16, top: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: children,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

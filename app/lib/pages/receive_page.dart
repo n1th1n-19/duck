@@ -4,20 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:localsend_app/config/theme.dart';
 import 'package:localsend_app/gen/strings.g.dart';
-import 'package:localsend_app/model/persistence/color_mode.dart';
 import 'package:localsend_app/pages/receive_options_page.dart';
 import 'package:localsend_app/pages/verify_page.dart';
 import 'package:localsend_app/pages/web_share_page.dart';
 import 'package:localsend_app/provider/device_trust_provider.dart';
 import 'package:localsend_app/provider/favorites_provider.dart';
 import 'package:localsend_app/provider/selection/selected_receiving_files_provider.dart';
-import 'package:localsend_app/provider/settings_provider.dart';
 import 'package:localsend_app/util/device_type_ext.dart';
 import 'package:localsend_app/util/favorites.dart';
 import 'package:localsend_app/util/native/platform_check.dart';
 import 'package:localsend_app/util/native/taskbar_helper.dart';
 import 'package:localsend_app/util/ui/snackbar.dart';
-import 'package:localsend_app/widget/device_bage.dart';
 import 'package:localsend_app/widget/responsive_list_view.dart';
 import 'package:localsend_isolates/model/device.dart';
 import 'package:localsend_isolates/model/dto/file_dto.dart';
@@ -117,32 +114,35 @@ class _ReceivePageState extends State<ReceivePage> with Refena {
                                     children: [
                                       if (vm.showSenderInfo && !smallUi)
                                         Padding(
-                                          padding: const EdgeInsets.only(bottom: 10),
-                                          child: Icon(vm.sender.deviceType.icon, size: 64),
+                                          padding: const EdgeInsets.only(bottom: 16),
+                                          child: CircleAvatar(
+                                            radius: 44,
+                                            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                                            child: Icon(vm.sender.deviceType.icon, size: 40, color: Theme.of(context).colorScheme.onSurface),
+                                          ),
                                         ),
                                       Builder(
                                         builder: (context) {
                                           final alias = senderFavoriteEntry?.alias ?? vm.sender.alias;
                                           if (alias.isEmpty) {
-                                            return Text('', style: TextStyle(fontSize: smallUi ? 32 : 48));
+                                            return Text('', style: Theme.of(context).textTheme.headlineMedium);
                                           }
                                           return FittedBox(
                                             child: Text(
                                               alias,
-                                              style: TextStyle(fontSize: smallUi ? 32 : 48),
+                                              style: smallUi ? Theme.of(context).textTheme.titleLarge : Theme.of(context).textTheme.headlineMedium,
                                               textAlign: TextAlign.center,
                                             ),
                                           );
                                         },
                                       ),
                                       if (vm.showSenderInfo && vm.sender.deviceModel != null) ...[
-                                        const SizedBox(height: 10),
-                                        Center(
-                                          child: DeviceBadge(
-                                            backgroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-                                            foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
-                                            label: vm.sender.deviceModel!,
-                                          ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          vm.sender.deviceModel!,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                                         ),
                                       ],
                                       // Only a certificate-backed identity can be trusted.
@@ -157,7 +157,7 @@ class _ReceivePageState extends State<ReceivePage> with Refena {
                                         vm.message != null
                                             ? (vm.isLink ? t.receivePage.subTitleLink : t.receivePage.subTitleMessage)
                                             : t.receivePage.subTitle(n: vm.files.length),
-                                        style: smallUi ? null : Theme.of(context).textTheme.titleLarge,
+                                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                                         textAlign: TextAlign.center,
                                       ),
                                       if (vm.showSenderInfo && vm.message == null)
@@ -291,7 +291,6 @@ class _Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedFiles = context.watch(selectedReceivingFilesProvider);
-    final colorMode = context.watch(settingsProvider.select((state) => state.colorMode));
 
     if (vm.message != null) {
       return Center(
@@ -362,27 +361,25 @@ class _Actions extends StatelessWidget {
             return KeyEventResult.ignored;
           },
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  elevation: colorMode == ColorMode.yaru ? 0 : null,
-                  backgroundColor: colorMode == ColorMode.yaru ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.error,
-                  foregroundColor: colorMode == ColorMode.yaru ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onError,
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(52),
+                    foregroundColor: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  onPressed: decline,
+                  child: Text(t.general.decline),
                 ),
-                onPressed: decline,
-                icon: const Icon(Icons.close),
-                label: Text(t.general.decline),
               ),
-              const SizedBox(width: 20),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                  onPressed: onAccept,
+                  icon: const Icon(Icons.check_rounded),
+                  label: Text(t.general.accept),
                 ),
-                onPressed: onAccept,
-                icon: const Icon(Icons.check_circle),
-                label: Text(t.general.accept),
               ),
             ],
           ),
@@ -400,24 +397,35 @@ class _TrustCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Card(
-      margin: const EdgeInsets.only(top: 16),
+      color: colors.surfaceContainerHigh,
+      margin: const EdgeInsets.only(top: 20),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              t.trust.question(alias: vm.sender.alias),
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 4),
-            Text(t.trust.explanation, textAlign: TextAlign.center),
-            const SizedBox(height: 8),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TextButton.icon(
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: colors.primaryContainer,
+                  child: Icon(Icons.shield_outlined, size: 20, color: colors.onPrimaryContainer),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(t.trust.question(alias: vm.sender.alias), style: Theme.of(context).textTheme.titleMedium),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(t.trust.explanation, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(foregroundColor: colors.error),
                   onPressed: () async {
                     await context.global.dispatchAsync(BlockDeviceAction(vm.sender));
                     vm.onDecline();
@@ -425,17 +433,15 @@ class _TrustCard extends StatelessWidget {
                       context.global.dispatch(NavigateAction.popUntil<WebSharePage>());
                     }
                   },
-                  icon: const Icon(Icons.block),
-                  label: Text(t.trust.block),
+                  child: Text(t.trust.block),
                 ),
                 const SizedBox(width: 8),
-                FilledButton.icon(
+                FilledButton(
                   onPressed: () async {
                     await context.global.dispatchAsync(TrustDeviceAction(vm.sender));
                     vm.onAccept();
                   },
-                  icon: const Icon(Icons.verified_user),
-                  label: Text(t.trust.alwaysAllow),
+                  child: Text(t.trust.alwaysAllow),
                 ),
               ],
             ),

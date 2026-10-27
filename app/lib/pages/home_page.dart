@@ -193,7 +193,7 @@ class _HomePageState extends State<HomePage> with Refena {
   }
 }
 
-/// Mobile header: the gear opens settings; in settings, back returns to the last tab.
+/// Mobile header: the page title and the gear to settings; in settings, back returns to the last tab.
 class _MobileTopBar extends StatelessWidget {
   final HomePageVm vm;
 
@@ -202,8 +202,9 @@ class _MobileTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inSettings = vm.currentTab == HomeTab.settings;
+    final colors = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.fromLTRB(inSettings ? 8 : 20, 12, 16, 8),
       child: Row(
         children: [
           if (inSettings)
@@ -212,9 +213,12 @@ class _MobileTopBar extends StatelessWidget {
               icon: const Icon(Icons.arrow_back_rounded),
               onPressed: () => vm.changeTab(vm.previousTab),
             ),
-          const Spacer(),
+          Expanded(
+            child: Text(vm.currentTab.label, style: Theme.of(context).textTheme.headlineMedium, overflow: TextOverflow.ellipsis),
+          ),
           if (!inSettings)
-            IconButton(
+            IconButton.filled(
+              style: IconButton.styleFrom(backgroundColor: colors.surfaceContainerHigh, foregroundColor: colors.onSurface),
               tooltip: t.settingsTab.title,
               icon: Icon(HomeTab.settings.icon),
               onPressed: () => vm.changeTab(HomeTab.settings),
@@ -235,51 +239,55 @@ class _PillNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return SafeArea(
-      minimum: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      child: Container(
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          color: colors.surfaceContainer,
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: colors.outlineVariant),
-        ),
-        child: Row(
-          children: [HomeTab.send, HomeTab.receive].map((tab) {
-            final selected = vm.currentTab == tab;
-            return Expanded(
-              child: Semantics(
-                selected: selected,
-                button: true,
-                child: Material(
-                  color: selected ? colors.primaryContainer : Colors.transparent,
-                  shape: const StadiumBorder(),
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    onTap: () => vm.changeTab(tab),
-                    child: SizedBox(
-                      height: 48,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(tab.icon, size: 22, color: selected ? colors.onPrimaryContainer : colors.onSurfaceVariant),
-                          const SizedBox(width: 8),
-                          Text(
-                            tab.label,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: selected ? colors.onPrimaryContainer : colors.onSurfaceVariant,
+      minimum: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: colors.surfaceContainer,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: colors.outlineVariant),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [HomeTab.send, HomeTab.receive].map((tab) {
+                final selected = vm.currentTab == tab;
+                final foreground = selected ? colors.onPrimary : colors.onSurfaceVariant;
+                return Semantics(
+                  selected: selected,
+                  button: true,
+                  child: Material(
+                    color: selected ? colors.primary : Colors.transparent,
+                    shape: const StadiumBorder(),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: () => vm.changeTab(tab),
+                      child: Container(
+                        height: 48,
+                        constraints: const BoxConstraints(minWidth: 116),
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(tab.icon, size: 20, color: foreground),
+                            const SizedBox(width: 8),
+                            Text(
+                              tab.label,
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: foreground),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
       ),
     );
   }

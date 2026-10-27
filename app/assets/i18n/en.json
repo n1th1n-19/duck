@@ -52,14 +52,25 @@
       "favorites": "Favorites",
       "on": "@:general.on"
     },
-    "link": "Receive via link"
+    "link": "Receive via link",
+    "ready": "Ready to receive",
+    "quickSaveHint": "Accept files from everyone without asking",
+    "historyCount": {
+      "zero": "Nothing received yet",
+      "one": "1 file received",
+      "other": "{n} files received"
+    }
   },
   "sendTab": {
     "title": "Send",
     "selection": {
       "title": "Selection",
       "files": "Files: {files}",
-      "size": "Size: {size}"
+      "size": "Size: {size}",
+      "count": {
+        "one": "1 file · {size}",
+        "other": "{n} files · {size}"
+      }
     },
     "picker": {
       "file": "File",
@@ -82,7 +93,11 @@
     },
     "sendModeHelp": "Explanation",
     "help": "Please ensure that the desired target is also on the same Wi-Fi network.",
-    "placeItems": "Place items to share."
+    "placeItems": "Place items to share.",
+    "hero": "Pick something, then hold your phone near another",
+    "heroShare": "Or share from any app: Share, then Duck Share",
+    "tapTitle": "Tap phones to send",
+    "tapHint": "Hold the blue spot against the other phone"
   },
   "settingsTab": {
     "title": "Settings",
@@ -265,9 +280,9 @@
         "canceledSender": "Canceled by sender",
         "canceledReceiver": "Canceled by receiver"
       },
-      "count": "Files: {curr} / {n}",
-      "size": "Size: {curr} / {n}",
-      "speed": "Speed: {speed}/s"
+      "count": "{curr} of {n} files",
+      "size": "{curr} of {n}",
+      "speed": "{speed}/s"
     },
     "remainingTime": {
       "minutesUnit(plural, param=m)": {
