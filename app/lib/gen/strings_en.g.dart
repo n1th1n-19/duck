@@ -628,8 +628,9 @@ class Translations$aboutPage$en {
   String get title => 'About Duck Share';
 
   List<String> get description => [
-    'Duck Share is a free, open-source app that allows you to securely share files and messages with nearby devices over your local network without needing an internet connection.',
-    'This app is available on Android, iOS, macOS, Windows and Linux. You can find all download options on the official homepage.',
+    'Duck Share sends files and messages to nearby devices over your local network. No internet connection, no account, no cloud.',
+    'On Android, hold two phones back to back to send, like AirDrop or Quick Share, even when the app is closed on both phones.',
+    'Duck Share is a free, open-source fork of LocalSend and works with every LocalSend device on Windows, macOS, Linux, iOS and Android.',
   ];
 
   /// en: 'Author'
@@ -643,6 +644,9 @@ class Translations$aboutPage$en {
 
   /// en: 'Translators'
   String get translators => 'Translators';
+
+  /// en: 'Based on LocalSend'
+  String get basedOn => 'Based on LocalSend';
 }
 
 // Path: donationPage

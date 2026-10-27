@@ -45,14 +45,25 @@ class AboutPage extends StatelessWidget {
           Center(
             child: TextButton(
               onPressed: () async {
-                await launchUrl(Uri.parse('https://localsend.org'));
+                await launchUrl(Uri.parse('https://github.com/n1th1n-19/duck-share'), mode: LaunchMode.externalApplication);
               },
-              child: const Text('localsend.org'),
+              child: const Text('github.com/n1th1n-19/duck-share'),
             ),
           ),
           const SizedBox(height: 10),
           Text(t.aboutPage.description.join('\n\n')),
           const SizedBox(height: 20),
+          Text(t.aboutPage.author, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text.rich(
+            _buildContributor(
+              label: '@n1th1n-19',
+              primaryColor: primaryColor,
+            ),
+          ),
+          const SizedBox(height: 30),
+          // Duck Share builds on LocalSend: its people stay credited.
+          Text(t.aboutPage.basedOn, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 10),
           Text(t.aboutPage.author, style: const TextStyle(fontWeight: FontWeight.bold)),
           Text.rich(
             _buildContributor(
@@ -142,21 +153,21 @@ class AboutPage extends StatelessWidget {
             children: [
               TextButton(
                 onPressed: () async {
-                  await launchUrl(Uri.parse('https://localsend.org'));
+                  await launchUrl(Uri.parse('https://github.com/n1th1n-19/duck-share'), mode: LaunchMode.externalApplication);
                 },
-                child: const Text('Homepage'),
+                child: const Text('Source Code (GitHub)'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await launchUrl(Uri.parse('https://github.com/n1th1n-19/duck-share/releases'), mode: LaunchMode.externalApplication);
+                },
+                child: const Text('Releases'),
               ),
               TextButton(
                 onPressed: () async {
                   await launchUrl(Uri.parse('https://github.com/localsend/localsend'), mode: LaunchMode.externalApplication);
                 },
-                child: const Text('Source Code (Github)'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  await launchUrl(Uri.parse('https://codeberg.org/localsend/localsend'), mode: LaunchMode.externalApplication);
-                },
-                child: const Text('Source Code (Codeberg)'),
+                child: const Text('LocalSend (original project)'),
               ),
               TextButton(
                 onPressed: () async {

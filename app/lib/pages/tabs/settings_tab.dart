@@ -6,7 +6,6 @@ import 'package:localsend_app/model/persistence/color_mode.dart';
 import 'package:localsend_app/pages/about/about_page.dart';
 import 'package:localsend_app/pages/changelog_page.dart';
 import 'package:localsend_app/pages/device_trust_page.dart';
-import 'package:localsend_app/pages/donation/donation_page.dart';
 import 'package:localsend_app/pages/settings/network_interfaces_page.dart';
 import 'package:localsend_app/pages/tabs/settings_tab_controller.dart';
 import 'package:localsend_app/provider/network/server/server_provider.dart';
@@ -561,18 +560,11 @@ class SettingsTab extends StatelessWidget {
                   },
                 ),
                 _ButtonEntry(
-                  label: t.settingsTab.other.support,
-                  buttonLabel: t.settingsTab.other.donate,
-                  onTap: () async {
-                    await context.push(() => const DonationPage());
-                  },
-                ),
-                _ButtonEntry(
                   label: t.settingsTab.other.privacyPolicy,
                   buttonLabel: t.general.open,
                   onTap: () async {
                     await launchUrl(
-                      Uri.parse('https://localsend.org/privacy'),
+                      Uri.parse('https://n1th1n-19.github.io/duck-share/privacy.html'),
                       mode: LaunchMode.externalApplication,
                     );
                   },

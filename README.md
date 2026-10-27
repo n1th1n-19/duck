@@ -7,6 +7,8 @@
 
 <img src="support/branding/logo.svg" alt="Duck Share logo" width="96" />
 
+**Website:** <https://n1th1n-19.github.io/duck-share/> · [Privacy policy](https://n1th1n-19.github.io/duck-share/privacy.html)
+
 Duck Share shares files and messages between nearby devices over your local network, with no internet connection and no account. On Android, **hold two phones together** and the file goes across, like AirDrop or Quick Share — even when Duck Share is closed on both phones.
 
 Duck Share is a fork of [LocalSend](https://github.com/localsend/localsend) and speaks the same protocol, so it works with every LocalSend device on Windows, macOS, Linux, iOS and Android.

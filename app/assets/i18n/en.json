@@ -319,13 +319,15 @@
   "aboutPage": {
     "title": "About Duck Share",
     "description": [
-      "Duck Share is a free, open-source app that allows you to securely share files and messages with nearby devices over your local network without needing an internet connection.",
-      "This app is available on Android, iOS, macOS, Windows and Linux. You can find all download options on the official homepage."
+      "Duck Share sends files and messages to nearby devices over your local network. No internet connection, no account, no cloud.",
+      "On Android, hold two phones back to back to send, like AirDrop or Quick Share, even when the app is closed on both phones.",
+      "Duck Share is a free, open-source fork of LocalSend and works with every LocalSend device on Windows, macOS, Linux, iOS and Android."
     ],
     "author": "Author",
     "contributors": "Contributors",
     "packagers": "Packagers",
-    "translators": "Translators"
+    "translators": "Translators",
+    "basedOn": "Based on LocalSend"
   },
   "donationPage": {
     "title": "Donate",

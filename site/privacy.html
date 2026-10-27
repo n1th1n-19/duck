@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy · Duck Share</title>
+  <meta name="description" content="Duck Share does not collect, store or share any personal data.">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="wrap top">
+    <a class="brand" href="./"><img src="logo.svg" alt="">Duck Share</a>
+    <nav>
+      <a href="https://github.com/n1th1n-19/duck-share">GitHub</a>
+      <a href="privacy.html" aria-current="page">Privacy</a>
+    </nav>
+  </header>
+
+  <main class="wrap doc">
+    <h1>Privacy Policy</h1>
+    <p class="meta">Last updated: 28 October 2026</p>
+
+    <p>Duck Share is a free, open-source app for sending files and messages to nearby devices. It is developed by <a href="https://github.com/n1th1n-19">n1th1n-19</a> and based on <a href="https://github.com/localsend/localsend">LocalSend</a>.</p>
+
+    <p class="summary">In short: Duck Share does not collect, store or share any personal data. There are no accounts, no analytics, no ads and no servers of ours.</p>
+
+    <h2>What happens to your files</h2>
+    <p>Files and messages go directly from your device to the device you send them to, over your local network. They are encrypted in transit (HTTPS with a certificate generated on your device). They are never uploaded to the internet or to anyone else.</p>
+    <p>Received files are saved where you choose (by default your Downloads folder or gallery). Duck Share keeps a history of received files on your device; you can delete it at any time in the app.</p>
+
+    <h2>What other devices see</h2>
+    <p>To be found and to receive files, Duck Share shares a few details with devices on the same network, and with a phone you tap:</p>
+    <ul>
+      <li>the device name and device type you set in the app,</li>
+      <li>the device's local network addresses and the app's port,</li>
+      <li>a fingerprint of the app's security certificate.</li>
+    </ul>
+    <p>These details are needed to make a connection. They are not sent anywhere else.</p>
+
+    <h2>Tap to share (NFC)</h2>
+    <p>When you hold two phones together, they exchange the details listed above over NFC. The file itself then travels over your local network. Nothing is sent to us or to a third party.</p>
+
+    <h2>Internet</h2>
+    <p>Duck Share works without an internet connection and does not contact any server on its own. It only opens a website when you tap a link in the app, such as this policy or the source code. This website loads no trackers, analytics or third-party fonts.</p>
+
+    <h2>Permissions (Android)</h2>
+    <table>
+      <thead><tr><th>Permission</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Local network, Internet</td><td>Find nearby devices and transfer files over your local network.</td></tr>
+        <tr><td>NFC</td><td>Tap to share.</td></tr>
+        <tr><td>Photos and videos, storage</td><td>Pick files to send and save files you receive. Only the files you choose are read.</td></tr>
+        <tr><td>Media location</td><td>Keep the location data that is already inside your photos when you send them. Duck Share does not read your location.</td></tr>
+        <tr><td>Notifications, foreground service</td><td>Show transfer progress and keep a transfer running when the screen is off.</td></tr>
+        <tr><td>Install apps</td><td>Open APK files you received, only when you choose to install one.</td></tr>
+        <tr><td>Vibration</td><td>Confirm a tap and a finished transfer.</td></tr>
+        <tr><td>Quick Settings tile</td><td>The "Tap to share" on/off switch.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Children</h2>
+    <p>Duck Share does not collect data from anyone, including children.</p>
+
+    <h2>Changes</h2>
+    <p>If this policy changes, the new version is published on this page with a new date.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about this policy: open an issue at <a href="https://github.com/n1th1n-19/duck-share/issues">github.com/n1th1n-19/duck-share/issues</a>.</p>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 n1th1n-19 · Based on <a href="https://github.com/localsend/localsend">LocalSend</a> · Apache License 2.0</span>
+      <nav>
+        <a href="./">Home</a>
+        <a href="https://github.com/n1th1n-19/duck-share/releases">Releases</a>
+        <a href="https://github.com/n1th1n-19/duck-share/issues">Contact</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>
