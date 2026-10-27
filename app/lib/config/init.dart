@@ -196,6 +196,31 @@ Future<RefenaContainer> preInit(List<String> args) async {
 
 StreamSubscription? _sharedMediaSubscription;
 
+/// Passed by the native side when it starts the engine without UI (see LocalSendApplication.kt).
+const headlessFlag = '--headless';
+
+/// Starts receiving without a home page, used when a tap boots the engine headless.
+/// [postInit] repeats these steps once the UI attaches; they are idempotent.
+Future<void> startBackgroundServices(Ref ref) async {
+  initDeviceTrust(ref);
+
+  // Before the server: a tapped sender's upload can arrive right after it starts,
+  // and the auto-accept check needs the tap share state.
+  if (checkPlatform([TargetPlatform.android])) {
+    try {
+      await initTapShare(ref);
+    } catch (e) {
+      _logger.warning('Starting tap to share failed', e);
+    }
+  }
+
+  try {
+    await ref.notifier(serverProvider).startServerFromSettings();
+  } catch (e) {
+    _logger.warning('Starting server headless failed', e);
+  }
+}
+
 /// Will be called when home page has been initialized
 Future<void> postInit(BuildContext context, Ref ref, bool appStart) async {
   await updateSystemOverlayStyle(context);
@@ -232,6 +257,9 @@ Future<void> postInit(BuildContext context, Ref ref, bool appStart) async {
       context.showSnackBar(e.toString());
     }
   }
+
+  // A request that arrived headless is waiting for a decision.
+  ref.notifier(serverProvider).showPendingReceivePage();
 
   try {
     ref.redux(nearbyDevicesProvider).dispatchAsync(StartDiscoveryListener()); // ignore: unawaited_futures
@@ -302,6 +330,8 @@ Future<void> postInit(BuildContext context, Ref ref, bool appStart) async {
 
     _sharedMediaSubscription?.cancel(); // ignore: unawaited_futures
     _sharedMediaSubscription = shareHandler.sharedMediaStream.listen((SharedMedia payload) async {
+      // A cold start may deliver its share here (replayed intent) instead of as the initial share.
+      hasInitialShare = true;
       await ref.global.dispatchAsync(
         _HandleShareIntentAction(
           payload: payload,
@@ -316,7 +346,9 @@ Future<void> postInit(BuildContext context, Ref ref, bool appStart) async {
     }
   }
 
-  if (appStart && !hasInitialShare && (checkPlatformWithGallery() || checkPlatformCanReceiveShareIntent())) {
+  // A transfer received headless may still be writing to the cache.
+  final receiving = ref.read(serverProvider)?.session != null;
+  if (appStart && !hasInitialShare && !receiving && (checkPlatformWithGallery() || checkPlatformCanReceiveShareIntent())) {
     // Clear cache on every app start.
     // If we received a share intent, then don't clear it, otherwise the shared file will be lost.
     ref.global.dispatchAsync(ClearCacheAction()); // ignore: unawaited_futures

@@ -258,6 +258,11 @@ class ServerService extends Notifier<ServerState?> {
     _receiveController.declineFileRequest();
   }
 
+  /// Shows the receive page of a request that arrived while the engine ran headless.
+  void showPendingReceivePage() {
+    _receiveController.showPendingReceivePage();
+  }
+
   /// Updates the destination directory for the current session.
   void setSessionDestinationDir(String destinationDirectory) {
     _receiveController.setSessionDestinationDir(destinationDirectory);

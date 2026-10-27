@@ -91,8 +91,10 @@ Future<void> initTapShare(Ref ref) async {
     onRead: (json) => ref.global.dispatchAsync(TapShareSendAction(TapShareIdentity.decode(json))),
     onTapped: (fingerprint) {
       _logger.info('Tapped by $fingerprint');
+      // The OS may have closed the sockets while the app sat in the background.
+      unawaited(ref.notifier(serverProvider).ensureRunning());
       unawaited(HapticFeedback.heavyImpact());
-      showTapRipple(Routerino.context);
+      showTapRipple(Routerino.navigatorKey.currentContext);
     },
     onEnabledChanged: (enabled) => ref.redux(tapShareProvider).dispatch(_SetStateAction(ref.read(tapShareProvider).copyWith(enabled: enabled))),
   );
@@ -158,20 +160,20 @@ class TapShareSendAction extends AsyncGlobalAction {
       return;
     }
     unawaited(HapticFeedback.heavyImpact());
-    showTapRipple(Routerino.context);
+    showTapRipple(Routerino.navigatorKey.currentContext);
 
     final device = await _register();
-    // Routerino.context is the navigator's current context, so it is fresh after the await.
-    final context = Routerino.context;
+    // Fresh after the await; null while no UI exists.
+    final context = Routerino.navigatorKey.currentContext;
     if (device == null) {
-      if (context.mounted) {
+      if (context != null && context.mounted) {
         context.showSnackBar(t.tapShare.unreachable(alias: identity.alias));
       }
       return;
     }
 
     ref.redux(lastDevicesProvider).dispatch(AddLastDeviceAction(device));
-    if (context.mounted) {
+    if (context != null && context.mounted) {
       context.showSnackBar(t.tapShare.sending(alias: device.alias));
     }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:localsend_app/config/init.dart';
@@ -32,6 +34,12 @@ Future<void> main(List<String> args) async {
       stackTrace: stackTrace,
     );
     return;
+  }
+
+  if (args.contains(headlessFlag)) {
+    // A tap booted the engine while the app was closed (Android). No UI builds until
+    // the app is opened, so start receiving now instead of waiting for the home page.
+    unawaited(startBackgroundServices(container));
   }
 
   runApp(
@@ -74,9 +82,13 @@ class LocalSendApp extends StatelessWidget {
                 }
                 break;
               case AppLifecycleState.detached:
-                // The main isolate is only exited when all child isolates are exited.
-                // https://github.com/localsend/localsend/issues/1568
-                ref.redux(parentIsolateProvider).dispatch(IsolateDisposeAction());
+                // On Android the engine outlives the activity to keep receiving (tap to share),
+                // so the server isolates must survive the UI detaching.
+                if (!checkPlatform([TargetPlatform.android])) {
+                  // The main isolate is only exited when all child isolates are exited.
+                  // https://github.com/localsend/localsend/issues/1568
+                  ref.redux(parentIsolateProvider).dispatch(IsolateDisposeAction());
+                }
                 break;
               default:
                 break;

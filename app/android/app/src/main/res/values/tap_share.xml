@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="tap_share_service_description">Duck tap to share</string>
+    <string name="app_name_duck" translatable="false">Duck</string>
+    <string name="tap_share_ready_channel">Tap to share</string>
+    <string name="tap_share_ready">Ready to receive</string>
+    <string name="tap_share_incoming_channel">Incoming transfers</string>
 </resources>

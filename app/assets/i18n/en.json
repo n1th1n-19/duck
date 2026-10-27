@@ -582,7 +582,8 @@
     "description": "Hold two phones back to back to send the selected files.",
     "autoAccept": "Auto-accept from tapped phones",
     "sending": "Sending to {alias}",
-    "unreachable": "Could not reach {alias}. Are both phones on the same Wi-Fi?"
+    "unreachable": "Could not reach {alias}. Are both phones on the same Wi-Fi?",
+    "incoming": "{alias} wants to send you something. Tap to review."
   },
   "trust": {
     "question": "Trust {alias}?",

@@ -971,6 +971,9 @@ class Translations$tapShare$en {
 
   /// en: 'Could not reach {alias}. Are both phones on the same Wi-Fi?'
   String unreachable({required Object alias}) => 'Could not reach ${alias}. Are both phones on the same Wi-Fi?';
+
+  /// en: '{alias} wants to send you something. Tap to review.'
+  String incoming({required Object alias}) => '${alias} wants to send you something. Tap to review.';
 }
 
 // Path: trust

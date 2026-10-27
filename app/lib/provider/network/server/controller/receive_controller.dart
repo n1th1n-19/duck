@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/model/state/server/receive_session_state.dart';
 import 'package:localsend_app/model/state/server/receiving_file.dart';
@@ -25,6 +26,7 @@ import 'package:localsend_app/provider/selection/selected_receiving_files_provid
 import 'package:localsend_app/provider/selection/selected_sending_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
 import 'package:localsend_app/provider/tap_share_provider.dart';
+import 'package:localsend_app/util/native/channel/android_channel.dart';
 import 'package:localsend_app/util/native/directories.dart';
 import 'package:localsend_app/util/native/platform_check.dart';
 import 'package:localsend_app/util/native/tray_helper.dart';
@@ -67,6 +69,12 @@ class ReceiveController {
     server.ref.redux(parentIsolateProvider).dispatch(IsolateDiscoveryAddDeviceAction(device: event.info.toDevice(event.ip, withChannel: true)));
     server.ref.notifier(discoveryLoggerProvider).addLog('[DISCOVER/TCP] Received "/register" HTTP request: ${event.info.alias} (${event.ip})');
   }
+
+  /// A request that arrived headless, shown once the UI exists ([showPendingReceivePage]).
+  void Function()? _pendingReceivePage;
+
+  /// Null while the engine runs headless (started by a tap while the app was closed).
+  BuildContext? get _uiContext => Routerino.navigatorKey.currentContext;
 
   /// A sender requests to upload files.
   /// The Rust server already checked the PIN and enforces that only one
@@ -157,8 +165,9 @@ class ReceiveController {
 
     if (quickSave) {
       // Push before accepting: the permission request in [acceptFileRequest] may block for a while.
+      // Headless (tap while closed) there is no UI: the notification shows the progress.
       // ignore: use_build_context_synchronously, unawaited_futures
-      Routerino.context.pushImmediately(
+      _uiContext?.pushImmediately(
         () => ProgressPage(
           showAppBar: false,
           closeSessionOnClose: true,
@@ -180,8 +189,8 @@ class ReceiveController {
       await Clipboard.setData(ClipboardData(text: message));
       final senderAlias = server.getState().session!.senderAlias;
       await acceptFileRequest({});
-      final context = Routerino.context;
-      if (context.mounted) {
+      final context = _uiContext;
+      if (context != null && context.mounted) {
         context.showSnackBar(t.trust.copiedFrom(alias: senderAlias));
       }
       return;
@@ -245,8 +254,27 @@ class ReceiveController {
 
     server.ref.notifier(selectedReceivingFilesProvider).setFiles(files.values.toList());
 
-    // ignore: use_build_context_synchronously, unawaited_futures
-    Routerino.context.push(() => ReceivePage(receiveProvider));
+    void showPage() {
+      // ignore: use_build_context_synchronously
+      unawaited(Routerino.context.push(() => ReceivePage(receiveProvider)));
+    }
+
+    if (_uiContext != null) {
+      showPage();
+    } else {
+      // Headless: ask via a notification, the page opens with the app.
+      _pendingReceivePage = showPage;
+      unawaited(notifyIncomingAndroid(t.tapShare.incoming(alias: server.getState().session!.senderAlias)));
+    }
+  }
+
+  /// Shows the receive page of a request that arrived while no UI existed.
+  void showPendingReceivePage() {
+    final show = _pendingReceivePage;
+    _pendingReceivePage = null;
+    if (show != null && server.getStateOrNull()?.session?.status == SessionStatus.waiting) {
+      show();
+    }
   }
 
   /// An accepted file started being uploaded.
@@ -436,6 +464,11 @@ class ReceiveController {
         Future.delayed(Duration.zero, () {
           closeSession();
           _logger.info('Closing session');
+
+          final context = _uiContext;
+          if (context == null) {
+            return; // headless, the notification tells the user
+          }
 
           // ignore: use_build_context_synchronously, discarded_futures
           Routerino.context.pushRootImmediately(() => const HomePage(initialTab: HomeTab.receive, appStart: false));
@@ -736,7 +769,7 @@ void _cancelBySender(ServerUtils server) {
   if (receiveSession.status == SessionStatus.waiting) {
     // received cancel during accept/decline
     // pop just in case if user is in [ReceiveOptionsPage]
-    Routerino.context.popUntil(ReceivePage);
+    Routerino.navigatorKey.currentContext?.popUntil(ReceivePage);
   }
 
   server.setState(

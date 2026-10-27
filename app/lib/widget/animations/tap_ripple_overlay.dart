@@ -10,8 +10,9 @@ const _stagger = 0.12; // fraction of the duration between waves
 /// Plays an AirDrop-like wave rolling down from the top edge, where the two phones touch.
 ///
 /// The global `timeDilation` set by animationProvider makes this instant when animations are disabled.
-void showTapRipple(BuildContext context) {
-  final overlay = Overlay.maybeOf(context, rootOverlay: true);
+/// No-op without a [context], e.g. while the engine runs headless.
+void showTapRipple(BuildContext? context) {
+  final overlay = context == null ? null : Overlay.maybeOf(context, rootOverlay: true);
   if (overlay == null) {
     return;
   }

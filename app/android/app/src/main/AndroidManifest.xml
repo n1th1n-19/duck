@@ -24,6 +24,8 @@
 
     <!-- localsend: "Tap to share" between phones (HCE receiver + reader mode sender). Optional hardware. -->
     <uses-permission android:name="android.permission.NFC" />
+    <!-- Keeps the process awake between a tap and the sender's upload while the app is closed. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
     <uses-feature android:name="android.hardware.nfc.hce" android:required="false" />
 
@@ -33,7 +35,7 @@
 
     <application
         android:label="Duck"
-        android:name="${applicationName}"
+        android:name=".LocalSendApplication"
         android:usesCleartextTraffic="true"
         android:banner="@drawable/banner"
         android:icon="@mipmap/ic_launcher"
@@ -121,6 +123,12 @@
                 android:name="android.nfc.cardemulation.host_apdu_service"
                 android:resource="@xml/tap_share_apdu_service" />
         </service>
+
+        <!-- Started by a tap while the app is closed: boots the engine headless (see TapShareWakeService). -->
+        <service
+            android:name=".TapShareWakeService"
+            android:foregroundServiceType="connectedDevice"
+            android:exported="false" />
 
         <!-- Foreground service showing the receive progress.
              Warning: the name is defined by flutter_foreground_task and must not be changed. -->

@@ -154,3 +154,6 @@ class FileInfo with FileInfoMappable {
     required this.lastModified,
   });
 }
+
+/// Notification for a request that arrived while no UI exists (engine started headless by a tap).
+Future<void> notifyIncomingAndroid(String text) => _methodChannel.invokeMethod('tapShareNotifyIncoming', text);

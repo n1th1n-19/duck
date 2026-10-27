@@ -9,9 +9,7 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.DocumentsContract
-import android.provider.Settings
 import android.webkit.MimeTypeMap
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -23,7 +21,6 @@ import java.util.Locale
 import java.util.TimeZone
 
 
-private const val CHANNEL = "org.localsend.localsend_app/localsend"
 private const val REQUEST_CODE_PICK_DIRECTORY = 1
 private const val REQUEST_CODE_PICK_DIRECTORY_PATH = 2
 private const val REQUEST_CODE_PICK_FILE = 3
@@ -72,32 +69,53 @@ class MainActivity : FlutterActivity() {
         fun createDefaultIntent(launchContext: Context): Intent {
             return withNewEngine().build(launchContext)
         }
+
+        /// Whether the UI is in the foreground, so a tap needs no keep-alive service.
+        @Volatile
+        var isVisible = false
+            private set
+
+        /// Android 17+ gates local network access behind a runtime permission; older versions grant it implicitly.
+        fun hasLocalNetworkPermission(context: Context): Boolean {
+            if (Build.VERSION.SDK_INT < API_LEVEL_ANDROID_17) {
+                return true
+            }
+            return context.checkSelfPermission(PERMISSION_ACCESS_LOCAL_NETWORK) == PackageManager.PERMISSION_GRANTED
+        }
     }
+
+    /// The UI attaches to the app-wide engine, which may already run headless (see [LocalSendApplication]).
+    override fun provideFlutterEngine(context: Context): FlutterEngine = LocalSendApplication.obtainEngine(context, headless = false)
+
+    /// Keep receiving after the activity is closed.
+    override fun shouldDestroyEngineWithHost(): Boolean = false
 
     private var tapShareReader: TapShareReader? = null
 
     override fun onResume() {
         super.onResume()
+        isVisible = true
         tapShareReader?.apply()
     }
 
     override fun onPause() {
         super.onPause()
+        isVisible = false
         tapShareReader?.pause()
     }
 
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
         super.cleanUpFlutterEngine(flutterEngine)
-        TapShareState.onTapped = null
-        TapShareState.onEnabledChanged = null
+        tapShareReader?.pause()
+        tapShareReader = null
+        // The engine lives on headless: hand the channel back to the activity-free handler.
+        TapShareChannel.install(applicationContext, flutterEngine)
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         val channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
         tapShareReader = TapShareReader(this) { identity -> channel.invokeMethod("onTapShareRead", identity) }
-        TapShareState.onTapped = { fingerprint -> channel.invokeMethod("onTapShareTapped", fingerprint) }
-        TapShareState.onEnabledChanged = { enabled -> channel.invokeMethod("onTapShareEnabledChanged", enabled) }
         channel.setMethodCallHandler { call, result ->
             when (call.method) {
                 "pickDirectory" -> {
@@ -138,14 +156,6 @@ class MainActivity : FlutterActivity() {
                     result.success(null)
                 }
 
-                "isAnimationsEnabled" -> {
-                    result.success(isAnimationsEnabled())
-                }
-
-                "getDownloadsDirectory" -> {
-                    result.success(getDownloadsDirectory())
-                }
-
                 "requestLocalNetworkPermission" -> {
                     if (hasLocalNetworkPermission()) {
                         result.success(true)
@@ -155,52 +165,17 @@ class MainActivity : FlutterActivity() {
                     }
                 }
 
-                "tapShareGetState" -> {
-                    result.success(
-                        mapOf(
-                            "available" to TapShareState.isNfcAvailable(this),
-                            "enabled" to TapShareState.isEnabled(this),
-                            "autoAccept" to TapShareState.isAutoAccept(this),
-                        )
-                    )
-                }
-
-                "tapShareSetEnabled" -> {
-                    TapShareState.setEnabled(this, call.arguments as Boolean)
-                    result.success(null)
-                }
-
-                "tapShareSetAutoAccept" -> {
-                    TapShareState.setAutoAccept(this, call.arguments as Boolean)
-                    result.success(null)
-                }
-
-                "tapShareSetIdentity" -> {
-                    TapShareState.setIdentity(this, call.arguments as String?)
-                    result.success(null)
-                }
-
                 "tapShareSetSender" -> {
                     tapShareReader?.setSender(call.arguments as String?)
                     result.success(null)
                 }
 
-                "tapShareConsumeTap" -> {
-                    result.success(TapShareState.consumeTap(call.arguments as String))
-                }
-
-                else -> result.notImplemented()
+                else -> TapShareChannel.handle(this, call, result)
             }
         }
     }
 
-    /// Android 17+ gates local network access behind a runtime permission; older versions grant it implicitly.
-    private fun hasLocalNetworkPermission(): Boolean {
-        if (Build.VERSION.SDK_INT < API_LEVEL_ANDROID_17) {
-            return true
-        }
-        return checkSelfPermission(PERMISSION_ACCESS_LOCAL_NETWORK) == PackageManager.PERMISSION_GRANTED
-    }
+    private fun hasLocalNetworkPermission(): Boolean = hasLocalNetworkPermission(this)
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -212,15 +187,6 @@ class MainActivity : FlutterActivity() {
 
     /// Absolute path of the shared "Download" directory (usually /storage/emulated/0/Download).
     @Suppress("DEPRECATION")
-    private fun getDownloadsDirectory(): String {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
-    }
-
-    private fun isAnimationsEnabled() : Boolean {
-        return Settings.Global.getFloat(this.getContentResolver(),
-            Settings.Global.ANIMATOR_DURATION_SCALE, 1.0f) != 0.0f;
-    }
-
     private fun handleGetFileDescriptor(call: MethodCall, result: MethodChannel.Result) {
         val uriString = call.argument<String>("uri")
         if (uriString == null) {
