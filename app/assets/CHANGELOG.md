@@ -11,6 +11,14 @@ Duck Share is a fork of LocalSend. Changes on top of LocalSend 1.18.2:
 - feat: trusted devices (favorites) are auto-accepted, skip the PIN and get shared text copied to the clipboard
 - feat: block devices; their requests are declined and they are hidden from the nearby list
 - fix(android): closing the app no longer stops the server
+- feat: new design — Pond blue theme, Nunito font, Send/Receive pill navigation, settings behind the gear
+- feat: new "Glide" duck logo, animated while waiting to receive
+- feat(android): first-start onboarding with permissions and a Quick Settings shortcut
+- feat(android): shows where the NFC antenna sits on your phone (exact on Android 14+)
+- feat(android): the share sheet shows send progress; hiding it keeps sending, "Open Duck Share" shows the transfer
+- feat: history shows photo and video previews and opens received files, also from the gallery
+- fix(android): tap to share works again when files are picked in the app, also after rotating the phone
+- fix(android): the app no longer forces the highest screen refresh rate
 
 ## Unreleased
 
