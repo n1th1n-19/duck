@@ -1,0 +1,89 @@
+name: Android release
+
+# Push a tag like v1.18.2-duck.3 to build, sign and publish a pre-release.
+# Run manually (workflow_dispatch) to build and download the APKs without publishing.
+on:
+  push:
+    tags: ["v*-duck.*"]
+  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: "3.41.9"
+  # SHA-256 of the Duck Share release certificate. A build signed with anything else fails.
+  CERT_SHA256: "e7f5f7ff9c85f117b535d0f4179b4523d8a83d7a8b847f63122149bbd98cb304"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Signing key
+        env:
+          KEY_STORE: ${{ secrets.ANDROID_KEY_STORE }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          test -n "$KEY_STORE" && test -n "$KEY_PASSWORD" || { echo "::error::Secrets ANDROID_KEY_STORE / ANDROID_KEY_PASSWORD are missing"; exit 1; }
+          echo "$KEY_STORE" | base64 -d > "$RUNNER_TEMP/release.jks"
+          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=duckshare\nstoreFile=%s\n' \
+            "$KEY_PASSWORD" "$KEY_PASSWORD" "$RUNNER_TEMP/release.jks" > app/android/key.properties
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build APKs
+        working-directory: app
+        run: |
+          flutter pub get
+          flutter build apk --release --split-per-abi
+          flutter build apk --release
+
+      - name: Package and verify
+        id: package
+        run: |
+          VERSION=$(sed -n 's/^version: \([0-9.]*\).*/\1/p' app/pubspec.yaml)
+          TAG="${GITHUB_REF_NAME}"
+          case "$TAG" in v*-duck.*) NAME="${TAG#v}" ;; *) NAME="$VERSION-dev.$(git rev-parse --short HEAD)" ;; esac
+          OUT=dist; mkdir -p $OUT
+          SRC=app/build/app/outputs/flutter-apk
+          cp $SRC/app-arm64-v8a-release.apk   $OUT/duck-share-$NAME-arm64-v8a.apk
+          cp $SRC/app-armeabi-v7a-release.apk $OUT/duck-share-$NAME-armeabi-v7a.apk
+          cp $SRC/app-x86_64-release.apk      $OUT/duck-share-$NAME-x86_64.apk
+          cp $SRC/app-release.apk             $OUT/duck-share-$NAME-universal.apk
+          APKSIGNER=$(ls -d $ANDROID_HOME/build-tools/*/ | sort -V | tail -1)apksigner
+          for apk in $OUT/*.apk; do
+            $APKSIGNER verify --print-certs "$apk" | grep -q "SHA-256 digest: $CERT_SHA256" \
+              || { echo "::error::$apk is not signed with the Duck Share key"; exit 1; }
+          done
+          (cd $OUT && sha256sum *.apk > SHA256SUMS.txt && cat SHA256SUMS.txt)
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: duck-share-${{ steps.package.outputs.name }}
+          path: dist/*
+
+      - name: Publish pre-release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NAME: ${{ steps.package.outputs.name }}
+        run: |
+          NOTES=dist/notes.md
+          # The release notes come from the "## Duck Share (unreleased)" section of the changelog.
+          awk '/^## Duck Share/{f=1; next} /^## /{f=0} f' app/assets/CHANGELOG.md > $NOTES
+          printf '\n> [!NOTE]\n> **Play Protect warning?** Duck Share is a new independent app. Tap **More details → Install anyway**. Most phones need **arm64-v8a**.\n\nBuilt by [this workflow run](%s) from %s. Certificate SHA-256: `%s`\n' \
+            "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" "$GITHUB_SHA" "$CERT_SHA256" >> $NOTES
+          gh release create "$GITHUB_REF_NAME" --prerelease --title "Duck Share $NAME" \
+            --notes-file $NOTES dist/*.apk dist/SHA256SUMS.txt
