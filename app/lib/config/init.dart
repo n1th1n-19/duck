@@ -5,7 +5,6 @@ import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:localsend_app/config/refena.dart';
 import 'package:localsend_app/config/theme.dart';
 import 'package:localsend_app/pages/home_page.dart';
@@ -227,16 +226,6 @@ Future<void> postInit(BuildContext context, Ref ref, bool appStart) async {
   await updateSystemOverlayStyle(context);
 
   if (checkPlatform([TargetPlatform.android])) {
-    // On some TVs, requesting a high refresh rate can trigger HDMI resync and blank the display when entering or leaving the app.
-    // https://github.com/localsend/localsend/issues/3452
-    if (!ref.read(tvProvider)) {
-      try {
-        await FlutterDisplayMode.setHighRefreshRate();
-      } catch (e) {
-        _logger.warning('Setting high refresh rate failed', e);
-      }
-    }
-
     // Android 17+ blocks multicast discovery and LAN connections until this permission is granted,
     // so ask before the server and discovery start.
     final localNetworkGranted = await requestLocalNetworkPermissionAndroid();
