@@ -158,12 +158,6 @@ Run from the `app` directory.
 
 Release APKs need a signing key: create `app/android/key.properties`, or sign with the debug key (see [CONTRIBUTING.md](CONTRIBUTING.md#compile-a-release-apk)).
 
-## A note before you dig in
-
-I apologize to whoever finds this repo: I built this entire project with AI.
-
-The idea, the decisions and the testing are mine, but most of the code was written with AI assistance. That means there may be rough edges, odd patterns, or things a careful developer would have done differently. If you're here to learn from the code, double-check anything before you copy it into your own work. If you spot something broken or questionable, issues and pull requests are very welcome. I'm still learning, and this project is part of that.
-
 ## Credits and license
 
 Duck Share is based on [LocalSend](https://github.com/localsend/localsend) by Tien Do Nam and contributors, and is licensed under the [Apache License 2.0](LICENSE), like the original. "LocalSend" and its logo belong to their owners; Duck Share is not affiliated with or endorsed by the LocalSend project.
